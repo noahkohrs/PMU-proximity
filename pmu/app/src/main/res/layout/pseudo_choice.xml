@@ -54,8 +54,8 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="@dimen/main_width"
-        android:layout_height="@dimen/main_height"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
         android:backgroundTint="@color/unavailable"
         android:fontFamily="@font/inter"
         android:text="JOUER"
