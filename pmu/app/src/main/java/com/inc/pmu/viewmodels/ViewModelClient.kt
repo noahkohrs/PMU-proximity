@@ -14,9 +14,8 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
-import com.yourcompany.android.tictactoe.BuildConfig
+import com.inc.pmu.BuildConfig
 import java.util.*
-import kotlin.text.Charsets.UTF_8
 
 class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewModel() {
     private val localId : String = UUID.randomUUID().toString()
