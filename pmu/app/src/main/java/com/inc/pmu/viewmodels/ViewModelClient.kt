@@ -8,11 +8,13 @@ import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
+import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
+import com.yourcompany.android.tictactoe.BuildConfig
 import java.util.*
 import kotlin.text.Charsets.UTF_8
 
@@ -21,8 +23,23 @@ class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewMo
     private var serverId =  ""
 
     private companion object {
-        const val TAG = "TicTacToeVM"
+        const val TAG = "PMU"
         val STRATEGY = Strategy.P2P_STAR
+    }
+
+    fun startDiscovering() {
+        Log.d(TAG, "Start discovering...")
+        val discoveryOptions = DiscoveryOptions.Builder().setStrategy(STRATEGY).build()
+
+        connectionsClient.startDiscovery(
+            BuildConfig.APPLICATION_ID,
+            endpointDiscoveryCallback,
+            discoveryOptions
+        ).addOnSuccessListener {
+            Log.d(TAG, "Discovering...")
+        }.addOnFailureListener {
+            Log.d(TAG, "Unable to start discovering")
+        }
     }
 
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
