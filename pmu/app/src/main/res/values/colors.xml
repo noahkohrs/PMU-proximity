@@ -6,4 +6,5 @@
     <color name="unavailable">#FFAAA4A4</color>
     <color name="selectOrValidate">#FFDDFF0F</color>
     <color name="quitGame">#FFED0909</color>
+    <color name="betPushupBackground">#FF59AB58</color>
 </resources>
