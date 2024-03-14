@@ -15,6 +15,7 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
+import com.inc.pmu.models.Global
 import java.util.*
 
 class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewModel() {
@@ -22,7 +23,7 @@ class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewMo
     private var serverId =  ""
 
     private companion object {
-        const val TAG = "PMU"
+        const val TAG = Global.TAG
         val STRATEGY = Strategy.P2P_STAR
     }
 
