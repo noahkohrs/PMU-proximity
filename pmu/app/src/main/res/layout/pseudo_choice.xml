@@ -38,7 +38,7 @@
         app:layout_constraintVertical_bias="0.327" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/pseudoInput"
         android:layout_width="230dp"
         android:layout_height="48dp"
         android:background="@drawable/pseudo_text_field_style"
@@ -61,9 +61,10 @@
         android:text="JOUER"
         android:textAlignment="center"
         android:textColor="@color/black"
+        android:onClick="onClickPlayButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+        app:layout_constraintTop_toBottomOf="@+id/pseudoInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
