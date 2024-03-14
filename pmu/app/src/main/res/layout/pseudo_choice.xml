@@ -54,9 +54,9 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="171dp"
-        android:layout_height="57dp"
-        android:backgroundTint="#AAA4A4"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
+        android:backgroundTint="@color/unavailable"
         android:fontFamily="@font/inter"
         android:text="JOUER"
         android:textAlignment="center"
