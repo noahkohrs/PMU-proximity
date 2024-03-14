@@ -11,8 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 public class Player {
 
-    public String puuid ;
-    public String playerName ;
+    public final String puuid ;
+    public final String playerName ;
     public Player(
             String puuid, String name
     ) {
@@ -24,6 +24,7 @@ public class Player {
     public JSONObject toJSon() {
         JSONObject main = new JSONObject();
         try {
+
             main.put("puuid", puuid);
             main.put("name", playerName);
         } catch (JSONException e) {
