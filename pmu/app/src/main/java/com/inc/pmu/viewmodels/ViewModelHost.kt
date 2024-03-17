@@ -13,7 +13,7 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
-import com.inc.pmu.models.Global
+import com.inc.pmu.Global
 import java.util.*
 
 class ViewModelHost(private val connectionsClient: ConnectionsClient) : ViewModel() {
