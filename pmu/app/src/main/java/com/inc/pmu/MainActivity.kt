@@ -2,10 +2,13 @@ package com.inc.pmu
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -68,5 +71,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
             }
+    }
+
+    fun onClickPlayButton(view: View) {
+        val intent = Intent(this,HomePage::class.java)
+        intent.putExtra("Pseudo", this.findViewById<EditText>(R.id.pseudoInput).text.toString())
+        startActivities(arrayOf(intent))
     }
 }

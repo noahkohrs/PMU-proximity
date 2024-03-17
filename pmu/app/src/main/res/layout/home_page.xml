@@ -24,12 +24,13 @@
         app:layout_constraintVertical_bias="0.171" />
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="@dimen/main_width"
-        android:layout_height="@dimen/main_height"
+        android:id="@+id/createButton"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
         android:layout_marginTop="116dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
+        android:onClick="onClickCreate"
         android:text="CRÉER"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -39,22 +40,23 @@
         app:layout_constraintVertical_bias="0.047" />
 
     <Button
-        android:id="@+id/button4"
-        android:layout_width="@dimen/main_width"
-        android:layout_height="@dimen/main_height"
+        android:id="@+id/joinButton"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
         android:text="REJOINDRE"
         android:textColor="@color/black"
+        android:onClick="onClickJoin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
+        app:layout_constraintTop_toBottomOf="@+id/createButton" />
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="@dimen/main_width"
-        android:layout_height="@dimen/main_height"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
@@ -62,5 +64,5 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button4" />
+        app:layout_constraintTop_toBottomOf="@+id/joinButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
