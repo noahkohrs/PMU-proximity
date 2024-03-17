@@ -5,9 +5,9 @@ import java.util.*;
 public class Board {
 
     public static final int LENGTH = 5;
-    Map<Suit, Integer> riderPos;
-    Card[][] sideCards = new Card[LENGTH][2];
-    int sideCardsDiscoverIndex = 0;
+    public Map<Suit, Integer> riderPos;
+    public Card[][] sideCards = new Card[LENGTH][2];
+    public int sideCardsDiscoverIndex = 0;
 
     /**
      * Constructor for the Board class that initializes the deck, riderPos, and sideCards.
@@ -38,10 +38,10 @@ public class Board {
                 return;
             }
         }
-
-        moveRiderForward(sideCards[sideCardsDiscoverIndex][0].suit);
-        moveRiderBackward(sideCards[sideCardsDiscoverIndex][1].suit);
         sideCardsDiscoverIndex++;
+        moveRiderForward(sideCards[sideCardsDiscoverIndex-1][0].suit);
+        moveRiderBackward(sideCards[sideCardsDiscoverIndex-1][1].suit);
+
     }
 
     /**
@@ -49,11 +49,11 @@ public class Board {
      * @param suit the suit of the rider to move
      */
     public void moveRiderForward(Suit suit) {
-        this.updateSideCards();
         int pos = riderPos.get(suit);
         if (pos < LENGTH) {
             riderPos.put(suit, pos + 1);
         }
+        this.updateSideCards();
     }
 
     /**
