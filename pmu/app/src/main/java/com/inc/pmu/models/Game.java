@@ -1,0 +1,95 @@
+package com.inc.pmu.models;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.*;
+
+public class Game implements IGame, Jsonisable {
+    
+    public Board board;
+    public Map<String, Player> players; // key: puuid, value: player
+
+    private Card currentCard;
+    private boolean currentRoundHaveBeenCanceled = true;
+
+    protected Game(List<Player> players) {
+        // TODO : Board from json file as a client
+        this.players = new HashMap<String, Player>();
+        players.forEach(p -> this.players.put(p.puuid, p));
+    }
+
+    @Override
+    public void addPlayer(Player player) {
+        players.put(player.puuid, player);
+    }
+
+    @Override
+    public void removePlayer(String puuid) {
+        players.remove(puuid);
+    }
+
+    @Override
+    public void cardDrawn(Card card) {
+        board.moveRiderForward(card.suit);
+        currentRoundHaveBeenCanceled = false;
+        currentCard = card;
+    }
+
+    @Override
+    public void roundCancelled(String puuid) {
+        if (puuid == null) {
+            throw new NullPointerException("Null puuid given");
+        }
+
+        Player p = players.get(puuid);
+        if (p==null) {
+            throw new NullPointerException("Player founded unavailable");
+        }
+        p.currentPushUps = p.currentPushUps*2;
+        currentRoundHaveBeenCanceled = true;
+        board.moveRiderBackward(currentCard.suit);
+    }
+
+    public boolean isRoundCanceled() {
+        return currentRoundHaveBeenCanceled;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject game = new JSONObject();
+        try {
+            game.put("board", board.toJson());
+            JSONArray players = new JSONArray();
+            for (Player p : this.players.values()) {
+                players.put(p.toJson());
+            }
+            game.put("players", players);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return game;
+    }
+
+    private Game(Board board, Map<String, Player> players) {
+        this.board = board;
+        this.players = players;
+    }
+
+    public static Game fromJson(JSONObject json) {
+        Board board;
+        Map<String, Player> players;
+        try {
+            board = Board.fromJson(json.getJSONObject("board"));
+            players = new HashMap<String, Player>();
+            JSONArray playersJson = json.getJSONArray("players");
+            for (int i = 0; i < playersJson.length(); i++) {
+                Player p = Player.fromJson(playersJson.getJSONObject(i));
+                players.put(p.puuid, p);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return new Game(board, players);
+    }
+}
