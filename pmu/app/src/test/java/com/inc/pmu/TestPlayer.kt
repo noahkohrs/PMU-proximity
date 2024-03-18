@@ -2,6 +2,7 @@ import com.inc.pmu.models.Player
 import org.json.JSONObject
 import org.junit.Assert
 import org.junit.Test
+import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -14,11 +15,11 @@ class TestPlayer {
     fun playerDataIsCorrectlyBridged() {
         val uuid: String = UUID.randomUUID().toString()
         val player: Player = Player(uuid, "Bob")
-        val bytes: ByteArray = player.toBytes()
-        val strPlayer: String = bytes.toString(Charsets.UTF_8);
-        println(strPlayer)
-        val json: JSONObject = JSONObject(strPlayer)
-        Assert.assertEquals(json.get("puuid"), uuid)
-        Assert.assertEquals(json.get("name"), "Bob")
+        val json: JSONObject = player.toJson()
+        val playerRemade: Player = Player.fromJson(json)
+
+        assertEquals(player, playerRemade) // Only check for the PUUID, so not sufficient
+        assertEquals(player.playerName, playerRemade.playerName)
+        assertEquals(player.bet, playerRemade.bet)
     }
 }
