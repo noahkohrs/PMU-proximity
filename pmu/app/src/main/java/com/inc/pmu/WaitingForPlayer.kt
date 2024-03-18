@@ -2,6 +2,7 @@ package com.inc.pmu
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.inc.pmu.models.Global
 import com.inc.pmu.models.Player
@@ -15,5 +16,15 @@ class WaitingForPlayer : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+    }
+
+    fun onClickHomePage(view: View) {
+        intent.setClass(this,HomePage::class.java)
+        startActivities(arrayOf(intent))
+    }
+
+    fun onClickStartGame(view: View) {
+        intent.setClass(this,BetChoice::class.java)
+        startActivities(arrayOf(intent))
     }
 }
