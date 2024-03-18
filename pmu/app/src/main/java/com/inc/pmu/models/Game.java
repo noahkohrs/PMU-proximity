@@ -1,50 +1,95 @@
 package com.inc.pmu.models;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.*;
 
-public class Game {
+public class Game implements IGame, Jsonisable {
     
     public Board board;
     public Map<String, Player> players; // key: puuid, value: player
-    public List<Card> deck = new ArrayList<Card>();
-    public static final List<Card> cardLeftAfterBoardSetup = new ArrayList<Card>();
-    
 
-    public Game() {
-        List<Card> deck = getFullSchuffledDeck();
-        board = new Board(deck);
-        cardLeftAfterBoardSetup.addAll(deck);
-        players = new HashMap<String, Player>();
+    private Card currentCard;
+    private boolean currentRoundHaveBeenCanceled = true;
+
+    protected Game(List<Player> players) {
+        // TODO : Board from json file as a client
+        this.players = new HashMap<String, Player>();
+        players.forEach(p -> this.players.put(p.puuid, p));
     }
 
+    @Override
     public void addPlayer(Player player) {
         players.put(player.puuid, player);
     }
 
+    @Override
     public void removePlayer(String puuid) {
         players.remove(puuid);
     }
 
-    /**
-     * @return The card that have been drawn
-     */
-    public Card drawCard() {
-        if (deck.size() == 0) {
-            deck.addAll(cardLeftAfterBoardSetup);
+    @Override
+    public void cardDrawn(Card card) {
+        board.moveRiderForward(card.suit);
+        currentRoundHaveBeenCanceled = false;
+        currentCard = card;
+    }
+
+    @Override
+    public void roundCancelled(String puuid) {
+        if (puuid == null) {
+            throw new NullPointerException("Null puuid given");
         }
-        return deck.remove(0);
-    }    
-    /**
-     * @return a full deck of cards
-     */
-    public static List<Card> getFullSchuffledDeck() {
-        List<Card> fullDeck = new ArrayList<Card>();
-        for (Suit suit : Suit.values()) {
-            for (int i = Card.MIN_NUMBER; i <= Card.MAX_NUMBER; i++) {
-                fullDeck.add(new Card(suit, i));
+
+        Player p = players.get(puuid);
+        if (p==null) {
+            throw new NullPointerException("Player founded unavailable");
+        }
+        p.currentPushUps = p.currentPushUps*2;
+        currentRoundHaveBeenCanceled = true;
+        board.moveRiderBackward(currentCard.suit);
+    }
+
+    public boolean isRoundCanceled() {
+        return currentRoundHaveBeenCanceled;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject game = new JSONObject();
+        try {
+            game.put("board", board.toJson());
+            JSONArray players = new JSONArray();
+            for (Player p : this.players.values()) {
+                players.put(p.toJson());
             }
+            game.put("players", players);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Collections.shuffle(fullDeck);
-        return fullDeck;
+        return game;
+    }
+
+    private Game(Board board, Map<String, Player> players) {
+        this.board = board;
+        this.players = players;
+    }
+
+    public static Game fromJson(JSONObject json) {
+        Board board;
+        Map<String, Player> players;
+        try {
+            board = Board.fromJson(json.getJSONObject("board"));
+            players = new HashMap<String, Player>();
+            JSONArray playersJson = json.getJSONArray("players");
+            for (int i = 0; i < playersJson.length(); i++) {
+                Player p = Player.fromJson(playersJson.getJSONObject(i));
+                players.put(p.puuid, p);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return new Game(board, players);
     }
 }

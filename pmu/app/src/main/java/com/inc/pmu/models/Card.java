@@ -1,6 +1,8 @@
 package com.inc.pmu.models;
 
-public class Card {
+import org.json.JSONObject;
+
+public class Card implements Jsonisable {
     public static final int MIN_NUMBER = 1 ;
     public static final int MAX_NUMBER = 13 ;
 
@@ -28,4 +30,27 @@ public class Card {
     }
 
 
+    @Override
+    public JSONObject toJson() {
+        JSONObject card = new JSONObject();
+        try {
+            card.put("suit", suit.name());
+            card.put("number", number);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return card;
+    }
+
+    public static Card fromJson(JSONObject json) {
+        Suit suit;
+        int number;
+        try {
+            suit = Suit.valueOf(json.getString("suit"));
+            number = json.getInt("number");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return new Card(suit, number);
+    }
 }
