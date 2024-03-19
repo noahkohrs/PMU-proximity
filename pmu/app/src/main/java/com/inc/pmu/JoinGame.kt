@@ -10,7 +10,7 @@ class JoinGame : Fragment(R.layout.join_page) {
     lateinit var homePage: Button
 
     companion object {
-        fun newInstance() = HomePage()
+        fun newInstance() = JoinGame()
     }
 
     override fun onStart() {

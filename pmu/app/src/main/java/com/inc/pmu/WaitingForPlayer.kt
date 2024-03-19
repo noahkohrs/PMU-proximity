@@ -26,12 +26,12 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 .commit()
         }
 
-       /* launchButton.setOnClickListener {
+       launchButton.setOnClickListener {
             val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
-        }*/
+        }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
