@@ -7,7 +7,7 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 
-class ViewModelClient(connectionsClient: ConnectionsClient) : ViewModelPMU() {
+class ViewModelClient() : ViewModelPMU() {
     private var serverId =  ""
 
     private companion object {
@@ -15,7 +15,8 @@ class ViewModelClient(connectionsClient: ConnectionsClient) : ViewModelPMU() {
         val STRATEGY = Strategy.P2P_STAR
     }
 
-    override fun startDiscovering() {
+    override fun startDiscovering(connectionsClient: ConnectionsClient) {
+        this.connectionsClient = connectionsClient
         Log.d(TAG, "Start discovering...")
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(STRATEGY).build()
 
@@ -30,7 +31,7 @@ class ViewModelClient(connectionsClient: ConnectionsClient) : ViewModelPMU() {
         }
     }
 
-    override fun startHosting() {
+    override fun startHosting(connectionsClient: ConnectionsClient) {
         throw UnsupportedOperationException("Client cannot host")
     }
 

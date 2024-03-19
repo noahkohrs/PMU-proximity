@@ -7,14 +7,18 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
+import com.inc.pmu.viewmodels.ViewModelPMU
+import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 class BetChoice : Fragment(R.layout.bet_choice) {
 
     var player : Player? = null
     var suit : Suit? = null
 
+    private lateinit var vmGame: ViewModelPMU
 
     companion object {
         fun newInstance() = BetChoice()
@@ -22,6 +26,9 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
     override fun onStart() {
         super.onStart()
+
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+
         Log.d(Global.TAG, "OnStart method")
         var buttonH : Button = requireView().findViewById(R.id.coeurButton)
         var buttonS : Button = requireView().findViewById(R.id.piqueButton)

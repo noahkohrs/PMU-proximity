@@ -7,11 +7,15 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 
 class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
     private lateinit var pseudoField: EditText
     private lateinit var playButton: Button
+
+    private lateinit var vmUserData : ViewModelBeforeNetwork
 
     companion object {
         fun newInstance() = PseudoChoice()
@@ -23,6 +27,8 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
     override fun onStart() {
         super.onStart()
+
+        vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
 
         pseudoField = requireView().findViewById(R.id.pseudoInput)
         playButton = requireView().findViewById(R.id.playButton)
@@ -59,6 +65,7 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
                     playButton.isClickable = false
                 } else {
                     playButton.setBackgroundColor(resources.getColor(R.color.white))
+                    vmUserData.setUsername(pseudoField.text.toString())
                     playButton.isClickable = true
                 }
             }
