@@ -20,9 +20,6 @@ import com.inc.pmu.viewmodels.ViewModelClient
 import com.inc.pmu.viewmodels.ViewModelHost
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var connectionsClient : ConnectionsClient
-    private lateinit var viewModelClient : ViewModelClient
-    private lateinit var viewModelHost : ViewModelHost
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.pseudo_choice)
@@ -54,9 +51,6 @@ class MainActivity : AppCompatActivity() {
                 REQUIRED_PERMISSIONS
             )
         }
-        connectionsClient = Nearby.getConnectionsClient(applicationContext)
-        viewModelClient = ViewModelClient(connectionsClient)
-        viewModelHost = ViewModelHost(connectionsClient)
     }
     private companion object {
         val REQUIRED_PERMISSIONS =
