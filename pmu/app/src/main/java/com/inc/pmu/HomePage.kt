@@ -21,6 +21,7 @@ class HomePage : Fragment(R.layout.home_page) {
 
     private lateinit var createButton: Button
     private lateinit var joinButton: Button
+    
     companion object {
         fun newInstance() = HomePage()
     }
@@ -54,26 +55,5 @@ class HomePage : Fragment(R.layout.home_page) {
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
         //TODO create player
-    fun onClickCreate(view: View) {
-        connectionsClient = Nearby.getConnectionsClient(applicationContext)
-        viewModel = ViewModelProvider(this, ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST,connectionsClient)).get(ViewModelPMU::class.java)
-        viewModel.localUsername = username
-        viewModel = ViewModelProvider(this, ViewModelPMUFactory()).get(ViewModelPMU::class.java)
-        viewModel.startHosting()
-        Log.d(Global.TAG, "Je m'appelle ${viewModel.localUsername} et je viens de créer une partie !")
-        intent.setClass(this,WaitingForPlayer::class.java)
-        startActivities(arrayOf(intent))
-    }
-
-    fun onClickJoin(view: View) {
-        connectionsClient = Nearby.getConnectionsClient(applicationContext)
-        viewModel = ViewModelProvider(this, ViewModelPMUFactory(ViewModelPMUFactory.Mode.CLIENT,connectionsClient)).get(ViewModelPMU::class.java)
-        viewModel.localUsername = username
-        viewModel = ViewModelProvider(this, ViewModelPMUFactory()).get(ViewModelPMU::class.java)
-        viewModel.startDiscovering()
-        Log.d(Global.TAG, "Je m'appelle ${viewModel.localUsername} et je cherche une partie !")
-        viewModel.startDiscovering()
-        intent.setClass(this,JoinGame::class.java)
-        startActivities(arrayOf(intent))
     }
 }
