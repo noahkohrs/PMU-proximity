@@ -1,6 +1,7 @@
 package com.inc.pmu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
@@ -30,6 +31,7 @@ class JoinGame : Fragment(R.layout.join_page) {
         vmGame.localUsername = vmUserData.getUsername()
         val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
         vmGame.startDiscovering(connectionsClient)
+        Log.d(Global.TAG, "${vmGame.localUsername} starts searching...")
 
         homePage = requireView().findViewById(R.id.homePage)
 

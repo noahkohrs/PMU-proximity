@@ -1,11 +1,15 @@
 package com.inc.pmu
 
+import android.util.Log
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
+import com.google.android.gms.nearby.connection.Payload
+import com.inc.pmu.models.Game
+import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
@@ -27,9 +31,11 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
         vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST))[ViewModelPMU::class.java]
+        vmGame.game = Game(mutableListOf(Player(vmGame.localId,vmUserData.getUsername())))
         vmGame.localUsername = vmUserData.getUsername()
         val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
         vmGame.startHosting(connectionsClient)
+        Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
 
         homePageButton = requireView().findViewById(R.id.quitButton)
         launchButton = requireView().findViewById(R.id.lauchButton)
@@ -41,12 +47,13 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 .commit()
         }
 
-       /* launchButton.setOnClickListener {
+       launchButton.setOnClickListener {
+            vmGame.broadcast(Payload.fromBytes("Un JSON qui ordonne de passer aux bets".toByteArray()))
             val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
-        }*/
+        }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

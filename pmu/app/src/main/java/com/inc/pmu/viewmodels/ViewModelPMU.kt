@@ -14,13 +14,14 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.Global
+import com.inc.pmu.models.Game
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
     val localId : String = UUID.randomUUID().toString()
     var localUsername: String = localId
-    private var serverId =  ""
     lateinit var connectionsClient : ConnectionsClient
+    public lateinit var game : Game
 
     private companion object {
         const val TAG = Global.TAG
@@ -60,35 +61,34 @@ abstract class ViewModelPMU : ViewModel() {
         }
     }
 
+    abstract fun onConnectionResultOK(endpointId: String)
+
     protected val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
             Log.d(TAG, "onConnectionInitiated")
 
             Log.d(TAG, "Accepting connection...")
             connectionsClient.acceptConnection(endpointId, payloadCallback)
-            connectionsClient.sendPayload(endpointId, Payload.fromBytes(localUsername.toByteArray()))
         }
 
         override fun onConnectionResult(endpointId: String, resolution: ConnectionResolution) {
-            Log.d(TAG, "onConnectionResult")
+            Log.d(Global.TAG, "onConnectionResult")
 
             when (resolution.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_OK")
+                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_OK")
 
-                    connectionsClient.stopAdvertising()
                     connectionsClient.stopDiscovery()
-                    serverId = endpointId
-                    Log.d(TAG, "opponentEndpointId: $serverId")
+                    onConnectionResultOK(endpointId)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED")
+                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED")
                 }
                 ConnectionsStatusCodes.STATUS_ERROR -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_ERROR")
+                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_ERROR")
                 }
                 else -> {
-                    Log.d(TAG, "Unknown status code ${resolution.status.statusCode}")
+                    Log.d(Global.TAG, "Unknown status code ${resolution.status.statusCode}")
                 }
             }
         }
@@ -97,21 +97,22 @@ abstract class ViewModelPMU : ViewModel() {
             Log.d(TAG, "onDisconnected")
         }
     }
+
+    abstract fun onPayloadReceived(endpointId: String, paquet: String)
+    // au lieu d'un string pour le paquet, il faudrait lui donner un JSON qu'il va parser pour traiter la requête
+
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            Log.d(TAG, "onPayloadReceived")
-
             if (payload.type == Payload.Type.BYTES) {
-                Log.d(TAG, "bytesPayloadDetected")
                 payload.asBytes()?.let {
                     val message = String(it)
-                    Log.d(TAG, "Message: $message")
+                    onPayloadReceived(endpointId,message)
                 }
             }
         }
 
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-            Log.d(TAG, "onPayloadTransferUpdate")
-        }
+        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
     }
+
+    abstract fun broadcast(payload: Payload)
 }
