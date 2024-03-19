@@ -1,25 +1,22 @@
 package com.inc.pmu
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
-class JoinGame : Fragment(R.layout.join_page) {
-
-    lateinit var homePage: Button
+class PushupsBet : Fragment(R.layout.pushup_bet_page) {
 
     companion object {
-        fun newInstance() = JoinGame()
+        fun newInstance() = PushupsBet()
     }
-
     override fun onStart() {
         super.onStart()
 
-        homePage = requireView().findViewById(R.id.homePage)
+        var playButton : Button = requireView().findViewById(R.id.jouerButton)
 
-        homePage.setOnClickListener {
-            val fragment = HomePage.newInstance()
+        playButton.setOnClickListener {
+            val fragment = TeamsPage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
