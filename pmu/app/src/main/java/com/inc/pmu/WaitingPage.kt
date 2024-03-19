@@ -2,14 +2,13 @@ package com.inc.pmu
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
-class WaitingPage : AppCompatActivity() {
+class WaitingPage : Fragment(R.layout.waiting_page) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.waiting_for_player)
+    companion object {
+        fun newInstance() = WaitingPage()
     }
-
     override fun onStart() {
         super.onStart()
     }

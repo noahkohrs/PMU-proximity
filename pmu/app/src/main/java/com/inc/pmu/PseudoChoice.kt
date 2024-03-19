@@ -56,7 +56,7 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
     fun onClickPlayButton(view: View) {
         val fragment = HomePage.newInstance()
-        supportFragmentManager.beginTransaction()
+        requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
     }

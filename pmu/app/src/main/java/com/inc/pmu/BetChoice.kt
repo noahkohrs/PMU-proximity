@@ -72,7 +72,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonPlay.setOnClickListener {
-            val fragment = PseudoChoice.newInstance()
+            val fragment = WaitingPage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
