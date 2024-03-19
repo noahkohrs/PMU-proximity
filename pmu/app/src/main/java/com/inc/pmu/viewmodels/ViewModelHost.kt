@@ -3,6 +3,7 @@ package com.inc.pmu.viewmodels
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
+import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
@@ -38,6 +39,14 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
+    override fun onConnectionInitiated(endpointId: String) {
+        // Nothing
+    }
+
+    override fun onPayloadReceived(endpointId: String, paquet: String) {
+        Log.d(TAG, paquet)
+        connectionsClient.sendPayload(endpointId, Payload.fromBytes(localUsername.toByteArray()))
+    }
 
 
 }

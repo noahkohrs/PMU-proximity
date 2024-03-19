@@ -60,13 +60,15 @@ abstract class ViewModelPMU : ViewModel() {
         }
     }
 
+    abstract fun onConnectionInitiated(endpointId: String)
+
     protected val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
             Log.d(TAG, "onConnectionInitiated")
 
             Log.d(TAG, "Accepting connection...")
             connectionsClient.acceptConnection(endpointId, payloadCallback)
-            connectionsClient.sendPayload(endpointId, Payload.fromBytes(localUsername.toByteArray()))
+            onConnectionInitiated(endpointId)
         }
 
         override fun onConnectionResult(endpointId: String, resolution: ConnectionResolution) {
@@ -97,6 +99,9 @@ abstract class ViewModelPMU : ViewModel() {
             Log.d(TAG, "onDisconnected")
         }
     }
+
+    abstract fun onPayloadReceived(endpointId: String, paquet: String)
+
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             Log.d(TAG, "onPayloadReceived")
@@ -106,6 +111,7 @@ abstract class ViewModelPMU : ViewModel() {
                 payload.asBytes()?.let {
                     val message = String(it)
                     Log.d(TAG, "Message: $message")
+                    onPayloadReceived(endpointId, message)
                 }
             }
         }
