@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.inc.pmu.models.Player
 
 class HomePage : Fragment(R.layout.home_page) {
@@ -35,6 +37,13 @@ class HomePage : Fragment(R.layout.home_page) {
                 .addToBackStack(null)
                 .commit()
         }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().supportFragmentManager.popBackStack("HomePage", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
         //TODO create player
     }
