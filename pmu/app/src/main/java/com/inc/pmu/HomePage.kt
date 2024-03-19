@@ -7,18 +7,25 @@ import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Player
+import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 
 class HomePage : Fragment(R.layout.home_page) {
 
     private lateinit var createButton: Button
     private lateinit var joinButton: Button
+
+    private lateinit var vmUserData: ViewModelBeforeNetwork
     companion object {
         fun newInstance() = HomePage()
     }
 
     override fun onStart() {
         super.onStart()
+
+        vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
+
 
         createButton = requireView().findViewById(R.id.createButton)
         joinButton = requireView().findViewById(R.id.joinButton)

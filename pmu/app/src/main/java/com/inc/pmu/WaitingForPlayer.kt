@@ -3,11 +3,20 @@ package com.inc.pmu
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.ConnectionsClient
+import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
+import com.inc.pmu.viewmodels.ViewModelPMU
+import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
     private lateinit var homePageButton: Button
     private lateinit var launchButton: Button
+
+    private lateinit var vmUserData: ViewModelBeforeNetwork
+    private lateinit var vmGame: ViewModelPMU
 
     companion object {
         fun newInstance() = WaitingForPlayer()
@@ -15,6 +24,12 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
     override fun onStart() {
         super.onStart()
+
+        vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST))[ViewModelPMU::class.java]
+        vmGame.localUsername = vmUserData.getUsername()
+        val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
+        vmGame.startHosting(connectionsClient)
 
         homePageButton = requireView().findViewById(R.id.quitButton)
         launchButton = requireView().findViewById(R.id.lauchButton)
