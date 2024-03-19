@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.inc.pmu.Global
 
-class ViewModelPMUFactory(private val mode : Mode, private val connectionsClient: ConnectionsClient?) : ViewModelProvider.Factory {
+class ViewModelPMUFactory(private val mode : Mode) : ViewModelProvider.Factory {
 
     public enum class Mode {
         HOST, CLIENT, NONE
@@ -14,10 +14,9 @@ class ViewModelPMUFactory(private val mode : Mode, private val connectionsClient
 
     companion object {
         private var SELECTED : Mode = Mode.NONE
-        private lateinit var client : ConnectionsClient
     }
 
-    constructor() : this(Mode.NONE, null)
+    constructor() : this(Mode.NONE)
 
     init {
         if (mode == Mode.HOST || mode == Mode.CLIENT) {
@@ -26,20 +25,16 @@ class ViewModelPMUFactory(private val mode : Mode, private val connectionsClient
             if (SELECTED == Mode.NONE)
                 Log.d(Global.TAG, "MODE SHOULD NOT BE NONE")
         }
-
-        if (connectionsClient != null) {
-            client = connectionsClient
-        }
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        
+
         return when (SELECTED) {
             Mode.HOST -> {
-                ViewModelHost(client) as T
+                ViewModelHost() as T
             }
             Mode.CLIENT -> {
-                ViewModelClient(client) as T
+                ViewModelClient() as T
             }
             Mode.NONE -> {
                 throw IllegalArgumentException("Unknown ViewModel class")

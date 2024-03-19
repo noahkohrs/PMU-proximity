@@ -7,7 +7,7 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 
-class ViewModelHost(connectionsClient: ConnectionsClient) : ViewModelPMU() {
+class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = mutableListOf<String>()
 
     private companion object {
@@ -15,12 +15,13 @@ class ViewModelHost(connectionsClient: ConnectionsClient) : ViewModelPMU() {
         val STRATEGY = Strategy.P2P_STAR
     }
 
-    override fun startDiscovering() {
+    override fun startDiscovering(connectionsClient: ConnectionsClient) {
         throw UnsupportedOperationException("Host cannot discover")
     }
 
 
-    override fun startHosting() {
+    override fun startHosting(connectionsClient: ConnectionsClient) {
+        this.connectionsClient = connectionsClient
         Log.d(TAG, "Start advertising...")
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
         connectionsClient.startAdvertising(

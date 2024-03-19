@@ -27,11 +27,18 @@ abstract class ViewModelPMU : ViewModel() {
         val STRATEGY = Strategy.P2P_STAR
     }
 
-    abstract fun startDiscovering()
+    /**
+     * Set the connectionClient to connectionClient Start discovering for other devices
+     * @param connectionsClient the connectionClient to use
+     */
+    abstract fun startDiscovering(connectionsClient: ConnectionsClient)
 
 
-    abstract fun startHosting()
-
+    /**
+     * Set the connectionClient to connectionClient Start hosting for other devices
+     * @param connectionsClient the connectionClient to use
+     */
+    abstract fun startHosting(connectionsClient: ConnectionsClient)
 
     protected val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
@@ -59,6 +66,7 @@ abstract class ViewModelPMU : ViewModel() {
 
             Log.d(TAG, "Accepting connection...")
             connectionsClient.acceptConnection(endpointId, payloadCallback)
+            connectionsClient.sendPayload(endpointId, Payload.fromBytes(localUsername.toByteArray()))
         }
 
         override fun onConnectionResult(endpointId: String, resolution: ConnectionResolution) {
@@ -95,6 +103,10 @@ abstract class ViewModelPMU : ViewModel() {
 
             if (payload.type == Payload.Type.BYTES) {
                 Log.d(TAG, "bytesPayloadDetected")
+                payload.asBytes()?.let {
+                    val message = String(it)
+                    Log.d(TAG, "Message: $message")
+                }
             }
         }
 
