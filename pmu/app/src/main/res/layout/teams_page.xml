@@ -7,25 +7,36 @@
     android:background="@color/greenBackground">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/teamTrefle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:id="@+id/trefleTeam"
+        android:layout_width="93dp"
+        android:layout_height="169dp"
+        android:layout_marginEnd="72dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.735"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textTrefle" />
+        tools:layout_editor_absoluteY="183dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/teamPique"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.261"
+        android:id="@+id/piqueTeam"
+        android:layout_width="93dp"
+        android:layout_height="169dp"
+        app:layout_constraintEnd_toStartOf="@+id/trefleTeam"
+        app:layout_constraintHorizontal_bias="0.47"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textPique" />
+        tools:layout_editor_absoluteY="183dp" />
+
+    <Button
+        android:id="@+id/jouerButton"
+        android:layout_width="@dimen/main_button_width"
+        android:layout_height="@dimen/main_button_height"
+        android:backgroundTint="@color/unavailable"
+        android:fontFamily="@font/inter"
+        android:text="JOUER"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Title"
+        app:layout_constraintVertical_bias="0.897" />
 
     <TextView
         android:id="@+id/textPique"
@@ -42,61 +53,7 @@
         app:layout_constraintHorizontal_bias="0.226"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
-
-    <TextView
-        android:id="@+id/textCoeur"
-        android:layout_width="93dp"
-        android:layout_height="32dp"
-        android:fontFamily="@font/inter_medium"
-        android:text="Coeur"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.226"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.622" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/teamCoeur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.261"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textCoeur" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/teamCarreau"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.735"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textCarreau" />
-
-    <TextView
-        android:id="@+id/textCarreau"
-        android:layout_width="93dp"
-        android:layout_height="32dp"
-        android:fontFamily="@font/inter_medium"
-        android:text="Carreau"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.773"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.622" />
+        app:layout_constraintVertical_bias="0.201" />
 
     <TextView
         android:id="@+id/textTrefle"
@@ -113,7 +70,58 @@
         app:layout_constraintHorizontal_bias="0.773"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.247" />
+        app:layout_constraintVertical_bias="0.201" />
+
+    <TextView
+        android:id="@+id/textCoeur"
+        android:layout_width="93dp"
+        android:layout_height="32dp"
+        android:fontFamily="@font/inter_medium"
+        android:text="Coeur"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.226"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.53" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/coeurTeam"
+        android:layout_width="93dp"
+        android:layout_height="169dp"
+        app:layout_constraintEnd_toStartOf="@+id/carreauTeam"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="414dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/carreauTeam"
+        android:layout_width="93dp"
+        android:layout_height="169dp"
+        android:layout_marginEnd="72dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="414dp" />
+
+    <TextView
+        android:id="@+id/textCarreau"
+        android:layout_width="93dp"
+        android:layout_height="32dp"
+        android:fontFamily="@font/inter_medium"
+        android:text="Carreau"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.53" />
 
     <TextView
         android:id="@+id/Title"
