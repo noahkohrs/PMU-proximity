@@ -29,6 +29,7 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
+        android:onClick="onClickHomePage"
         android:text="ACCUEIL"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
