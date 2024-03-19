@@ -31,7 +31,7 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
             val fragment = HomePage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
-                .addToBackStack(null)
+                .addToBackStack("HomePage")
                 .commit()
         }
 
