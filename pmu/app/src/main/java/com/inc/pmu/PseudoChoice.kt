@@ -1,21 +1,24 @@
 package com.inc.pmu
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 
 class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
-    lateinit var pseudoField: EditText
-    lateinit var playButton: Button
+    private lateinit var pseudoField: EditText
+    private lateinit var playButton: Button
 
     companion object {
         fun newInstance() = PseudoChoice()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun onStart() {
@@ -24,11 +27,21 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
         pseudoField = requireView().findViewById(R.id.pseudoInput)
         playButton = requireView().findViewById(R.id.playButton)
 
+        playButton.setOnClickListener {
+            val fragment = HomePage.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
         if (pseudoField.text.toString() != "") {
             playButton.isClickable = true
+            playButton.setBackgroundColor(resources.getColor(R.color.white))
         }
         else {
             playButton.isClickable = false
+            playButton.setBackgroundColor(resources.getColor(R.color.unavailable))
         }
 
         pseudoField.addTextChangedListener(object: TextWatcher {
@@ -44,20 +57,11 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
                 if (pseudoField.text.toString() == "") {
                     playButton.setBackgroundColor(resources.getColor(R.color.unavailable))
                     playButton.isClickable = false
-                }
-                else {
+                } else {
                     playButton.setBackgroundColor(resources.getColor(R.color.white))
                     playButton.isClickable = true
                 }
             }
-
         })
-    }
-
-    fun onClickPlayButton(view: View) {
-        val fragment = HomePage.newInstance()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .commit()
     }
 }
