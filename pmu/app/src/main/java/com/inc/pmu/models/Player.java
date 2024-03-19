@@ -7,10 +7,11 @@ import com.inc.pmu.Global;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-public class Player implements Jsonisable {
+public class Player implements Jsonisable, Serializable {
 
     public static final Bet defaultBet = new Bet(1, Suit.HEARTS);
     public final String puuid ;

@@ -3,34 +3,49 @@ package com.inc.pmu
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.inc.pmu.models.Player
 
-class HomePage : AppCompatActivity() {
+class HomePage : Fragment(R.layout.home_page) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.home_page)
+    private lateinit var createButton: Button
+    private lateinit var joinButton: Button
+    companion object {
+        fun newInstance() = HomePage()
     }
 
     override fun onStart() {
         super.onStart()
-        val pseudoIntent = intent
-        var pseudo = pseudoIntent.getStringExtra("Pseudo")
-        if (pseudo == null) {
-            pseudo = "default"
+
+        createButton = requireView().findViewById(R.id.createButton)
+        joinButton = requireView().findViewById(R.id.joinButton)
+
+        createButton.setOnClickListener {
+            val fragment = WaitingForPlayer.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
         }
-        val p1 = Player("jk", pseudo)
-        Log.d(Global.TAG, p1.playerName)
+
+        joinButton.setOnClickListener {
+            val fragment = JoinGame.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().supportFragmentManager.popBackStack("HomePage", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
+        //TODO create player
     }
 
-    fun onClickCreate(view: View) {
-        intent.setClass(this,WaitingForPlayer::class.java)
-        startActivities(arrayOf(intent))
-    }
-
-    fun onClickJoin(view: View) {
-        intent.setClass(this,JoinGame::class.java)
-        startActivities(arrayOf(intent))
-    }
 }

@@ -1,27 +1,44 @@
 package com.inc.pmu
 
-import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 
-class WaitingForPlayer : AppCompatActivity() {
+class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.waiting_for_player)
+    private lateinit var homePageButton: Button
+    private lateinit var launchButton: Button
+
+    companion object {
+        fun newInstance() = WaitingForPlayer()
     }
 
     override fun onStart() {
         super.onStart()
-    }
 
-    fun onClickHomePage(view: View) {
-        intent.setClass(this,HomePage::class.java)
-        startActivities(arrayOf(intent))
-    }
+        homePageButton = requireView().findViewById(R.id.quitButton)
+        launchButton = requireView().findViewById(R.id.lauchButton)
 
-    fun onClickStartGame(view: View) {
-        intent.setClass(this,BetChoice::class.java)
-        startActivities(arrayOf(intent))
+        homePageButton.setOnClickListener {
+            val fragment = HomePage.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
+        }
+
+       /* launchButton.setOnClickListener {
+            val fragment = BetChoice.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
+        }*/
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the default back button behavior
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 }
