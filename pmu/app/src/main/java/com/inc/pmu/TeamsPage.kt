@@ -1,8 +1,7 @@
 package com.inc.pmu
 
-import android.os.Bundle
 import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 
 class TeamsPage : Fragment(R.layout.teams_page) {
@@ -21,5 +20,13 @@ class TeamsPage : Fragment(R.layout.teams_page) {
                 .replace(R.id.container, fragment)
                 .commit()
         }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the default back button behavior
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 }

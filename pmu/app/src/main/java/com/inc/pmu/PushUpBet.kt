@@ -3,6 +3,7 @@ package com.inc.pmu
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 
 class PushUpBet : Fragment(R.layout.pushup_bet_page) {
@@ -41,6 +42,13 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
             }
         }
 
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the default back button behavior
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
     }
 }
