@@ -18,6 +18,7 @@ import com.inc.pmu.models.Game
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
+    val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
     var localUsername: String = localId
     lateinit var connectionsClient : ConnectionsClient
@@ -115,4 +116,12 @@ abstract class ViewModelPMU : ViewModel() {
     }
 
     abstract fun broadcast(payload: Payload)
+
+    fun addListener(listener: ViewModelListener){
+        listeners.add(listener)
+    }
+
+    fun removeListener(listener: ViewModelListener){
+        listeners.remove(listener)
+    }
 }

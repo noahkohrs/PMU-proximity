@@ -1,14 +1,13 @@
 package com.inc.pmu
 
-import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
+import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
@@ -41,5 +40,17 @@ class JoinGame : Fragment(R.layout.join_page) {
                 .replace(R.id.container, fragment)
                 .commit()
         }
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onConnectionEstablished() {
+                    Log.d(Global.TAG, "Connection established")
+                    val fragment = WaitingForPlayer.newInstance()
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit()
+                }
+            }
+        )
     }
 }

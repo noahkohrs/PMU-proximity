@@ -24,6 +24,9 @@ class ViewModelClient() : ViewModelPMU() {
     override fun onConnectionResultOK(endpointId: String) {
         serverId = endpointId
         connectionsClient.sendPayload(serverId, Payload.fromBytes(localUsername.toByteArray()))
+        for (listener in listeners){
+            listener.onConnectionEstablished()
+        }
     }
 
     override fun startDiscovering(connectionsClient: ConnectionsClient) {
