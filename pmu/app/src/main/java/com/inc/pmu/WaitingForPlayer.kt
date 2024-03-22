@@ -49,7 +49,7 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
        launchButton.setOnClickListener {
             vmGame.broadcast(Payload.fromBytes("Un JSON qui ordonne de passer aux bets".toByteArray()))
-            val fragment = BetChoice.newInstance()
+            val fragment = PushUpBet.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()

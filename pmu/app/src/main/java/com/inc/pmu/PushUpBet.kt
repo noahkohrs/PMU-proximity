@@ -22,7 +22,7 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
 
 
         playButton.setOnClickListener {
-            val fragment = WaitingPage.newInstance()
+            val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
