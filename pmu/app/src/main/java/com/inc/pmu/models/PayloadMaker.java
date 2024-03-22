@@ -2,7 +2,10 @@ package com.inc.pmu.models;
 
 import com.google.android.gms.nearby.connection.Payload;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class PayloadMaker implements Jsonisable {
 
@@ -58,6 +61,19 @@ public class PayloadMaker implements Jsonisable {
     public PayloadMaker addParam(String key, JSONObject value) {
         try {
             json.put(key, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    public PayloadMaker addParam(String key, String[] strings) {
+        JSONArray list = new JSONArray();
+        try {
+            for (String i : strings) {
+                list.put(i);
+            }
+            json.put(key, list);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
