@@ -2,9 +2,7 @@ package com.inc.pmu.viewmodels
 
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
-import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
@@ -12,6 +10,7 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import org.json.JSONObject
 
@@ -111,5 +110,37 @@ class ViewModelHost() : ViewModelPMU() {
     override fun handleAskDoPushUps(puuid: String) {
         val json = PayloadMaker.createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST).addParam(Param.PUUID,puuid)
         broadcast(json.toPayload())
+    }
+
+    override fun handlePlayerList(playerList: List<Player>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleStartBet() {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleCreateGame(game: Game) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleDrawCard(card: Card) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleDoPushUps(puuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleStartVote(puuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleVote(puuid: String, vote: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleVoteResult(result: Boolean) {
+        TODO("Not yet implemented")
     }
 }
