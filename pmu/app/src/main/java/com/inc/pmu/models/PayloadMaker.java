@@ -80,6 +80,33 @@ public class PayloadMaker implements Jsonisable {
         return this;
     }
 
+    public PayloadMaker addParam(String key, Bet bet) {
+        try {
+            json.put(key, bet.toJson());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    public PayloadMaker addParam(String key, Player p) {
+        try {
+            json.put(key, p.toJson());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    public PayloadMaker addParam(String key, Card card) {
+        try {
+            json.put(key, card.toJson());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
     @Override
     public JSONObject toJson() {
         return json;

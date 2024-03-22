@@ -69,6 +69,8 @@ class ViewModelClient() : ViewModelPMU() {
                 Action.BET -> {
                     val b = params.get(Param.BET)
                     val bet: Bet = Bet.fromJson(paquet)
+                    val id: String = params.getString(Param.PUUID)
+                    handleBet(id, bet)
                 }
             }
         }
@@ -87,7 +89,7 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
-        TODO("Not yet implemented")
+        game.players[puuid]?.setBet(bet)
     }
 
     override fun handleCreateGame(game: Game) {
