@@ -6,23 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/greenBackground">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/trefleTeam"
-        android:layout_width="93dp"
-        android:layout_height="169dp"
-        android:layout_marginEnd="72dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="183dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/piqueTeam"
-        android:layout_width="93dp"
-        android:layout_height="169dp"
-        app:layout_constraintEnd_toStartOf="@+id/trefleTeam"
-        app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="183dp" />
-
     <Button
         android:id="@+id/jouerButton"
         android:layout_width="@dimen/main_button_width"
@@ -89,23 +72,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.53" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/coeurTeam"
-        android:layout_width="93dp"
-        android:layout_height="169dp"
-        app:layout_constraintEnd_toStartOf="@+id/carreauTeam"
-        app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="414dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/carreauTeam"
-        android:layout_width="93dp"
-        android:layout_height="169dp"
-        android:layout_marginEnd="72dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="414dp" />
-
     <TextView
         android:id="@+id/textCarreau"
         android:layout_width="93dp"
@@ -139,5 +105,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.082" />
+
+    <TextView
+        android:id="@+id/teamPique"
+        android:layout_width="93dp"
+        android:layout_height="156dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="72dp"
+        tools:layout_editor_absoluteY="184dp" />
+
+    <TextView
+        android:id="@+id/teamTrefle"
+        android:layout_width="93dp"
+        android:layout_height="156dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="246dp"
+        tools:layout_editor_absoluteY="184dp" />
+
+    <TextView
+        android:id="@+id/teamCoeur"
+        android:layout_width="93dp"
+        android:layout_height="156dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="72dp"
+        tools:layout_editor_absoluteY="416dp" />
+
+    <TextView
+        android:id="@+id/teamCarreau"
+        android:layout_width="93dp"
+        android:layout_height="156dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="246dp"
+        tools:layout_editor_absoluteY="416dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
