@@ -88,7 +88,7 @@ class ViewModelHost() : ViewModelPMU() {
         broadcast(Payload.fromBytes(playerNameList.toString().toByteArray()))
     }
 
-    override fun handlePlayerList(playerList: List<Player>) {
+    override fun handlePlayerList(playerList: Array<String>) {
         TODO("Not yet implemented")
     }
 
@@ -97,6 +97,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleBetValid(puuid: String, bet: Bet) {
         TODO("Not yet implemented")
     }
 

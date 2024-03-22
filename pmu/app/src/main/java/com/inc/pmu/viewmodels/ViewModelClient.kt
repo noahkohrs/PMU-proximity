@@ -1,5 +1,6 @@
 package com.inc.pmu.viewmodels
 
+import kotlin.collections.*
 import android.util.Log
 import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -17,6 +18,7 @@ import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
+import org.json.JSONArray
 import org.json.JSONObject
 
 class ViewModelClient() : ViewModelPMU() {
@@ -62,15 +64,19 @@ class ViewModelClient() : ViewModelPMU() {
         if (sender == Sender.HOST){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
-                Action.PLAYER_USERNAME -> {
-                    val name: String = params.get(Param.PLAYER_USERNAME) as String
-                    handlePlayerUsername(name)
-                }
                 Action.BET -> {
                     val b = params.get(Param.BET)
                     val bet: Bet = Bet.fromJson(paquet)
                     val id: String = params.getString(Param.PUUID)
                     handleBet(id, bet)
+                }
+                Action.PLAYER_LIST -> {
+                    val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
+                    val r : Array<String> = Array(arr.length()) {i -> ""}
+                    for (i in r.indices) {
+                        r[i] = arr.get(i) as String
+                    }
+                    handlePlayerList(r)
                 }
             }
         }
@@ -80,40 +86,54 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Not a client action")
     }
 
-    override fun handlePlayerList(playerList: List<Player>) {
-        TODO("Not yet implemented")
+    override fun handlePlayerList(playerList: Array<String>) {
+        for (l in listeners)
+            l.onPlayerListUpdate(playerList)
     }
 
     override fun handleStartBet() {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onBetStart()
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handleBetValid(puuid: String, bet: Bet) {
         game.players[puuid]?.setBet(bet)
+        for (l in listeners)
+            l.onBetValidated()
     }
 
     override fun handleCreateGame(game: Game) {
-        TODO("Not yet implemented")
+        this.game = game
+        for (l in listeners)
+            l.onGameCreated()
     }
 
     override fun handleDrawCard(card: Card) {
-        TODO("Not yet implemented")
+        game.cardDrawn(card)
+        for (l in listeners)
+            l.onCardDrawn(card)
     }
 
     override fun handleAskDoPushUps(puuid: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not a client action")
     }
 
     override fun handleDoPushUps(puuid: String) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onPlayerDoingPushUps(puuid)
     }
 
     override fun handleStartVote(puuid: String) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onStartVote()
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not a client action")
     }
 
     override fun handleVoteResult(result: Boolean) {
