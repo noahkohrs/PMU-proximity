@@ -10,6 +10,8 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
+import com.inc.pmu.models.Card
+import com.inc.pmu.models.Game
 import com.inc.pmu.models.Player
 import org.json.JSONObject
 
@@ -84,5 +86,45 @@ class ViewModelHost() : ViewModelPMU() {
         }
         Log.d(Global.TAG, "Liste des joueurs : $playerNameList")
         broadcast(Payload.fromBytes(playerNameList.toString().toByteArray()))
+    }
+
+    override fun handlePlayerList(playerList: List<Player>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleStartBet() {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleBet(puuid: String, bet: Bet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleCreateGame(game: Game) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleDrawCard(card: Card) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleAskDoPushUps(puuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleDoPushUps(puuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleStartVote(puuid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleVote(puuid: String, vote: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleVoteResult(result: Boolean) {
+        TODO("Not yet implemented")
     }
 }

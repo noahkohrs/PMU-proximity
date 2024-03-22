@@ -14,7 +14,10 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.Global
+import com.inc.pmu.models.Bet
+import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.Player
 import org.json.JSONObject
 import java.util.UUID
 
@@ -22,7 +25,6 @@ abstract class ViewModelPMU : ViewModel() {
     var localUsername: String = "Default"
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
-    var localUsername: String = localId
     lateinit var connectionsClient : ConnectionsClient
     public lateinit var game : Game
 
@@ -121,6 +123,18 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun broadcast(payload: Payload)
 
     abstract fun handlePlayerUsername(name: String)
+    abstract fun handlePlayerList(playerList: List<Player>)
+    abstract fun handleStartBet()
+    abstract fun handleBet(puuid: String, bet: Bet)
+    abstract fun handleCreateGame(game:Game)
+    abstract fun handleDrawCard(card:Card)
+    abstract fun handleAskDoPushUps(puuid: String)
+    abstract fun handleDoPushUps(puuid: String)
+    abstract fun handleStartVote(puuid: String)
+    abstract fun handleVote(puuid: String, vote: Boolean)
+    abstract fun handleVoteResult(result: Boolean)
+
+
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
@@ -129,4 +143,6 @@ abstract class ViewModelPMU : ViewModel() {
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
+
+
 }
