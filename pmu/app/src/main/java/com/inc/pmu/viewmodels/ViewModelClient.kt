@@ -75,4 +75,12 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Not a client action")
     }
 
+    override fun handleBet(puuid: String, bet: Bet) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handleAskDoPushUps(puuid: String) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
 }
