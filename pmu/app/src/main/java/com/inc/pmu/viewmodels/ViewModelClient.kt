@@ -12,6 +12,9 @@ import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 import com.inc.pmu.R
 import com.inc.pmu.WaitingPage
+import com.inc.pmu.models.Bet
+import com.inc.pmu.models.PayloadMaker
+import org.json.JSONObject
 
 class ViewModelClient() : ViewModelPMU() {
     private var serverId =  ""
@@ -23,7 +26,8 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun onConnectionResultOK(endpointId: String) {
         serverId = endpointId
-        connectionsClient.sendPayload(serverId, Payload.fromBytes(localUsername.toByteArray()))
+        val json = PayloadMaker.createPayloadRequest(Action.PLAYER_USERNAME, Sender.PLAYER).addParam(Param.PLAYER_USERNAME,localUsername)
+        connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
     override fun startDiscovering(connectionsClient: ConnectionsClient) {
@@ -50,16 +54,25 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Client cannot broadcast")
     }
 
-    override fun onPayloadReceived(endpointId: String, paquet: String) {
-        if (paquet.equals("Un JSON qui ordonne de passer aux bets")){
-            Log.d(Global.TAG, "On passe aux bets !")
-            /*val fragment = BetChoice.newInstance()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit()*/
-        }else{
-            Log.d(Global.TAG, "Liste des joueurs : $paquet")
+    override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
+        val sender = paquet.get(Sender.SENDER)
+        if (sender == Sender.HOST){
+            val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
+            when(paquet.get(Action.ACTION)){
+                Action.PLAYER_USERNAME -> {
+                    val name: String = params.get(Param.PLAYER_USERNAME) as String
+                    handlePlayerUsername(name)
+                }
+                Action.BET -> {
+                    val b = params.get(Param.BET)
+                    val bet: Bet = Bet.fromJson(paquet)
+                }
+            }
         }
+    }
+
+    override fun handlePlayerUsername(name: String) {
+        throw UnsupportedOperationException("Not a client action")
     }
 
 }

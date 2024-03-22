@@ -15,11 +15,11 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.Global
 import com.inc.pmu.models.Game
+import org.json.JSONObject
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
-    val localId : String = UUID.randomUUID().toString()
-    var localUsername: String = localId
+    var localUsername: String = "Default"
     lateinit var connectionsClient : ConnectionsClient
     public lateinit var game : Game
 
@@ -46,7 +46,7 @@ abstract class ViewModelPMU : ViewModel() {
             Log.d(TAG, "onEndpointFound")
             Log.d(TAG, "Requesting connection...")
             connectionsClient.requestConnection(
-                localId,
+                localUsername,
                 endpointId,
                 connectionLifecycleCallback
             ).addOnSuccessListener {
@@ -98,7 +98,7 @@ abstract class ViewModelPMU : ViewModel() {
         }
     }
 
-    abstract fun onPayloadReceived(endpointId: String, paquet: String)
+    abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
     // au lieu d'un string pour le paquet, il faudrait lui donner un JSON qu'il va parser pour traiter la requête
 
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
@@ -106,7 +106,8 @@ abstract class ViewModelPMU : ViewModel() {
             if (payload.type == Payload.Type.BYTES) {
                 payload.asBytes()?.let {
                     val message = String(it)
-                    onPayloadReceived(endpointId,message)
+                    val json = JSONObject(message)
+                    onPayloadReceived(endpointId,json)
                 }
             }
         }
@@ -115,4 +116,6 @@ abstract class ViewModelPMU : ViewModel() {
     }
 
     abstract fun broadcast(payload: Payload)
+
+    abstract fun handlePlayerUsername(name: String)
 }

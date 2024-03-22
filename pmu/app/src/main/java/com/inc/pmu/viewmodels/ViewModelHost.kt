@@ -9,7 +9,9 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
+import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Player
+import org.json.JSONObject
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = mutableListOf<String>()
@@ -48,20 +50,39 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
-    override fun onPayloadReceived(endpointId: String, paquet: String) {
-        game.addPlayer(Player(endpointId,paquet))
-        var playerList = game.players.values
-        var playerNameList = mutableListOf<String>()
-        for (p in playerList){
-            playerNameList.add(p.playerName)
+    override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
+        val sender = paquet.get(Sender.SENDER)
+        if (sender == Sender.PLAYER){
+            val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
+            when(paquet.get(Action.ACTION)){
+                Action.PLAYER_USERNAME -> {
+                    val name: String = params.get(Param.PLAYER_USERNAME) as String
+                    handlePlayerUsername(name)
+                }
+                Action.BET -> {
+                    val puuid = params.get(Param.PUUID)
+                    val player = game.players[puuid]
+                    val b = params.get(Param.BET)
+                    val bet: Bet = Bet.fromJson(paquet)
+                }
+            }
         }
-        Log.d(Global.TAG, "Liste des joueurs : $playerNameList")
-        broadcast(Payload.fromBytes(playerNameList.toString().toByteArray()))
     }
 
     override fun broadcast(payload: Payload){
         for (epi in playersEndpointIds){
             connectionsClient.sendPayload(epi, payload)
         }
+    }
+
+    override fun handlePlayerUsername(name: String) {
+        game.addPlayer(Player(name))
+        val playerList = game.players.values
+        val playerNameList = mutableListOf<String>()
+        for (p in playerList){
+            playerNameList.add(p.playerName)
+        }
+        Log.d(Global.TAG, "Liste des joueurs : $playerNameList")
+        broadcast(Payload.fromBytes(playerNameList.toString().toByteArray()))
     }
 }
