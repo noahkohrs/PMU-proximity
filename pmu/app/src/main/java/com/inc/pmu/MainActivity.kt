@@ -68,6 +68,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
+            requestMultiplePermissions.launch(
+                REQUIRED_PERMISSIONS
+            )
+        }
         val fragment = PseudoChoice.newInstance()
         if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
             requestMultiplePermissions.launch(
