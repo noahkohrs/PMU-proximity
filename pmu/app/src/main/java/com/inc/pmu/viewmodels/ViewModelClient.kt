@@ -1,25 +1,19 @@
 package com.inc.pmu.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.google.android.gms.nearby.connection.ConnectionInfo
-import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback
 import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
-import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 import com.google.android.gms.nearby.connection.DiscoveryOptions
-import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
 import com.google.android.gms.nearby.connection.Payload
-import com.google.android.gms.nearby.connection.PayloadCallback
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
+import com.inc.pmu.BetChoice
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
-import java.util.*
+import com.inc.pmu.R
+import com.inc.pmu.WaitingPage
 
-class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewModel() {
-    private val localId : String = UUID.randomUUID().toString()
+class ViewModelClient() : ViewModelPMU() {
     private var serverId =  ""
 
     private companion object {
@@ -27,7 +21,16 @@ class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewMo
         val STRATEGY = Strategy.P2P_STAR
     }
 
-    fun startDiscovering() {
+    override fun onConnectionResultOK(endpointId: String) {
+        serverId = endpointId
+        connectionsClient.sendPayload(serverId, Payload.fromBytes(localUsername.toByteArray()))
+        for (listener in listeners){
+            listener.onConnectionEstablished()
+        }
+    }
+
+    override fun startDiscovering(connectionsClient: ConnectionsClient) {
+        this.connectionsClient = connectionsClient
         Log.d(TAG, "Start discovering...")
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(STRATEGY).build()
 
@@ -42,76 +45,24 @@ class ViewModelClient(private val connectionsClient: ConnectionsClient) : ViewMo
         }
     }
 
-    private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
-        override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
-            Log.d(TAG, "onEndpointFound")
-            Log.d(TAG, "Requesting connection...")
-            connectionsClient.requestConnection(
-                localId,
-                endpointId,
-                connectionLifecycleCallback
-            ).addOnSuccessListener {
-                Log.d(TAG, "Successfully requested a connection")
-            }.addOnFailureListener {
-                Log.d(TAG, "Failed to request the connection")
-            }
-        }
-
-        override fun onEndpointLost(endpointId: String) {
-            Log.d(TAG, "onEndpointLost")
-        }
+    override fun startHosting(connectionsClient: ConnectionsClient) {
+        throw UnsupportedOperationException("Client cannot host")
     }
 
-    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
-        override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
-            Log.d(TAG, "onConnectionInitiated")
-
-            Log.d(TAG, "Accepting connection...")
-            connectionsClient.acceptConnection(endpointId, payloadCallback)
-        }
-
-        override fun onConnectionResult(endpointId: String, resolution: ConnectionResolution) {
-            Log.d(TAG, "onConnectionResult")
-
-            when (resolution.status.statusCode) {
-                ConnectionsStatusCodes.STATUS_OK -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_OK")
-
-                    connectionsClient.stopAdvertising()
-                    connectionsClient.stopDiscovery()
-                    serverId = endpointId
-                    Log.d(TAG, "opponentEndpointId: $serverId")
-                }
-                ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED")
-                }
-                ConnectionsStatusCodes.STATUS_ERROR -> {
-                    Log.d(TAG, "ConnectionsStatusCodes.STATUS_ERROR")
-                }
-                else -> {
-                    Log.d(TAG, "Unknown status code ${resolution.status.statusCode}")
-                }
-            }
-        }
-
-        override fun onDisconnected(endpointId: String) {
-            Log.d(TAG, "onDisconnected")
-        }
-    }
-    private val payloadCallback: PayloadCallback = object : PayloadCallback() {
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            Log.d(TAG, "onPayloadReceived")
-
-            if (payload.type == Payload.Type.BYTES) {
-                Log.d(TAG, "bytesPayloadDetected")
-            }
-        }
-
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-            Log.d(TAG, "onPayloadTransferUpdate")
-        }
+    override fun broadcast(payload: Payload){
+        throw UnsupportedOperationException("Client cannot broadcast")
     }
 
-
+    override fun onPayloadReceived(endpointId: String, paquet: String) {
+        if (paquet.equals("Un JSON qui ordonne de passer aux bets")){
+            Log.d(Global.TAG, "On passe aux bets !")
+            /*val fragment = BetChoice.newInstance()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()*/
+        }else{
+            Log.d(Global.TAG, "Liste des joueurs : $paquet")
+        }
+    }
 
 }
