@@ -10,7 +10,8 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
-import com.inc.pmu.models.PayloadMaker
+import com.inc.pmu.models.Card
+import com.inc.pmu.models.Game
 import com.inc.pmu.models.Player
 import org.json.JSONObject
 
