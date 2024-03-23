@@ -12,9 +12,5 @@ public class ViewModelListener {
     public void onCardDrawn(Card card){}
     public void onPlayerDoingPushUps(String puuid){}
     public void onStartVote(){}
-    public void onVoteFinished(boolean voteResult){}
-    
-    
-    
-    
+    public void onVoteFinished(String puuid, boolean voteResult){}
 }

@@ -133,7 +133,7 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun handleDoPushUps(puuid: String)
     abstract fun handleStartVote(puuid: String)
     abstract fun handleVote(puuid: String, vote: Boolean)
-    abstract fun handleVoteResult(result: Boolean)
+    abstract fun handleVoteResult(puuid: String, result: Boolean)
 
 
     fun addListener(listener: ViewModelListener){

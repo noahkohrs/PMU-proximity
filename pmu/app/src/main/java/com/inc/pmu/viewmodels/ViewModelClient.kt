@@ -64,12 +64,6 @@ class ViewModelClient() : ViewModelPMU() {
         if (sender == Sender.HOST){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
-                Action.BET -> {
-                    val b = params.get(Param.BET)
-                    val bet: Bet = Bet.fromJson(paquet)
-                    val id: String = params.getString(Param.PUUID)
-                    handleBet(id, bet)
-                }
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
                     val r : Array<String> = Array(arr.length()) {i -> ""}
@@ -78,6 +72,39 @@ class ViewModelClient() : ViewModelPMU() {
                     }
                     handlePlayerList(r)
                 }
+                Action.START_BET -> {
+                    handleStartBet()
+                }
+                Action.BET_VALID -> {
+                    val id = params.get(Param.PUUID) as String
+                    val betObj = params.get(Param.BET) as JSONObject
+                    val bet = Bet.fromJson(betObj)
+                    handleBetValid(id, bet)
+                }
+                Action.CREATE_GAME -> {
+                    val gameObj = params.get(Param.GAME) as JSONObject
+                    val game = Game.fromJson(gameObj)
+                    handleCreateGame(game)
+                }
+                Action.DRAW_CARD -> {
+                    val cardObj = params.get(Param.CARD) as JSONObject
+                    val card = Card.fromJson(cardObj)
+                    handleDrawCard(card)
+                }
+                Action.DO_PUSH_UPS -> {
+                    val id = params.get(Param.PUUID) as String
+                    handleDoPushUps(id)
+                }
+                Action.START_VOTE -> {
+                    val id = params.get(Param.PUUID) as String
+                    handleStartVote(id)
+                }
+                Action.VOTE_RESULTS -> {
+                    val id = params.get(Param.PUUID) as String
+                    val res = params.get(Param.VOTE_RESULT) as Boolean
+                    handleVoteResult(id, res)
+                }
+                else -> throw UnsupportedOperationException("Not a client action")
             }
         }
     }
@@ -136,8 +163,9 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Not a client action")
     }
 
-    override fun handleVoteResult(result: Boolean) {
-        TODO("Not yet implemented")
+    override fun handleVoteResult(puuid: String, result: Boolean) {
+        for (l in listeners)
+            l.onVoteFinished(puuid, result)
     }
 
 }

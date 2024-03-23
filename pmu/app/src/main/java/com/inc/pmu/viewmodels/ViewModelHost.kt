@@ -128,7 +128,7 @@ class ViewModelHost() : ViewModelPMU() {
         TODO("Not yet implemented")
     }
 
-    override fun handleVoteResult(result: Boolean) {
+    override fun handleVoteResult(puuid: String, result: Boolean) {
         TODO("Not yet implemented")
     }
 }
