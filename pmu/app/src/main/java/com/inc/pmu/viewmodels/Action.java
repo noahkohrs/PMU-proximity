@@ -8,6 +8,7 @@ public class Action {
     public static final String PLAYER_LIST = "player_list";
     public static final String START_BET = "start_bet";
     public static final String BET = "bet";
+    public static final String BET_VALID = "bet_valid";
     public static final String CREATE_GAME = "create_game";
     public static final String DRAW_CARD = "draw_card";
     public static final String ASK_DO_PUSH_UPS = "ask_do_push_ups";
