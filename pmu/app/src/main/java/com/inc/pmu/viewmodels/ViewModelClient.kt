@@ -2,22 +2,16 @@ package com.inc.pmu.viewmodels
 
 import kotlin.collections.*
 import android.util.Log
-import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
-import com.inc.pmu.BetChoice
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
-import com.inc.pmu.R
-import com.inc.pmu.WaitingPage
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
-import com.inc.pmu.models.Player
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -130,7 +124,7 @@ class ViewModelClient() : ViewModelPMU() {
     override fun handleBetValid(puuid: String, bet: Bet) {
         game.players[puuid]?.setBet(bet)
         for (l in listeners)
-            l.onBetValidated()
+            l.onBetValidated(bet.suit, game.players.values)
     }
 
     override fun handleCreateGame(game: Game) {

@@ -2,6 +2,7 @@ package com.inc.pmu.viewmodels;
 
 import com.inc.pmu.models.Player;
 import com.inc.pmu.models.Suit;
+import com.inc.pmu.models.Card;
 
 import java.util.Collection;
 
