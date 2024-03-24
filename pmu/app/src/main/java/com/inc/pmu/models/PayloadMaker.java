@@ -1,20 +1,24 @@
 package com.inc.pmu.models;
 
 import com.google.android.gms.nearby.connection.Payload;
+import com.inc.pmu.viewmodels.Action;
+import com.inc.pmu.viewmodels.Param;
+import com.inc.pmu.viewmodels.Sender;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class PayloadMaker implements Jsonisable {
 
-    JSONObject json = new JSONObject();
+    private final String action;
+    private final String source;
+    JSONObject params = new JSONObject();
 
     private PayloadMaker(String action, String source) {
         try {
-            json.put("action", action);
-            json.put("source", source);
+            this.action = action;
+            this.source = source;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -25,7 +29,7 @@ public class PayloadMaker implements Jsonisable {
     }
     public PayloadMaker addParam(String key, String value) {
         try {
-            json.put(key, value);
+            params.put(key, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -33,7 +37,7 @@ public class PayloadMaker implements Jsonisable {
     }
     public PayloadMaker addParam(String key, Jsonisable value) {
         try {
-            json.put(key, value.toJson());
+            params.put(key, value.toJson());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +46,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, int value) {
         try {
-            json.put(key, value);
+            params.put(key, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +55,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, boolean value) {
         try {
-            json.put(key, value);
+            params.put(key, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -60,7 +64,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, JSONObject value) {
         try {
-            json.put(key, value);
+            params.put(key, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +77,7 @@ public class PayloadMaker implements Jsonisable {
             for (String i : strings) {
                 list.put(i);
             }
-            json.put(key, list);
+            params.put(key, list);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -82,7 +86,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, Bet bet) {
         try {
-            json.put(key, bet.toJson());
+            params.put(key, bet.toJson());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -91,7 +95,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, Player p) {
         try {
-            json.put(key, p.toJson());
+            params.put(key, p.toJson());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +104,7 @@ public class PayloadMaker implements Jsonisable {
 
     public PayloadMaker addParam(String key, Card card) {
         try {
-            json.put(key, card.toJson());
+            params.put(key, card.toJson());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -109,10 +113,20 @@ public class PayloadMaker implements Jsonisable {
 
     @Override
     public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put(Action.ACTION, action);
+            json.put(Sender.SENDER, action);
+            json.put(Param.PARAMS, params);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         return json;
+
     }
 
     public Payload toPayload() {
-        return Payload.fromBytes(json.toString().getBytes());
+        return Payload.fromBytes(toJson().toString().getBytes());
     }
 }
