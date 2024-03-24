@@ -49,8 +49,8 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
         }
 
        launchButton.setOnClickListener {
-           val fragment = BetChoice.newInstance()
-           requireActivity().supportFragmentManager.beginTransaction()
+            val fragment = PushUpBet.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
         }
