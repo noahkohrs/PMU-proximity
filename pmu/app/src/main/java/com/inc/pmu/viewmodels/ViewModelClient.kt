@@ -12,6 +12,7 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
+import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -103,8 +104,12 @@ class ViewModelClient() : ViewModelPMU() {
         }
     }
 
-    override fun handlePlayerUsername(name: String) {
+    override fun handlePlayerUsername(endpointId: String, name: String) {
         throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handlePlayerPuuid(puuid: String) {
+        localPuuid = puuid
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
@@ -161,5 +166,32 @@ class ViewModelClient() : ViewModelPMU() {
         for (l in listeners)
             l.onVoteFinished(puuid, result)
     }
+
+    override fun startBet() {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun bet(number: Int, suit: Suit) {
+        val b: Bet = Bet(number, suit)
+        val req = PayloadMaker
+            .createPayloadRequest(Action.BET, Sender.PLAYER)
+            .addParam(Param.BET, b)
+            .toPayload()
+
+        broadcast(req)
+    }
+
+    override fun vote(choice: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun doPushUps() {
+        TODO("Not yet implemented")
+    }
+
+    override fun pushUpsDone() {
+        TODO("Not yet implemented")
+    }
+
 
 }
