@@ -156,6 +156,6 @@ abstract class ViewModelPMU : ViewModel() {
     }
 
 
-
+    abstract fun isHost(): Boolean
 
 }

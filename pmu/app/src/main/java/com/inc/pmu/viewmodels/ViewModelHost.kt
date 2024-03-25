@@ -195,4 +195,8 @@ class ViewModelHost() : ViewModelPMU() {
         TODO("Not yet implemented")
     }
 
+    override fun isHost(): Boolean {
+        return true
+    }
+
 }
