@@ -65,4 +65,8 @@ class ViewModelClient() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return false
+    }
+
 }

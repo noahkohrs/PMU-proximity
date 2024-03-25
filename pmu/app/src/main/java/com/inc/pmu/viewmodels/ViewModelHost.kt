@@ -64,4 +64,8 @@ class ViewModelHost() : ViewModelPMU() {
             connectionsClient.sendPayload(epi, payload)
         }
     }
+
+    override fun isHost(): Boolean {
+        return true
+    }
 }
