@@ -1,1 +1,5 @@
 *.idea/*
+
+pmu/gradle.properties
+
+pmu/app/gradle.properties
