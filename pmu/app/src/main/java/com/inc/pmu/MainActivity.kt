@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 REQUIRED_PERMISSIONS
             )
         }
-        val fragment = PseudoChoice.newInstance()
+        val fragment = GameBoard.newInstance()
         if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
             requestMultiplePermissions.launch(
                 REQUIRED_PERMISSIONS
