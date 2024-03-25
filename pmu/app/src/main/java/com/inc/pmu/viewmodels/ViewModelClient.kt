@@ -110,7 +110,7 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handlePlayerPuuid(puuid: String) {
-        localPuuid = puuid
+        localId = puuid
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
@@ -157,6 +157,10 @@ class ViewModelClient() : ViewModelPMU() {
             l.onPlayerDoingPushUps(puuid)
     }
 
+    override fun handlePushUpsDone(puuid: String) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
     override fun handleStartVote(puuid: String) {
         for (l in listeners)
             l.onStartVote()
@@ -184,15 +188,33 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
+        val votePayload = PayloadMaker
+            .createPayloadRequest(Action.VOTE, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .addParam(Param.VOTE_RESULT, choice)
+            .toPayload()
+        broadcast(votePayload)
     }
 
     override fun doPushUps() {
-        TODO("Not yet implemented")
+        val doPushUpsPayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(doPushUpsPayload)
+    }
+
+    override fun drawCard() {
+        throw UnsupportedOperationException("A client can't draw a card")
     }
 
     override fun pushUpsDone() {
-        TODO("Not yet implemented")
+        val pushupDonePayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(pushupDonePayload)
     }
+
 
 }
