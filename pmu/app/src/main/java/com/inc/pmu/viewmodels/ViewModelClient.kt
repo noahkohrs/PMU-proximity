@@ -111,6 +111,10 @@ class ViewModelClient() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return false
+    }
+
     override fun handlePlayerUsername(endpointId: String, name: String) {
         throw UnsupportedOperationException("Not a client action")
     }
