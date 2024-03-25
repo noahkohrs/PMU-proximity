@@ -12,7 +12,6 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
-import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
@@ -70,7 +69,9 @@ class ViewModelClient() : ViewModelPMU() {
                     handlePlayerList(r)
                 }
                 Action.START_BET -> {
-                    handleStartBet()
+                    val gameObj = params.get(Param.GAME) as JSONObject
+                    val receivedGame = Game.fromJson(gameObj)
+                    handleStartBet(receivedGame)
                 }
                 Action.BET_VALID -> {
                     val id = params.get(Param.PUUID) as String
@@ -78,10 +79,8 @@ class ViewModelClient() : ViewModelPMU() {
                     val bet = Bet.fromJson(betObj)
                     handleBetValid(id, bet)
                 }
-                Action.CREATE_GAME -> {
-                    val gameObj = params.get(Param.GAME) as JSONObject
-                    val game = Game.fromJson(gameObj)
-                    handleCreateGame(game)
+                Action.START_GAME -> {
+                    handleStartGame()
                 }
                 Action.DRAW_CARD -> {
                     val cardObj = params.get(Param.CARD) as JSONObject
@@ -123,7 +122,8 @@ class ViewModelClient() : ViewModelPMU() {
             l.onPlayerListUpdate(playerList)
     }
 
-    override fun handleStartBet() {
+    override fun handleStartBet(game: Game) {
+        this.game = game
         for (l in listeners)
             l.onBetStart()
     }
@@ -138,10 +138,8 @@ class ViewModelClient() : ViewModelPMU() {
             l.onBetValidated(bet.suit, game.players.values)
     }
 
-    override fun handleCreateGame(game: Game) {
-        this.game = game
-        for (l in listeners)
-            l.onGameCreated()
+    override fun handleStartGame() {
+        TODO("Not yet implemented")
     }
 
     override fun handleDrawCard(card: Card) {
@@ -178,8 +176,10 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun bet(number: Int, suit: Suit) {
         val b: Bet = Bet(number, suit)
-        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
-            Param.BET, b).addParam(Param.PUUID, localId)
+        val json = PayloadMaker
+            .createPayloadRequest(Action.BET, Sender.PLAYER)
+            .addParam(Param.BET, b)
+            .addParam(Param.PUUID, localId)
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
