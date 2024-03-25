@@ -10,6 +10,7 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
@@ -123,6 +124,7 @@ class ViewModelHost() : ViewModelPMU() {
 
         val info = PayloadMaker
             .createPayloadRequest(Action.BET_VALID, Sender.HOST)
+            .addParam(Param.PUUID, puuid)
             .addParam(Param.BET, bet)
             .toPayload()
 
@@ -130,6 +132,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleStartGame() {
         TODO("Not yet implemented")
     }
 
@@ -143,13 +149,10 @@ class ViewModelHost() : ViewModelPMU() {
         TODO("Not yet implemented")
     }
 
-    override fun handleStartBet() {
+    override fun handleStartBet(game : Game) {
         TODO("Not yet implemented")
     }
 
-    override fun handleCreateGame(game: Game) {
-        TODO("Not yet implemented")
-    }
 
     override fun handleDrawCard(card: Card) {
         TODO("Not yet implemented")
@@ -174,6 +177,7 @@ class ViewModelHost() : ViewModelPMU() {
     override fun startBet() {
         val info = PayloadMaker
             .createPayloadRequest(Action.START_BET, Sender.HOST)
+            .addParam(Param.GAME, game)
             .toPayload()
         broadcast(info)
     }

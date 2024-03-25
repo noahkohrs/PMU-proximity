@@ -29,8 +29,8 @@ abstract class ViewModelPMU : ViewModel() {
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
     lateinit var connectionsClient : ConnectionsClient
-    lateinit var game : Game
     var counter = 0
+    lateinit var game : Game
 
     private companion object {
         const val TAG = Global.TAG
@@ -129,10 +129,10 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun handlePlayerUsername(endpointId: String, name: String)
     abstract fun handlePlayerPuuid(puuid: String)
     abstract fun handlePlayerList(playerList: Array<String>)
-    abstract fun handleStartBet()
+    abstract fun handleStartBet(game : Game)
     abstract fun handleBet(puuid: String, bet: Bet)
     abstract fun handleBetValid(puuid: String, bet: Bet)
-    abstract fun handleCreateGame(game:Game)
+    abstract fun handleStartGame()
     abstract fun handleDrawCard(card:Card)
     abstract fun handleAskDoPushUps(puuid: String)
     abstract fun handleDoPushUps(puuid: String)
@@ -146,7 +146,6 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun vote(choice: Boolean)
     abstract fun doPushUps()
     abstract fun pushUpsDone()
-
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)

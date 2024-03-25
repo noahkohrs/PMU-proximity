@@ -2,6 +2,11 @@ package com.inc.pmu.models;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Card implements Jsonisable {
     public static final int MIN_NUMBER = 1 ;
     public static final int MAX_NUMBER = 13 ;
@@ -27,6 +32,16 @@ public class Card implements Jsonisable {
         }
         Card card = (Card) obj;
         return card.suit == this.suit && card.number == this.number;
+    }
+
+    public static List<Card> getFullDeck() {
+        List<Card> deck = new ArrayList<>();
+        for (int i = MIN_NUMBER; i <= MAX_NUMBER ; i++) {
+            for (Suit s : Suit.values()){
+                deck.add(new Card(s, i));
+            }
+        }
+        return deck;
     }
 
 
