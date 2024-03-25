@@ -10,8 +10,8 @@ public class HostGame extends Game {
     public List<Card> deck = new ArrayList<Card>();
     public static final List<Card> cardLeftAfterBoardSetup = new ArrayList<Card>();
 
-    public HostGame(List<Player> players) {
-        super(players);
+    public HostGame(Player host) {
+        super(host);
         deck.addAll(IGame.getFullSchuffledDeck());
         board = new Board(deck);
         cardLeftAfterBoardSetup.addAll(deck); // Should never be modified
