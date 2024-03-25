@@ -17,6 +17,7 @@ import org.json.JSONObject
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = mutableListOf<String>()
+
     private companion object {
         const val TAG = Global.TAG
         val STRATEGY = Strategy.P2P_STAR
@@ -51,7 +52,8 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
-        val sender = paquet.get(Sender.SENDER)
+        Log.d(Global.TAG, paquet.toString())
+        val sender = paquet.get(Sender.SENDER) as String
         if (sender == Sender.PLAYER){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
@@ -102,6 +104,7 @@ class ViewModelHost() : ViewModelPMU() {
         for (p in playerList){
             playerNameList.add(p.playerName)
         }
+        Log.d(Global.TAG, playerNameList.toString())
         val jsonList = PayloadMaker.createPayloadRequest(Action.PLAYER_LIST, Sender.HOST).addParam(Param.PLAYER_LIST,playerNameList.toTypedArray())
         broadcast(jsonList.toPayload())
         for (l in listeners)
@@ -126,6 +129,14 @@ class ViewModelHost() : ViewModelPMU() {
         broadcast(info)
     }
 
+    override fun handleBetValid(puuid: String, bet: Bet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleBetValid(puuid: String, bet: Bet) {
+        TODO("Not yet implemented")
+    }
+
     override fun handleAskDoPushUps(puuid: String) {
         val json = PayloadMaker.createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST).addParam(Param.PUUID,puuid)
         broadcast(json.toPayload())
@@ -136,10 +147,6 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleStartBet() {
-        TODO("Not yet implemented")
-    }
-
-    override fun handleBetValid(puuid: String, bet: Bet) {
         TODO("Not yet implemented")
     }
 
@@ -177,6 +184,54 @@ class ViewModelHost() : ViewModelPMU() {
     override fun bet(number: Int, suit: Suit) {
         val b = Bet(number, suit)
         handleBet(localPuuid, b)
+    }
+
+    override fun vote(choice: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun doPushUps() {
+        TODO("Not yet implemented")
+    }
+
+    override fun pushUpsDone() {
+        TODO("Not yet implemented")
+    }
+
+    override fun startBet() {
+        val info = PayloadMaker
+            .createPayloadRequest(Action.START_BET, Sender.HOST)
+            .toPayload()
+        broadcast(info)
+    }
+
+    override fun bet(number: Int, suit: Suit) {
+        val b = Bet(number, suit)
+        handleBet(localId, b)
+    }
+
+    override fun vote(choice: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun doPushUps() {
+        TODO("Not yet implemented")
+    }
+
+    override fun pushUpsDone() {
+        TODO("Not yet implemented")
+    }
+
+    override fun startBet() {
+        val info = PayloadMaker
+            .createPayloadRequest(Action.START_BET, Sender.HOST)
+            .toPayload()
+        broadcast(info)
+    }
+
+    override fun bet(number: Int, suit: Suit) {
+        val b = Bet(number, suit)
+        handleBet(localId, b)
     }
 
     override fun vote(choice: Boolean) {

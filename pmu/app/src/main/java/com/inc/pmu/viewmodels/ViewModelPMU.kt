@@ -23,12 +23,14 @@ import org.json.JSONObject
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
+    var serverId: String = ""
     var localUsername: String = "Default"
     var localPuuid = ""
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
     lateinit var connectionsClient : ConnectionsClient
-    public lateinit var game : Game
+    lateinit var game : Game
+    var counter = 0
 
     private companion object {
         const val TAG = Global.TAG
@@ -145,6 +147,13 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun doPushUps()
     abstract fun pushUpsDone()
 
+    // Related to casting actions on the game
+    abstract fun startBet()
+    abstract fun bet(number: Int, suit: Suit)
+    abstract fun vote(choice: Boolean)
+    abstract fun doPushUps()
+    abstract fun pushUpsDone()
+
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
@@ -152,6 +161,8 @@ abstract class ViewModelPMU : ViewModel() {
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
+
+
 
 
 }

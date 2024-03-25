@@ -113,15 +113,17 @@ public class PayloadMaker implements Jsonisable {
 
     @Override
     public JSONObject toJson() {
+
         JSONObject json = new JSONObject();
 
         try {
             json.put(Action.ACTION, action);
-            json.put(Sender.SENDER, action);
+            json.put(Sender.SENDER, source);
             json.put(Param.PARAMS, params);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
         return json;
 
     }
