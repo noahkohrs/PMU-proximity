@@ -14,15 +14,23 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.Global
+import com.inc.pmu.models.Bet
+import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.Player
+import com.inc.pmu.models.Suit
+import org.json.JSONObject
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
+    var serverId: String = ""
+    var localUsername: String = "Default"
+    var localPuuid = ""
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
-    var localUsername: String = localId
     lateinit var connectionsClient : ConnectionsClient
-    public lateinit var game : Game
+    lateinit var game : Game
+    var counter = 0
 
     private companion object {
         const val TAG = Global.TAG
@@ -47,7 +55,7 @@ abstract class ViewModelPMU : ViewModel() {
             Log.d(TAG, "onEndpointFound")
             Log.d(TAG, "Requesting connection...")
             connectionsClient.requestConnection(
-                localId,
+                localUsername,
                 endpointId,
                 connectionLifecycleCallback
             ).addOnSuccessListener {
@@ -99,15 +107,15 @@ abstract class ViewModelPMU : ViewModel() {
         }
     }
 
-    abstract fun onPayloadReceived(endpointId: String, paquet: String)
-    // au lieu d'un string pour le paquet, il faudrait lui donner un JSON qu'il va parser pour traiter la requête
+    abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
 
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             if (payload.type == Payload.Type.BYTES) {
                 payload.asBytes()?.let {
                     val message = String(it)
-                    onPayloadReceived(endpointId,message)
+                    val json = JSONObject(message)
+                    onPayloadReceived(endpointId,json)
                 }
             }
         }
@@ -117,10 +125,32 @@ abstract class ViewModelPMU : ViewModel() {
 
     abstract fun broadcast(payload: Payload)
 
+    // Handeling Paquets Related
+    abstract fun handlePlayerUsername(endpointId: String, name: String)
+    abstract fun handlePlayerPuuid(puuid: String)
+    abstract fun handlePlayerList(playerList: Array<String>)
+    abstract fun handleStartBet()
+    abstract fun handleBet(puuid: String, bet: Bet)
+    abstract fun handleBetValid(puuid: String, bet: Bet)
+    abstract fun handleCreateGame(game:Game)
+    abstract fun handleDrawCard(card:Card)
+    abstract fun handleAskDoPushUps(puuid: String)
+    abstract fun handleDoPushUps(puuid: String)
+    abstract fun handleStartVote(puuid: String)
+    abstract fun handleVote(puuid: String, vote: Boolean)
+    abstract fun handleVoteResult(puuid: String, result: Boolean)
+
+    // Related to casting actions on the game
+    abstract fun startBet()
+    abstract fun bet(number: Int, suit: Suit)
+    abstract fun vote(choice: Boolean)
+    abstract fun doPushUps()
+    abstract fun pushUpsDone()
+
+
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
     }
-
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
