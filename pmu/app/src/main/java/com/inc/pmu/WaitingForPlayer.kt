@@ -14,7 +14,11 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.Payload
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
+import com.inc.pmu.viewmodels.Action
+import com.inc.pmu.viewmodels.Param
+import com.inc.pmu.viewmodels.Sender
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -33,6 +37,7 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
     override fun onStart() {
         super.onStart()
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
 
         homePageButton = requireView().findViewById(R.id.quitButton)
         launchButton = requireView().findViewById(R.id.lauchButton)
@@ -44,8 +49,8 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 .commit()
         }
 
-        launchButton.setOnClickListener {
-            vmGame.broadcast(Payload.fromBytes("Un JSON qui ordonne de passer aux bets".toByteArray()))
+       launchButton.setOnClickListener {
+           vmGame.startBet()
             val fragment = PushUpBet.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
@@ -84,6 +89,18 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 // Do nothing to disable the default back button behavior
             }
         }
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onBetStart() {
+                    Log.d(Global.TAG, "Start bet !")
+                    val fragment = PushUpBet.newInstance()
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit()
+                }
+            }
+        )
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
