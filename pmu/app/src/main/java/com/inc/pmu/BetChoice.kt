@@ -6,8 +6,14 @@ import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.inc.pmu.models.Bet
+import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
+import com.inc.pmu.viewmodels.Action
+import com.inc.pmu.viewmodels.Param
+import com.inc.pmu.viewmodels.Sender
+import com.inc.pmu.viewmodels.ViewModelClient
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
@@ -82,6 +88,8 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonPlay.setOnClickListener {
+            suitChosen?.let { it1 -> vmGame.bet(vmGame.counter, it1) }
+            Log.d(Global.TAG, "... sur le " + suitChosen.toString())
             val fragment = TeamsPage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
@@ -104,8 +112,6 @@ class BetChoice : Fragment(R.layout.bet_choice) {
                     if (nSuitBet > players.size) {
                         setUnchoosable(suit)
                     }
-
-
                 }
             }
         )

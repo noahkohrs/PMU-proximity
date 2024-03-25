@@ -13,7 +13,7 @@ public class Bet implements Jsonisable{
         this.suit = suit;
     }
 
-    public JSONObject toJSon() {
+    public JSONObject toJson() {
         JSONObject bet = new JSONObject();
         try {
             bet.put("number", number);
@@ -22,11 +22,6 @@ public class Bet implements Jsonisable{
             throw new RuntimeException(e);
         }
         return bet;
-    }
-
-    @Override
-    public JSONObject toJson() {
-        return null;
     }
 
     public static Bet fromJson(JSONObject json) {

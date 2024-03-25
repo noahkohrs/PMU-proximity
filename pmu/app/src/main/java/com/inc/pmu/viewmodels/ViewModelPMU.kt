@@ -18,15 +18,18 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.Player
+import com.inc.pmu.models.Suit
 import org.json.JSONObject
 import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
+    var serverId: String = ""
     var localUsername: String = "Default"
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
     lateinit var connectionsClient : ConnectionsClient
-    public lateinit var game : Game
+    lateinit var game : Game
+    var counter = 0
 
     private companion object {
         const val TAG = Global.TAG
@@ -104,7 +107,6 @@ abstract class ViewModelPMU : ViewModel() {
     }
 
     abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
-    // au lieu d'un string pour le paquet, il faudrait lui donner un JSON qu'il va parser pour traiter la requête
 
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
@@ -135,6 +137,13 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun handleVote(puuid: String, vote: Boolean)
     abstract fun handleVoteResult(result: Boolean)
 
+    // Related to casting actions on the game
+    abstract fun startBet()
+    abstract fun bet(number: Int, suit: Suit)
+    abstract fun vote(choice: Boolean)
+    abstract fun doPushUps()
+    abstract fun pushUpsDone()
+
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
@@ -143,6 +152,8 @@ abstract class ViewModelPMU : ViewModel() {
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
+
+
 
 
 }

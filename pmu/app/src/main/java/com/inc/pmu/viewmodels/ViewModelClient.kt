@@ -18,11 +18,11 @@ import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
+import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
 class ViewModelClient() : ViewModelPMU() {
-    private var serverId =  ""
 
     private companion object {
         const val TAG = Global.TAG
@@ -30,6 +30,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun onConnectionResultOK(endpointId: String) {
+        for (l in listeners)
+            l.onConnectionEstablished()
         serverId = endpointId
         val json = PayloadMaker.createPayloadRequest(Action.PLAYER_USERNAME, Sender.PLAYER).addParam(Param.PLAYER_USERNAME,localUsername)
         connectionsClient.sendPayload(serverId, json.toPayload())
@@ -78,6 +80,9 @@ class ViewModelClient() : ViewModelPMU() {
                     }
                     handlePlayerList(r)
                 }
+                Action.START_BET -> {
+                    handleStartBet()
+                }
             }
         }
     }
@@ -87,6 +92,10 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
+        for (p in playerList){
+            Log.d(Global.TAG, "Joueur 1 : " + p)
+        }
+
         for (l in listeners)
             l.onPlayerListUpdate(playerList)
     }
@@ -102,8 +111,8 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun handleBetValid(puuid: String, bet: Bet) {
         game.players[puuid]?.setBet(bet)
-        for (l in listeners)
-            l.onBetValidated()
+        /*for (l in listeners)
+            l.onBetValidated()*/
     }
 
     override fun handleCreateGame(game: Game) {
@@ -134,6 +143,29 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun handleVote(puuid: String, vote: Boolean) {
         throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun startBet() {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun bet(number: Int, suit: Suit) {
+        val b: Bet = Bet(number, suit)
+        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
+            Param.BET, b).addParam(Param.PUUID, localId)
+        connectionsClient.sendPayload(serverId, json.toPayload())
+    }
+
+    override fun vote(choice: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun doPushUps() {
+        TODO("Not yet implemented")
+    }
+
+    override fun pushUpsDone() {
+        TODO("Not yet implemented")
     }
 
     override fun handleVoteResult(result: Boolean) {
