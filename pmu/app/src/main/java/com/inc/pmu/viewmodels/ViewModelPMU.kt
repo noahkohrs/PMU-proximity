@@ -124,4 +124,6 @@ abstract class ViewModelPMU : ViewModel() {
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
+
+    abstract fun isHost(): Boolean
 }

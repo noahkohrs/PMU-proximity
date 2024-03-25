@@ -12,8 +12,11 @@ import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.inc.pmu.models.Game
 import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
+import com.inc.pmu.viewmodels.ViewModelPMU
+import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 class HomePage : Fragment(R.layout.home_page) {
 
@@ -21,6 +24,7 @@ class HomePage : Fragment(R.layout.home_page) {
     private lateinit var joinButton: Button
 
     private lateinit var vmUserData: ViewModelBeforeNetwork
+    private lateinit var vmGame: ViewModelPMU
     companion object {
         fun newInstance() = HomePage()
     }
@@ -35,6 +39,9 @@ class HomePage : Fragment(R.layout.home_page) {
         joinButton = requireView().findViewById(R.id.joinButton)
 
         createButton.setOnClickListener {
+            vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST))[ViewModelPMU::class.java]
+            vmGame.game = Game(mutableListOf(Player(vmGame.localId,vmUserData.getUsername())))
+            vmGame.localUsername = vmUserData.getUsername()
             val fragment = WaitingForPlayer.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
