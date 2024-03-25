@@ -1,5 +1,6 @@
 package com.inc.pmu
 
+import android.graphics.Color
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -38,12 +39,11 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
 
         playButton.setOnClickListener {
-            if (vmGame is ViewModelHost) {
-                val fragment = PushUpBet.newInstance()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .commit()
-            }
+
+            val fragment = PushUpBet.newInstance()  // TODO : replace with Board fragment
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
         }
 
         vmGame.addListener(
@@ -55,6 +55,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
                     diamondTeam.setText("")
 
                     var team : TextView? = null
+                    var remaining : Int = 0
 
                     if (players != null) {
                         for (player in players) {
@@ -75,9 +76,14 @@ class TeamsPage : Fragment(R.layout.teams_page) {
                                     team = clubTeam
                                 }
 
-                                else -> {}
+                                else -> { remaining += 1 }
                             }
                             team?.append(player.playerName + '\n')
+                        }
+
+                        if (vmGame is ViewModelHost && remaining == 0) {
+                            playButton.isClickable = true
+                            playButton.setBackgroundColor(Color.YELLOW)
                         }
                     }
                 }
@@ -92,11 +98,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
-        setButtonProperties()
+        playButton.isClickable = false
     }
 
-    fun setButtonProperties() {
-        if (vmGame is ViewModelHost) {
-        }
-    }
 }
