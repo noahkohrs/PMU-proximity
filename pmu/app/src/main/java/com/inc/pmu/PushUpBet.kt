@@ -5,8 +5,13 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.inc.pmu.viewmodels.ViewModelPMU
+import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 class PushUpBet : Fragment(R.layout.pushup_bet_page) {
+
+    private lateinit var vmGame: ViewModelPMU
 
     companion object {
         fun newInstance() = PushUpBet()
@@ -15,6 +20,8 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
         super.onStart()
         Log.d(Global.TAG, "PushUpsBet")
 
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+
         var playButton : Button = requireView().findViewById(R.id.betButton)
         var plusButton : Button = requireView().findViewById(R.id.plus)
         var minusButton : Button = requireView().findViewById(R.id.minus)
@@ -22,6 +29,8 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
 
 
         playButton.setOnClickListener {
+            vmGame.counter = counter.text.toString().toInt()
+            Log.d(Global.TAG, "Je parie ${vmGame.counter} pompes...")
             val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
