@@ -110,32 +110,60 @@
         android:id="@+id/teamPique"
         android:layout_width="93dp"
         android:layout_height="156dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="72dp"
-        tools:layout_editor_absoluteY="184dp" />
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text=""
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.226"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPique" />
 
     <TextView
         android:id="@+id/teamTrefle"
         android:layout_width="93dp"
         android:layout_height="156dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="184dp" />
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text=""
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textTrefle" />
 
     <TextView
         android:id="@+id/teamCoeur"
         android:layout_width="93dp"
         android:layout_height="156dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="72dp"
-        tools:layout_editor_absoluteY="416dp" />
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text=""
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.226"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCoeur" />
 
     <TextView
         android:id="@+id/teamCarreau"
         android:layout_width="93dp"
         android:layout_height="156dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="246dp"
-        tools:layout_editor_absoluteY="416dp" />
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text=""
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCarreau" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

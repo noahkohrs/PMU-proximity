@@ -90,21 +90,22 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
         vmGame.addListener(
             object : ViewModelListener() {
-                override fun onBetValidated(suit: Suit?) {
+                override fun onBetValidated(suit: Suit?, players: MutableCollection<Player>?) {
                     Log.d(Global.TAG, "OnBetValidated")
 
                     var nSuitBet = 0
-                    val players = vmGame.game.players.values
-                    for (player in players) {
-                        if (player.bet.suit == suit) {
-                            nSuitBet++
+                    if (players != null) {
+                        for (player in players) {
+                            if (player.bet.suit == suit) {
+                                nSuitBet++
+                            }
+                        }
+
+
+                        if (nSuitBet > players.size) {
+                            setUnchoosable(suit)
                         }
                     }
-
-                    if (nSuitBet > players.size) {
-                        setUnchoosable(suit)
-                    }
-
 
                 }
             }
