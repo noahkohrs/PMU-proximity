@@ -89,6 +89,10 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return true
+    }
+
     override fun handlePlayerUsername(endpointId: String,name: String) {
         val newPlayer: Player = Player(name)
 
