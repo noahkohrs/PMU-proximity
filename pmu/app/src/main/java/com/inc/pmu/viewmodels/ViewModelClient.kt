@@ -168,55 +168,8 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Not a client action")
     }
 
-    override fun startBet() {
-        throw UnsupportedOperationException("Not a client action")
-    }
-
-    override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
-        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
-            Param.BET, b).addParam(Param.PUUID, localId)
-        connectionsClient.sendPayload(serverId, json.toPayload())
-    }
-
-    override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun doPushUps() {
-        TODO("Not yet implemented")
-    }
-
-    override fun pushUpsDone() {
-        TODO("Not yet implemented")
-    }
-
-    override fun startBet() {
-        throw UnsupportedOperationException("Not a client action")
-    }
-
-    override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
-        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
-            Param.BET, b).addParam(Param.PUUID, localId)
-        connectionsClient.sendPayload(serverId, json.toPayload())
-    }
-
-    override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun doPushUps() {
-        TODO("Not yet implemented")
-    }
-
-    override fun pushUpsDone() {
-        TODO("Not yet implemented")
-    }
-
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        for (l in listeners)
-            l.onVoteFinished(puuid, result)
+        TODO("Not yet implemented")
     }
 
     override fun startBet() {
@@ -225,12 +178,9 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun bet(number: Int, suit: Suit) {
         val b: Bet = Bet(number, suit)
-        val req = PayloadMaker
-            .createPayloadRequest(Action.BET, Sender.PLAYER)
-            .addParam(Param.BET, b)
-            .toPayload()
-
-        broadcast(req)
+        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
+            Param.BET, b).addParam(Param.PUUID, localId)
+        connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
     override fun vote(choice: Boolean) {
@@ -244,6 +194,5 @@ class ViewModelClient() : ViewModelPMU() {
     override fun pushUpsDone() {
         TODO("Not yet implemented")
     }
-
 
 }

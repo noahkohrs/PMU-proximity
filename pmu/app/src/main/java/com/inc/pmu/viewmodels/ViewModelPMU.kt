@@ -147,20 +147,6 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun doPushUps()
     abstract fun pushUpsDone()
 
-    // Related to casting actions on the game
-    abstract fun startBet()
-    abstract fun bet(number: Int, suit: Suit)
-    abstract fun vote(choice: Boolean)
-    abstract fun doPushUps()
-    abstract fun pushUpsDone()
-
-    // Related to casting actions on the game
-    abstract fun startBet()
-    abstract fun bet(number: Int, suit: Suit)
-    abstract fun vote(choice: Boolean)
-    abstract fun doPushUps()
-    abstract fun pushUpsDone()
-
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
