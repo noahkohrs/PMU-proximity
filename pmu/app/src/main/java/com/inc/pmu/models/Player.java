@@ -51,7 +51,7 @@ public class Player implements Jsonisable, Serializable {
 
             player.put("puuid", puuid);
             player.put("name", playerName);
-            player.put("bet", bet.toJSon());
+            player.put("bet", bet.toJson());
         } catch (JSONException e) {
             Log.d(Global.TAG, "JSON Exception /!\\ Should not happen");
         }

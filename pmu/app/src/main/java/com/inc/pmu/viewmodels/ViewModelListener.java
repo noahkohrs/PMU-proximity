@@ -4,6 +4,7 @@ import com.inc.pmu.models.Card;
 
 import com.inc.pmu.models.Player;
 import com.inc.pmu.models.Suit;
+import com.inc.pmu.models.Card;
 
 import java.util.Collection;
 
@@ -17,9 +18,5 @@ public class ViewModelListener {
     public void onCardDrawn(Card card){}
     public void onPlayerDoingPushUps(String puuid){}
     public void onStartVote(){}
-    public void onVoteFinished(boolean voteResult){}
-    
-    
-    
-    
+    public void onVoteFinished(String puuid, boolean voteResult){}
 }

@@ -60,7 +60,7 @@ class ViewModelHost() : ViewModelPMU() {
 
                 Action.PLAYER_USERNAME -> {
                     val name: String = params.get(Param.PLAYER_USERNAME) as String
-                    handlePlayerUsername(name)
+                    handlePlayerUsername(endpointId, name)
                 }
 
                 Action.BET -> {
@@ -88,8 +88,17 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
-    override fun handlePlayerUsername(name: String) {
-        game.addPlayer(Player(name))
+    override fun handlePlayerUsername(endpointId: String,name: String) {
+        val newPlayer: Player = Player(name)
+
+        val puuidPayload = PayloadMaker
+            .createPayloadRequest(Action.PLAYER_PUUID, Sender.SENDER)
+            .addParam(Param.PUUID, newPlayer.puuid)
+            .toPayload()
+
+        connectionsClient.sendPayload(endpointId, puuidPayload)
+
+        game.addPlayer(newPlayer)
         val playerList = game.players.values
         val playerNameList = mutableListOf<String>()
         for (p in playerList){
@@ -102,16 +111,28 @@ class ViewModelHost() : ViewModelPMU() {
             l.onPlayerListUpdate(playerNameList.toTypedArray())
     }
 
+    override fun handlePlayerPuuid(puuid: String) {
+        throw UnsupportedOperationException("Not an host action")
+    }
+
     override fun handleBet(puuid: String, bet: Bet) {
         val player = game.players[puuid]
         player?.setBet(bet)
         for (l in listeners)
             l.onBetValidated(bet.suit, game.players.values)
+
+        val info = PayloadMaker
+            .createPayloadRequest(Action.BET_VALID, Sender.HOST)
+            .addParam(Param.BET, bet)
+            .toPayload()
+
+        broadcast(info)
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
         TODO("Not yet implemented")
     }
+
 
     override fun handleAskDoPushUps(puuid: String) {
         val json = PayloadMaker.createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST).addParam(Param.PUUID,puuid)
@@ -146,7 +167,7 @@ class ViewModelHost() : ViewModelPMU() {
         TODO("Not yet implemented")
     }
 
-    override fun handleVoteResult(result: Boolean) {
+    override fun handleVoteResult(puuid: String, result: Boolean) {
         TODO("Not yet implemented")
     }
 
@@ -159,7 +180,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun bet(number: Int, suit: Suit) {
         val b = Bet(number, suit)
-        handleBet(localId, b)
+        handleBet(localPuuid, b)
     }
 
     override fun vote(choice: Boolean) {
@@ -173,4 +194,5 @@ class ViewModelHost() : ViewModelPMU() {
     override fun pushUpsDone() {
         TODO("Not yet implemented")
     }
+
 }

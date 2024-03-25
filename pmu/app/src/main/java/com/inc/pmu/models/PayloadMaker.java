@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 public class PayloadMaker implements Jsonisable {
 
     private final String action;
@@ -127,6 +125,7 @@ public class PayloadMaker implements Jsonisable {
         }
 
         return json;
+
     }
 
     public Payload toPayload() {

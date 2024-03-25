@@ -5,6 +5,7 @@ public class Action {
 
     // Actions
     public static final String PLAYER_USERNAME = "player_username";
+    public static final String PLAYER_PUUID = "player_puuid";
     public static final String PLAYER_LIST = "player_list";
     public static final String START_BET = "start_bet";
     public static final String BET = "bet";

@@ -2,17 +2,12 @@ package com.inc.pmu.viewmodels
 
 import kotlin.collections.*
 import android.util.Log
-import com.google.android.gms.nearby.connection.ConnectionResolution
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
-import com.inc.pmu.BetChoice
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
-import com.inc.pmu.R
-import com.inc.pmu.WaitingPage
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
@@ -66,12 +61,6 @@ class ViewModelClient() : ViewModelPMU() {
         if (sender == Sender.HOST){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
-                Action.BET -> {
-                    val b = params.get(Param.BET)
-                    val bet: Bet = Bet.fromJson(paquet)
-                    val id: String = params.getString(Param.PUUID)
-                    handleBet(id, bet)
-                }
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
                     val r : Array<String> = Array(arr.length()) {i -> ""}
@@ -83,12 +72,46 @@ class ViewModelClient() : ViewModelPMU() {
                 Action.START_BET -> {
                     handleStartBet()
                 }
+                Action.BET_VALID -> {
+                    val id = params.get(Param.PUUID) as String
+                    val betObj = params.get(Param.BET) as JSONObject
+                    val bet = Bet.fromJson(betObj)
+                    handleBetValid(id, bet)
+                }
+                Action.CREATE_GAME -> {
+                    val gameObj = params.get(Param.GAME) as JSONObject
+                    val game = Game.fromJson(gameObj)
+                    handleCreateGame(game)
+                }
+                Action.DRAW_CARD -> {
+                    val cardObj = params.get(Param.CARD) as JSONObject
+                    val card = Card.fromJson(cardObj)
+                    handleDrawCard(card)
+                }
+                Action.DO_PUSH_UPS -> {
+                    val id = params.get(Param.PUUID) as String
+                    handleDoPushUps(id)
+                }
+                Action.START_VOTE -> {
+                    val id = params.get(Param.PUUID) as String
+                    handleStartVote(id)
+                }
+                Action.VOTE_RESULTS -> {
+                    val id = params.get(Param.PUUID) as String
+                    val res = params.get(Param.VOTE_RESULT) as Boolean
+                    handleVoteResult(id, res)
+                }
+                else -> throw UnsupportedOperationException("Not a client action")
             }
         }
     }
 
-    override fun handlePlayerUsername(name: String) {
+    override fun handlePlayerUsername(endpointId: String, name: String) {
         throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handlePlayerPuuid(puuid: String) {
+        localPuuid = puuid
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
@@ -111,8 +134,8 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun handleBetValid(puuid: String, bet: Bet) {
         game.players[puuid]?.setBet(bet)
-        /*for (l in listeners)
-            l.onBetValidated()*/
+        for (l in listeners)
+            l.onBetValidated(bet.suit, game.players.values)
     }
 
     override fun handleCreateGame(game: Game) {
@@ -145,6 +168,10 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("Not a client action")
     }
 
+    override fun handleVoteResult(puuid: String, result: Boolean) {
+        TODO("Not yet implemented")
+    }
+
     override fun startBet() {
         throw UnsupportedOperationException("Not a client action")
     }
@@ -165,10 +192,6 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun pushUpsDone() {
-        TODO("Not yet implemented")
-    }
-
-    override fun handleVoteResult(result: Boolean) {
         TODO("Not yet implemented")
     }
 

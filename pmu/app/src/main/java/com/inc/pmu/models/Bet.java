@@ -13,6 +13,7 @@ public class Bet implements Jsonisable{
         this.suit = suit;
     }
 
+    @Override 
     public JSONObject toJson() {
         JSONObject bet = new JSONObject();
         try {

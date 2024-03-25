@@ -25,6 +25,7 @@ import java.util.UUID
 abstract class ViewModelPMU : ViewModel() {
     var serverId: String = ""
     var localUsername: String = "Default"
+    var localPuuid = ""
     val listeners = mutableListOf<ViewModelListener>()
     val localId : String = UUID.randomUUID().toString()
     lateinit var connectionsClient : ConnectionsClient
@@ -124,7 +125,9 @@ abstract class ViewModelPMU : ViewModel() {
 
     abstract fun broadcast(payload: Payload)
 
-    abstract fun handlePlayerUsername(name: String)
+    // Handeling Paquets Related
+    abstract fun handlePlayerUsername(endpointId: String, name: String)
+    abstract fun handlePlayerPuuid(puuid: String)
     abstract fun handlePlayerList(playerList: Array<String>)
     abstract fun handleStartBet()
     abstract fun handleBet(puuid: String, bet: Bet)
@@ -135,7 +138,7 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun handleDoPushUps(puuid: String)
     abstract fun handleStartVote(puuid: String)
     abstract fun handleVote(puuid: String, vote: Boolean)
-    abstract fun handleVoteResult(result: Boolean)
+    abstract fun handleVoteResult(puuid: String, result: Boolean)
 
     // Related to casting actions on the game
     abstract fun startBet()
@@ -148,7 +151,6 @@ abstract class ViewModelPMU : ViewModel() {
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
     }
-
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
     }
