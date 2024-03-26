@@ -1,23 +1,27 @@
 package com.inc.pmu
 
+import android.util.Log
 import android.R
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Suit
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
+import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var vmGame: ViewModelPMU
 
-    private lateinit var deckButton : Button
+    private lateinit var deckButton : ImageButton
     private lateinit var spades : ImageView
     private lateinit var club : ImageView
     private lateinit var heart : ImageView
@@ -31,15 +35,17 @@ class GameBoard : Fragment(R.layout.game_page) {
     override fun onStart() {
         super.onStart()
 
-        deckButton = requireActivity().findViewById(R.id.deck)
-        spades = requireActivity().findViewById(R.id.s1)
-        club = requireActivity().findViewById(R.id.c1)
-        heart = requireActivity().findViewById(R.id.h1)
-        diamonds = requireActivity().findViewById(R.id.d1)
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+        spades = requireView().findViewById(R.id.s1)
+        club = requireView().findViewById(R.id.c1)
+        heart = requireView().findViewById(R.id.h1)
+        diamonds = requireView().findViewById(R.id.d1)
+        deckButton = requireView().findViewById(R.id.deck)
 
+        deckButton = requireView().findViewById(R.id.deck)
 
         deckButton.setOnClickListener {
-            
+            vmGame.drawCard()
         }
 
         vmGame.addListener(
@@ -62,5 +68,8 @@ class GameBoard : Fragment(R.layout.game_page) {
                 }
             }
         )
+
+        deckButton.isClickable = true
+
     }
 }
