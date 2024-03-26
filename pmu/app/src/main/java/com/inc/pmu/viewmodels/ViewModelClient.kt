@@ -212,9 +212,6 @@ class ViewModelClient() : ViewModelPMU() {
     override fun pushUpsDone() {
         TODO("Not yet implemented")
     }
-
-    override fun isHost(): Boolean {
-        return false
-    }
+    
 
 }
