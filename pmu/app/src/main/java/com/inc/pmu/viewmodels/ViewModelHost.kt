@@ -10,7 +10,6 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
-import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
@@ -92,11 +91,15 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return true
+    }
+
     override fun handlePlayerUsername(endpointId: String,name: String) {
         val newPlayer: Player = Player(name)
 
         val puuidPayload = PayloadMaker
-            .createPayloadRequest(Action.PLAYER_PUUID, Sender.SENDER)
+            .createPayloadRequest(Action.PLAYER_PUUID, Sender.HOST)
             .addParam(Param.PUUID, newPlayer.puuid)
             .toPayload()
 
@@ -120,8 +123,17 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
-        val player = game.players[puuid]
-        player?.setBet(bet)
+        val player = game.players.get(puuid)
+        if (player != null){
+            Log.d(Global.TAG, player.playerName)
+            player.setBet(bet)
+        }
+
+        for (p in game.players.values){
+            if (p.bet.number != -1){
+                Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
+            }
+        }
         for (l in listeners)
             l.onBetValidated(bet.suit, game.players.values)
 

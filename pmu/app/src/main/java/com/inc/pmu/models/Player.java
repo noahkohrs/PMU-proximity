@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class Player implements Jsonisable, Serializable {
 
-    public static final Bet defaultBet = new Bet(1, Suit.HEARTS);
+    public static final Bet defaultBet = new Bet(-1, Suit.HEARTS);
     public final String puuid ;
     public final String playerName ;
     public Bet bet = defaultBet;

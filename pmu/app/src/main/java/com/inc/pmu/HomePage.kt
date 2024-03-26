@@ -41,7 +41,9 @@ class HomePage : Fragment(R.layout.home_page) {
 
         createButton.setOnClickListener {
             vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST))[ViewModelPMU::class.java]
-            vmGame.game = HostGame(Player(vmUserData.getUsername()))
+            var player = Player(vmUserData.getUsername())
+            vmGame.game = HostGame(player)
+            vmGame.localId = player.puuid
             vmGame.localUsername = vmUserData.getUsername()
             val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
             vmGame.startHosting(connectionsClient)

@@ -89,7 +89,6 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
         buttonPlay.setOnClickListener {
             suitChosen?.let { it1 -> vmGame.bet(vmGame.counter, it1) }
-            Log.d(Global.TAG, "... sur le " + suitChosen.toString())
             val fragment = TeamsPage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)

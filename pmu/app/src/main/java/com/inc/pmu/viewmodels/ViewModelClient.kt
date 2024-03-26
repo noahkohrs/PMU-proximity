@@ -60,6 +60,12 @@ class ViewModelClient() : ViewModelPMU() {
         if (sender == Sender.HOST){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
+
+                Action.PLAYER_PUUID -> {
+                    val puuid = params.get(Param.PUUID) as String
+                    handlePlayerPuuid(puuid)
+                }
+
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
                     val r : Array<String> = Array(arr.length()) {i -> ""}
@@ -105,6 +111,10 @@ class ViewModelClient() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return false
+    }
+
     override fun handlePlayerUsername(endpointId: String, name: String) {
         throw UnsupportedOperationException("Not a client action")
     }
@@ -133,7 +143,15 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
-        game.players[puuid]?.setBet(bet)
+        var player = game.players[puuid]
+        if (player != null){
+            player.setBet(bet)
+        }
+        for (p in game.players.values){
+            if (p.bet.number != -1){
+                Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
+            }
+        }
         for (l in listeners)
             l.onBetValidated(bet.suit, game.players.values)
     }
