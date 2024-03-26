@@ -103,13 +103,13 @@ class BetChoice : Fragment(R.layout.bet_choice) {
                     var nSuitBet = 0
                     if (players != null) {
                         for (player in players) {
-                            if (player.bet.suit == suit) {
+                            if (player.bet.number != -1 && player.bet.suit == suit) {
                                 nSuitBet++
                             }
                         }
 
 
-                        if (nSuitBet > players.size) {
+                        if (nSuitBet > players.size/4) {
                             setUnchoosable(suit)
                         }
                     }

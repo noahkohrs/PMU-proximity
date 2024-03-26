@@ -55,26 +55,32 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
                     if (players != null) {
                         for (player in players) {
-                            when (player.bet?.suit) {
-                                Suit.HEARTS -> {
-                                    team = heartTeam
-                                }
+                            if (player.bet?.number != -1) {
+                                when (player.bet?.suit) {
+                                    Suit.HEARTS -> {
+                                        team = heartTeam
+                                    }
 
-                                Suit.SPADES -> {
-                                    team = spadesTeam
-                                }
+                                    Suit.SPADES -> {
+                                        team = spadesTeam
+                                    }
 
-                                Suit.DIAMONDS -> {
-                                    team = diamondTeam
-                                }
+                                    Suit.DIAMONDS -> {
+                                        team = diamondTeam
+                                    }
 
-                                Suit.CLUBS -> {
-                                    team = clubTeam
-                                }
+                                    Suit.CLUBS -> {
+                                        team = clubTeam
+                                    }
 
-                                else -> { remaining += 1 }
+                                    else -> {}
+                                }
+                                team?.append(player.playerName + '\n')
                             }
-                            team?.append(player.playerName + '\n')
+                            else {
+                                remaining += 1
+                            }
+
                         }
 
                         if (vmGame is ViewModelHost && remaining == 0) {
