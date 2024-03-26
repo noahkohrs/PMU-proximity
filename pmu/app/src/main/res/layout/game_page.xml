@@ -60,7 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.955"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2"
+        app:layout_constraintTop_toBottomOf="@+id/divider5"
         app:srcCompat="@drawable/single_back_card" />
 
     <ImageView
@@ -126,7 +126,7 @@
         app:layout_constraintVertical_bias="0.023" />
 
     <View
-        android:id="@+id/divider2"
+        android:id="@+id/divider5"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:background="@color/black"
@@ -139,20 +139,6 @@
         app:layout_constraintWidth_percent="0.6" />
 
     <View
-        android:id="@+id/divider3"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="70dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintWidth_percent="0.6" />
-
-    <View
         android:id="@+id/divider4"
         android:layout_width="0dp"
         android:layout_height="2dp"
@@ -160,14 +146,28 @@
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3"
+        app:layout_constraintTop_toBottomOf="@+id/divider5"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent="0.6" />
 
     <View
-        android:id="@+id/divider5"
+        android:id="@+id/divider3"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="70dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider4"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent="0.6" />
+
+    <View
+        android:id="@+id/divider2"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="70dp"
@@ -176,12 +176,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4"
+        app:layout_constraintTop_toBottomOf="@+id/divider3"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent="0.6" />
 
     <View
-        android:id="@+id/divider6"
+        android:id="@+id/divider1"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="70dp"
@@ -190,12 +190,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider5"
+        app:layout_constraintTop_toBottomOf="@+id/divider2"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent="0.6" />
 
     <View
-        android:id="@+id/divider7"
+        android:id="@+id/divider0"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="70dp"
@@ -204,7 +204,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider6"
+        app:layout_constraintTop_toBottomOf="@+id/divider1"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent="0.6" />
 
@@ -216,7 +216,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2"
+        app:layout_constraintTop_toBottomOf="@+id/divider5"
         app:srcCompat="@drawable/single_back_card" />
 
     <ImageView
@@ -227,7 +227,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.223"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider7"
+        app:layout_constraintTop_toBottomOf="@+id/divider0"
         app:srcCompat="@drawable/s1" />
 
     <ImageView
@@ -238,7 +238,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.404"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider7"
+        app:layout_constraintTop_toBottomOf="@+id/divider0"
         app:srcCompat="@drawable/h1" />
 
     <ImageView
@@ -249,7 +249,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.595"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider7"
+        app:layout_constraintTop_toBottomOf="@+id/divider0"
         app:srcCompat="@drawable/c1" />
 
     <ImageView
@@ -260,7 +260,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.776"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider7"
+        app:layout_constraintTop_toBottomOf="@+id/divider0"
         app:srcCompat="@drawable/d1" />
 
     <ImageButton
