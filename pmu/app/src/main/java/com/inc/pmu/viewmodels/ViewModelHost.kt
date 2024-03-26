@@ -13,11 +13,14 @@ import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
+import com.inc.pmu.models.Validator
 import org.json.JSONObject
+import java.util.PriorityQueue
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = mutableListOf<String>()
 
+    private var validator: Validator = Validator.doneValidator() // Just to init
     private companion object {
         const val TAG = Global.TAG
         val STRATEGY = Strategy.P2P_STAR
@@ -144,46 +147,72 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handleStartGame() {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
 
     override fun handleAskDoPushUps(puuid: String) {
-        val json = PayloadMaker.createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST).addParam(Param.PUUID,puuid)
+        val json = PayloadMaker
+            .createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST)
+            .addParam(Param.PUUID,puuid)
         broadcast(json.toPayload())
+        for (l in listeners)
+            l.onPlayerDoingPushUps(puuid);
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handleStartBet(game : Game) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
-
-
     override fun handleDrawCard(card: Card) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handleDoPushUps(puuid: String) {
-        TODO("Not yet implemented")
+
+    }
+
+    override fun handlePushUpsDone(puuid: String) {
+        //TODO: Need somes conditions later on
+        val startVotePayload = PayloadMaker
+            .createPayloadRequest(Action.START_VOTE, Sender.HOST)
+            .addParam(Param.PUUID, puuid)
+            .toPayload()
+        broadcast(startVotePayload)
+        // Make a new validator
+        validator = Validator(puuid, game.players.keys)
+        for (l in listeners)
+            l.onStartVote()
     }
 
     override fun handleStartVote(puuid: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {
-        TODO("Not yet implemented")
+        validator.vote(puuid, vote);
+        if (validator.hasEveryoneVoted()) {
+            val result = validator.result
+            val voteResultPayload = PayloadMaker
+                .createPayloadRequest(Action.VOTE_RESULTS, Sender.HOST)
+                .addParam(Param.VOTE_RESULT, result)
+                .addParam(Param.PUUID, validator.votedPlayerPuuid)
+                .toPayload()
+            broadcast(voteResultPayload)
+            for (l in listeners)
+                l.onVoteFinished(validator.votedPlayerPuuid, result)
+        }
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun startBet() {
@@ -192,6 +221,8 @@ class ViewModelHost() : ViewModelPMU() {
             .addParam(Param.GAME, game)
             .toPayload()
         broadcast(info)
+        for (l in listeners)
+            l.onBetStart()
     }
 
     override fun bet(number: Int, suit: Suit) {
@@ -200,15 +231,29 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
+        handleVote(localId, choice)
     }
 
     override fun doPushUps() {
-        TODO("Not yet implemented")
+        handleAskDoPushUps(localId)
+    }
+
+    override fun drawCard() {
+        val hostGame: HostGame = game as HostGame
+        val card: Card = hostGame.drawCard()
+        game.cardDrawn(card)
+        for (l in listeners)
+            l.onCardDrawn(card)
+
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.DRAW_CARD, Sender.HOST)
+            .addParam(Param.CARD, card)
+            .toPayload()
+        broadcast(payload)
     }
 
     override fun pushUpsDone() {
-        TODO("Not yet implemented")
+        handlePushUpsDone(localId)
     }
 
 
