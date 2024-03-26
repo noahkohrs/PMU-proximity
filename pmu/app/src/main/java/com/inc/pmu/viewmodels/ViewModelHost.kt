@@ -261,6 +261,15 @@ class ViewModelHost() : ViewModelPMU() {
             l.onCardDrawn(card)
     }
 
+    override fun startGame() {
+        val startGamePayload = PayloadMaker
+            .createPayloadRequest(Action.START_GAME, Sender.HOST)
+            .toPayload()
+        broadcast(startGamePayload)
+        for (l in listeners)
+            l.onGameStarted()
+    }
+
     override fun pushUpsDone() {
         handlePushUpsDone(localId)
     }

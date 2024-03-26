@@ -16,7 +16,7 @@ import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ViewModelClient() : ViewModelPMU() {
+class ViewModelClient : ViewModelPMU() {
 
     private companion object {
         const val TAG = Global.TAG
@@ -68,7 +68,7 @@ class ViewModelClient() : ViewModelPMU() {
 
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
-                    val r : Array<String> = Array(arr.length()) {i -> ""}
+                    val r : Array<String> = Array(arr.length()) {_ -> ""}
                     for (i in r.indices) {
                         r[i] = arr.get(i) as String
                     }
@@ -124,8 +124,10 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
+        var n = 1
         for (p in playerList){
-            Log.d(Global.TAG, "Joueur 1 : " + p)
+            Log.d(Global.TAG, "Player $n : $p")
+            n++
         }
 
         for (l in listeners)
@@ -196,7 +198,7 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
+        val b = Bet(number, suit)
         val json = PayloadMaker
             .createPayloadRequest(Action.BET, Sender.PLAYER)
             .addParam(Param.BET, b)
@@ -223,6 +225,10 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun drawCard() {
         throw UnsupportedOperationException("A client can't draw a card")
+    }
+
+    override fun startGame() {
+        throw UnsupportedOperationException("A client can't start a game")
     }
 
     override fun pushUpsDone() {

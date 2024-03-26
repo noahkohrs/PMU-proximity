@@ -147,6 +147,7 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun vote(choice: Boolean)
     abstract fun doPushUps()
     abstract fun drawCard()
+    abstract fun startGame()
     abstract fun pushUpsDone()
 
     fun addListener(listener: ViewModelListener){
