@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -40,7 +41,9 @@ class HomePage : Fragment(R.layout.home_page) {
 
         createButton.setOnClickListener {
             vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.HOST))[ViewModelPMU::class.java]
-            vmGame.game = Game(mutableListOf(Player(vmUserData.getUsername())))
+            var player = Player(vmUserData.getUsername())
+            vmGame.game = HostGame(player)
+            vmGame.localId = player.puuid
             vmGame.localUsername = vmUserData.getUsername()
             val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
             vmGame.startHosting(connectionsClient)

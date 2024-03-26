@@ -1,10 +1,15 @@
 package com.inc.pmu
 
 import android.util.Log
+import android.widget.Adapter
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.Payload
@@ -24,7 +29,6 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
     private lateinit var homePageButton: Button
     private lateinit var launchButton: Button
 
-    private lateinit var vmUserData: ViewModelBeforeNetwork
     private lateinit var vmGame: ViewModelPMU
 
     companion object {
@@ -52,6 +56,44 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 .replace(R.id.container, fragment)
                 .commit()
         }
+
+        launchButton.isClickable = false
+        launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
+
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+        if (vmGame.isHost()) {
+            val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
+            vmGame.startHosting(connectionsClient)
+            Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
+
+            requireView().findViewById<TextView>(R.id.playerList).text = vmGame.localUsername
+        }
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onPlayerListUpdate(playerList: Array<out String>?) {
+                    Log.d(Global.TAG, playerList.toString())
+                    if (playerList != null) {
+                        var textPlayer =  requireView().findViewById<TextView>(R.id.playerList)
+                        var data : String = ""
+                        for (player in playerList) {
+                            Log.d(Global.TAG, player)
+                            data += player + '\n'
+                        }
+                        textPlayer.text = data
+
+                        if (playerList.size > 1 && vmGame.isHost()) {
+                            launchButton.isClickable = true
+                            launchButton.setBackgroundColor(resources.getColor(R.color.selectOrValidate))
+                        }
+                        else {
+                            launchButton.isClickable = false
+                            launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
+                        }
+                    }
+                }
+            }
+        )
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

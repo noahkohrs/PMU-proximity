@@ -25,12 +25,12 @@ import java.util.UUID
 abstract class ViewModelPMU : ViewModel() {
     var serverId: String = ""
     var localUsername: String = "Default"
-    var localPuuid = ""
+    //var localPuuid = ""
     val listeners = mutableListOf<ViewModelListener>()
-    val localId : String = UUID.randomUUID().toString()
+    var localId = ""
     lateinit var connectionsClient : ConnectionsClient
-    lateinit var game : Game
     var counter = 0
+    lateinit var game : Game
 
     private companion object {
         const val TAG = Global.TAG
@@ -126,27 +126,29 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun broadcast(payload: Payload)
 
     // Handeling Paquets Related
-    abstract fun handlePlayerUsername(endpointId: String, name: String)
-    abstract fun handlePlayerPuuid(puuid: String)
-    abstract fun handlePlayerList(playerList: Array<String>)
-    abstract fun handleStartBet()
-    abstract fun handleBet(puuid: String, bet: Bet)
-    abstract fun handleBetValid(puuid: String, bet: Bet)
-    abstract fun handleCreateGame(game:Game)
-    abstract fun handleDrawCard(card:Card)
-    abstract fun handleAskDoPushUps(puuid: String)
-    abstract fun handleDoPushUps(puuid: String)
-    abstract fun handleStartVote(puuid: String)
-    abstract fun handleVote(puuid: String, vote: Boolean)
-    abstract fun handleVoteResult(puuid: String, result: Boolean)
+    protected abstract fun handlePlayerUsername(endpointId: String, name: String)
+    protected abstract fun handlePlayerPuuid(puuid: String)
+    protected abstract fun handlePlayerList(playerList: Array<String>)
+    protected abstract fun handleStartBet(game : Game)
+    protected abstract fun handleBet(puuid: String, bet: Bet)
+    protected abstract fun handleBetValid(puuid: String, bet: Bet)
+    protected abstract fun handleStartGame()
+    protected abstract fun handleDrawCard(card:Card)
+    protected abstract fun handleAskDoPushUps(puuid: String)
+    protected abstract fun handleDoPushUps(puuid: String)
+    protected abstract fun handlePushUpsDone(puuid: String)
+    protected abstract fun handleStartVote(puuid: String)
+    protected abstract fun handleVote(puuid: String, vote: Boolean)
+    protected abstract fun handleVoteResult(puuid: String, result: Boolean)
 
     // Related to casting actions on the game
     abstract fun startBet()
     abstract fun bet(number: Int, suit: Suit)
     abstract fun vote(choice: Boolean)
     abstract fun doPushUps()
+    abstract fun drawCard()
+    abstract fun startGame()
     abstract fun pushUpsDone()
-
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
@@ -155,7 +157,5 @@ abstract class ViewModelPMU : ViewModel() {
         listeners.remove(listener)
     }
 
-
-
-
+    abstract fun isHost(): Boolean
 }

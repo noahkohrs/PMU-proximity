@@ -12,12 +12,11 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
-import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ViewModelClient() : ViewModelPMU() {
+class ViewModelClient : ViewModelPMU() {
 
     private companion object {
         const val TAG = Global.TAG
@@ -61,16 +60,24 @@ class ViewModelClient() : ViewModelPMU() {
         if (sender == Sender.HOST){
             val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
             when(paquet.get(Action.ACTION)){
+
+                Action.PLAYER_PUUID -> {
+                    val puuid = params.get(Param.PUUID) as String
+                    handlePlayerPuuid(puuid)
+                }
+
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
-                    val r : Array<String> = Array(arr.length()) {i -> ""}
+                    val r : Array<String> = Array(arr.length()) {_ -> ""}
                     for (i in r.indices) {
                         r[i] = arr.get(i) as String
                     }
                     handlePlayerList(r)
                 }
                 Action.START_BET -> {
-                    handleStartBet()
+                    val gameObj = params.get(Param.GAME) as JSONObject
+                    val receivedGame = Game.fromJson(gameObj)
+                    handleStartBet(receivedGame)
                 }
                 Action.BET_VALID -> {
                     val id = params.get(Param.PUUID) as String
@@ -78,10 +85,8 @@ class ViewModelClient() : ViewModelPMU() {
                     val bet = Bet.fromJson(betObj)
                     handleBetValid(id, bet)
                 }
-                Action.CREATE_GAME -> {
-                    val gameObj = params.get(Param.GAME) as JSONObject
-                    val game = Game.fromJson(gameObj)
-                    handleCreateGame(game)
+                Action.START_GAME -> {
+                    handleStartGame()
                 }
                 Action.DRAW_CARD -> {
                     val cardObj = params.get(Param.CARD) as JSONObject
@@ -106,24 +111,31 @@ class ViewModelClient() : ViewModelPMU() {
         }
     }
 
+    override fun isHost(): Boolean {
+        return false
+    }
+
     override fun handlePlayerUsername(endpointId: String, name: String) {
         throw UnsupportedOperationException("Not a client action")
     }
 
     override fun handlePlayerPuuid(puuid: String) {
-        localPuuid = puuid
+        localId = puuid
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
+        var n = 1
         for (p in playerList){
-            Log.d(Global.TAG, "Joueur 1 : " + p)
+            Log.d(Global.TAG, "Player $n : $p")
+            n++
         }
 
         for (l in listeners)
             l.onPlayerListUpdate(playerList)
     }
 
-    override fun handleStartBet() {
+    override fun handleStartBet(game: Game) {
+        this.game = game
         for (l in listeners)
             l.onBetStart()
     }
@@ -134,14 +146,18 @@ class ViewModelClient() : ViewModelPMU() {
 
     override fun handleBetValid(puuid: String, bet: Bet) {
         game.players[puuid]?.setBet(bet)
+        for (p in game.players.values) {
+            if (p.bet.number != -1) {
+                Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
+            }
+        }
         for (l in listeners)
             l.onBetValidated(bet.suit, game.players.values)
     }
 
-    override fun handleCreateGame(game: Game) {
-        this.game = game
+    override fun handleStartGame() {
         for (l in listeners)
-            l.onGameCreated()
+            l.onGameStarted()
     }
 
     override fun handleDrawCard(card: Card) {
@@ -159,6 +175,10 @@ class ViewModelClient() : ViewModelPMU() {
             l.onPlayerDoingPushUps(puuid)
     }
 
+    override fun handlePushUpsDone(puuid: String) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
     override fun handleStartVote(puuid: String) {
         for (l in listeners)
             l.onStartVote()
@@ -169,7 +189,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onVoteFinished(puuid, result)
     }
 
     override fun startBet() {
@@ -177,22 +198,46 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
-        val json = PayloadMaker.createPayloadRequest(Action.BET, Sender.PLAYER).addParam(
-            Param.BET, b).addParam(Param.PUUID, localId)
+        val b = Bet(number, suit)
+        val json = PayloadMaker
+            .createPayloadRequest(Action.BET, Sender.PLAYER)
+            .addParam(Param.BET, b)
+            .addParam(Param.PUUID, localId)
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
     override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
+        val votePayload = PayloadMaker
+            .createPayloadRequest(Action.VOTE, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .addParam(Param.VOTE_RESULT, choice)
+            .toPayload()
+        broadcast(votePayload)
     }
 
     override fun doPushUps() {
-        TODO("Not yet implemented")
+        val doPushUpsPayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(doPushUpsPayload)
+    }
+
+    override fun drawCard() {
+        throw UnsupportedOperationException("A client can't draw a card")
+    }
+
+    override fun startGame() {
+        throw UnsupportedOperationException("A client can't start a game")
     }
 
     override fun pushUpsDone() {
-        TODO("Not yet implemented")
+        val pushupDonePayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(pushupDonePayload)
     }
+
 
 }

@@ -13,10 +13,10 @@ public class Game implements IGame, Jsonisable {
     private Card currentCard;
     private boolean currentRoundHaveBeenCanceled = true;
 
-    public Game(List<Player> players) {
+    public Game(Player host) {
         // TODO : Board from json file as a client
         this.players = new HashMap<String, Player>();
-        players.forEach(p -> this.players.put(p.puuid, p));
+        players.put(host.puuid, host);
     }
 
     @Override
