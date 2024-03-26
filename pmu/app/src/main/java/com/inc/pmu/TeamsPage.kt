@@ -37,6 +37,8 @@ class TeamsPage : Fragment(R.layout.teams_page) {
         heartTeam = requireView().findViewById(R.id.teamCoeur)
         diamondTeam = requireView().findViewById(R.id.teamCarreau)
 
+        playButton.isClickable = false
+
         var team : TextView? = null
         var players : MutableCollection<Player> = vmGame.game.players.values
         var remaining = 0
@@ -147,7 +149,6 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
 
-        playButton.isClickable = false
     }
 
 }
