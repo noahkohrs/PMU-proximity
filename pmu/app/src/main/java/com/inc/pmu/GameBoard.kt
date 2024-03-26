@@ -28,7 +28,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
 
         deckButton = requireView().findViewById(R.id.deck)
-        playedCards = requireActivity().findViewById(R.id.playedCards)
+        playedCards = requireView().findViewById(R.id.playedCards)
 
 
         deckButton.setOnClickListener {
@@ -52,7 +52,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     fun linkCardToDrawable(card : Card) : Drawable {
         val uri = "@drawable/${card.toString()}"
-        var imageIndex : Int = resources.getIdentifier(uri, null, null)
+        Log.d(Global.TAG, uri)
+        var imageIndex : Int = resources.getIdentifier(uri, null, requireContext().packageName)
+        Log.d(Global.TAG, imageIndex.toString())
         return resources.getDrawable(imageIndex)
     }
 }
