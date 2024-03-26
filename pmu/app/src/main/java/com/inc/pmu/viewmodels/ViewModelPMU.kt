@@ -144,6 +144,7 @@ abstract class ViewModelPMU : ViewModel() {
     // Related to casting actions on the game
     abstract fun startBet()
     abstract fun bet(number: Int, suit: Suit)
+    abstract fun startGame()
     abstract fun vote(choice: Boolean)
     abstract fun doPushUps()
     abstract fun drawCard()

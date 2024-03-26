@@ -10,6 +10,7 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
@@ -125,7 +126,6 @@ class ViewModelHost() : ViewModelPMU() {
     override fun handleBet(puuid: String, bet: Bet) {
         val player = game.players.get(puuid)
         if (player != null){
-            Log.d(Global.TAG, player.playerName)
             player.setBet(bet)
         }
 
@@ -228,6 +228,15 @@ class ViewModelHost() : ViewModelPMU() {
     override fun bet(number: Int, suit: Suit) {
         val b = Bet(number, suit)
         handleBet(localId, b)
+    }
+
+    override fun startGame() {
+        val info = PayloadMaker
+            .createPayloadRequest(Action.START_GAME, Sender.HOST)
+            .toPayload()
+        broadcast(info)
+        for (l in listeners)
+            l.onGameStarted()
     }
 
     override fun vote(choice: Boolean) {

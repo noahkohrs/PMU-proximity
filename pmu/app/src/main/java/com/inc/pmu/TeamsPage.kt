@@ -21,6 +21,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
         var playButton : Button = requireView().findViewById(R.id.jouerButton)
 
         playButton.setOnClickListener {
+            vmGame.startGame()
             val fragment = PushUpBet.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)

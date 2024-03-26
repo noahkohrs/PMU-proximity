@@ -157,7 +157,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleStartGame() {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onGameStarted()
     }
 
     override fun handleDrawCard(card: Card) {
@@ -203,6 +204,10 @@ class ViewModelClient() : ViewModelPMU() {
             .addParam(Param.BET, b)
             .addParam(Param.PUUID, localId)
         connectionsClient.sendPayload(serverId, json.toPayload())
+    }
+
+    override fun startGame() {
+        handleStartGame()
     }
 
     override fun vote(choice: Boolean) {
