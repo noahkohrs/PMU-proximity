@@ -143,12 +143,9 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
-        var player = game.players[puuid]
-        if (player != null){
-            player.setBet(bet)
-        }
-        for (p in game.players.values){
-            if (p.bet.number != -1){
+        game.players[puuid]?.setBet(bet)
+        for (p in game.players.values) {
+            if (p.bet.number != -1) {
                 Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
             }
         }
@@ -157,7 +154,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleStartGame() {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onGameStarted()
     }
 
     override fun handleDrawCard(card: Card) {
@@ -189,7 +187,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onVoteFinished(puuid, result)
     }
 
     override fun startBet() {

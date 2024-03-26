@@ -10,6 +10,7 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
+import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
@@ -65,7 +66,6 @@ class ViewModelHost() : ViewModelPMU() {
                     val name: String = params.get(Param.PLAYER_USERNAME) as String
                     handlePlayerUsername(endpointId, name)
                 }
-
                 Action.BET -> {
                     val puuid = params.get(Param.PUUID) as String
                     val jsonBet: JSONObject = params.get(Param.BET) as JSONObject
@@ -80,6 +80,15 @@ class ViewModelHost() : ViewModelPMU() {
 
                 Action.CONFIRM_PUSH_UPS -> {
                     val puuid: String = params.get(Param.PUUID) as String
+                    handlePushUpsDone(puuid)
+                }
+                Action.VOTE -> {
+                    val puuid: String = params.get(Param.PUUID) as String
+                    val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
+                    handleVote(puuid, vote)
+                }
+                else -> {
+                    Log.d(Global.TAG, "Unknown action for an Host")
                 }
             }
         }
@@ -176,7 +185,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleDoPushUps(puuid: String) {
-
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handlePushUpsDone(puuid: String) {
@@ -242,14 +251,14 @@ class ViewModelHost() : ViewModelPMU() {
         val hostGame: HostGame = game as HostGame
         val card: Card = hostGame.drawCard()
         game.cardDrawn(card)
-        for (l in listeners)
-            l.onCardDrawn(card)
 
         val payload = PayloadMaker
             .createPayloadRequest(Action.DRAW_CARD, Sender.HOST)
             .addParam(Param.CARD, card)
             .toPayload()
         broadcast(payload)
+        for (l in listeners)
+            l.onCardDrawn(card)
     }
 
     override fun pushUpsDone() {
