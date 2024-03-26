@@ -162,7 +162,6 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun handleDrawCard(card: Card) {
         game.cardDrawn(card)
-        Log.d(Global.TAG, "Carte tirée : " + card.toString() )
         for (l in listeners)
             l.onCardDrawn(card)
     }
