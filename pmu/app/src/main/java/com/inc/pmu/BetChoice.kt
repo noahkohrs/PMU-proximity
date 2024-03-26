@@ -6,14 +6,8 @@ import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.inc.pmu.models.Bet
-import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
-import com.inc.pmu.viewmodels.Action
-import com.inc.pmu.viewmodels.Param
-import com.inc.pmu.viewmodels.Sender
-import com.inc.pmu.viewmodels.ViewModelClient
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
@@ -29,7 +23,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
     private lateinit var buttonC : Button
     private lateinit var buttonD : Button
     private lateinit var buttonPlay : Button
-    private lateinit var arrayButtons : ArrayList<Button>
+    private lateinit var availableButtons : ArrayList<Button>
 
 
 
@@ -48,7 +42,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         buttonD = requireView().findViewById(R.id.carreauButton)
         buttonPlay = requireView().findViewById(R.id.jouerButton)
 
-        arrayButtons = arrayListOf(buttonH, buttonS, buttonC, buttonD)
+        availableButtons = arrayListOf(buttonH, buttonS, buttonC, buttonD)
 
 
         var betListener = object : ViewModelListener() {
@@ -72,7 +66,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonH.setOnClickListener {
-            for (button in arrayButtons) {
+            for (button in availableButtons) {
                 button.setBackgroundColor(Color.WHITE)
             }
             buttonH.setBackgroundColor(Color.YELLOW)
@@ -82,7 +76,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonS.setOnClickListener {
-            for (button in arrayButtons) {
+            for (button in availableButtons) {
                 button.setBackgroundColor(Color.WHITE)
             }
             buttonS.setBackgroundColor(Color.YELLOW)
@@ -92,7 +86,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonC.setOnClickListener {
-            for (button in arrayButtons) {
+            for (button in availableButtons) {
                 button.setBackgroundColor(Color.WHITE)
             }
             buttonC.setBackgroundColor(Color.YELLOW)
@@ -102,7 +96,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         }
 
         buttonD.setOnClickListener {
-            for (button in arrayButtons) {
+            for (button in availableButtons) {
                 button.setBackgroundColor(Color.WHITE)
             }
             buttonD.setBackgroundColor(Color.YELLOW)
@@ -124,6 +118,11 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
         buttonPlay.isClickable = false
 
+        var unavailableSuits = vmGame.getSuitsUnavailable()
+        for (suit in unavailableSuits) {
+            setUnchoosable(suit)
+        }
+
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing to disable the default back button behavior
@@ -133,27 +132,28 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
+
     fun setUnchoosable(suit : Suit?) {
         when (suit) {
             Suit.SPADES -> {
                 buttonS.setBackgroundColor(resources.getColor(R.color.unavailable))
                 buttonS.isClickable = false
-                arrayButtons.remove(buttonS)
+                availableButtons.remove(buttonS)
             }
             Suit.HEARTS -> {
                 buttonH.setBackgroundColor(resources.getColor(R.color.unavailable))
                 buttonH.isClickable = false
-                arrayButtons.remove(buttonH)
+                availableButtons.remove(buttonH)
             }
             Suit.CLUBS -> {
                 buttonC.setBackgroundColor(resources.getColor(R.color.unavailable))
                 buttonC.isClickable = false
-                arrayButtons.remove(buttonC)
+                availableButtons.remove(buttonC)
             }
             Suit.DIAMONDS -> {
                 buttonD.setBackgroundColor(resources.getColor(R.color.unavailable))
                 buttonD.isClickable = false
-                arrayButtons.remove(buttonD)
+                availableButtons.remove(buttonD)
             }
             else -> {}
         }
