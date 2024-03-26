@@ -278,7 +278,7 @@
         app:srcCompat="@drawable/deck" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/playedCards"
         android:layout_width="82dp"
         android:layout_height="105dp"
         app:layout_constraintBottom_toBottomOf="parent"
