@@ -260,11 +260,15 @@ class ViewModelHost() : ViewModelPMU() {
         val card: Card = hostGame.drawCard()
         game.cardDrawn(card)
 
+
         val payload = PayloadMaker
             .createPayloadRequest(Action.DRAW_CARD, Sender.HOST)
             .addParam(Param.CARD, card)
             .toPayload()
         broadcast(payload)
+
+        Log.d(Global.TAG, "Carte tirée : " + card.toString() )
+
         for (l in listeners)
             l.onCardDrawn(card)
     }

@@ -32,7 +32,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
 
         deckButton.setOnClickListener {
-
+            vmGame.drawCard()
         }
 
         deckButton.isClickable = true
