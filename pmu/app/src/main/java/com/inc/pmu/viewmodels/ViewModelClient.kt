@@ -206,10 +206,6 @@ class ViewModelClient : ViewModelPMU() {
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
-    override fun startGame() {
-        handleStartGame()
-    }
-
     override fun vote(choice: Boolean) {
         val votePayload = PayloadMaker
             .createPayloadRequest(Action.VOTE, Sender.PLAYER)
