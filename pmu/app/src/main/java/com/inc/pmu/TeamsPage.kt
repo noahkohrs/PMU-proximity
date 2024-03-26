@@ -75,7 +75,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
         playButton.setOnClickListener {
             vmGame.startGame()
-            val fragment = PushUpBet.newInstance()
+            val fragment = GameBoard.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
