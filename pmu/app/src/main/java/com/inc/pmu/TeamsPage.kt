@@ -72,7 +72,10 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
 
         playButton.setOnClickListener {
-            vmGame.handleStartGame()
+            val fragment = GameBoard.newInstance()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit()
         }
 
         vmGame.addListener(

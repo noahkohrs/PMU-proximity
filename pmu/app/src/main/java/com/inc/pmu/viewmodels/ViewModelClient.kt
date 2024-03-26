@@ -16,7 +16,7 @@ import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ViewModelClient() : ViewModelPMU() {
+class ViewModelClient : ViewModelPMU() {
 
     private companion object {
         const val TAG = Global.TAG
@@ -68,7 +68,7 @@ class ViewModelClient() : ViewModelPMU() {
 
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
-                    val r : Array<String> = Array(arr.length()) {i -> ""}
+                    val r : Array<String> = Array(arr.length()) {_ -> ""}
                     for (i in r.indices) {
                         r[i] = arr.get(i) as String
                     }
@@ -124,8 +124,10 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
+        var n = 1
         for (p in playerList){
-            Log.d(Global.TAG, "Joueur 1 : " + p)
+            Log.d(Global.TAG, "Player $n : $p")
+            n++
         }
 
         for (l in listeners)
@@ -143,12 +145,9 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
-        var player = game.players[puuid]
-        if (player != null){
-            player.setBet(bet)
-        }
-        for (p in game.players.values){
-            if (p.bet.number != -1){
+        game.players[puuid]?.setBet(bet)
+        for (p in game.players.values) {
+            if (p.bet.number != -1) {
                 Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
             }
         }
@@ -157,7 +156,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleStartGame() {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onGameStarted()
     }
 
     override fun handleDrawCard(card: Card) {
@@ -175,6 +175,10 @@ class ViewModelClient() : ViewModelPMU() {
             l.onPlayerDoingPushUps(puuid)
     }
 
+    override fun handlePushUpsDone(puuid: String) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
     override fun handleStartVote(puuid: String) {
         for (l in listeners)
             l.onStartVote()
@@ -185,7 +189,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onVoteFinished(puuid, result)
     }
 
     override fun startBet() {
@@ -193,7 +198,7 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
+        val b = Bet(number, suit)
         val json = PayloadMaker
             .createPayloadRequest(Action.BET, Sender.PLAYER)
             .addParam(Param.BET, b)
@@ -202,16 +207,38 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun vote(choice: Boolean) {
-        TODO("Not yet implemented")
+        val votePayload = PayloadMaker
+            .createPayloadRequest(Action.VOTE, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .addParam(Param.VOTE_RESULT, choice)
+            .toPayload()
+        broadcast(votePayload)
     }
 
     override fun doPushUps() {
-        TODO("Not yet implemented")
+        val doPushUpsPayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(doPushUpsPayload)
+    }
+
+    override fun drawCard() {
+        throw UnsupportedOperationException("A client can't draw a card")
+    }
+
+    override fun startGame() {
+        throw UnsupportedOperationException("A client can't start a game")
     }
 
     override fun pushUpsDone() {
-        TODO("Not yet implemented")
+        val pushupDonePayload = PayloadMaker
+            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localId)
+            .toPayload()
+        broadcast(pushupDonePayload)
     }
     
+
 
 }
