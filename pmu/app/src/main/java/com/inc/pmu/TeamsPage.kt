@@ -39,11 +39,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
 
 
         playButton.setOnClickListener {
-
-            val fragment = PushUpBet.newInstance()  // TODO : replace with Board fragment
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit()
+            vmGame.handleStartGame()
         }
 
         vmGame.addListener(
@@ -86,6 +82,17 @@ class TeamsPage : Fragment(R.layout.teams_page) {
                             playButton.setBackgroundColor(Color.YELLOW)
                         }
                     }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onGameStarted() {
+                    val fragment = BoardGame.newInstance()  // TODO : replace with Board fragment
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit()
                 }
             }
         )
