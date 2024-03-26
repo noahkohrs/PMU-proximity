@@ -89,7 +89,7 @@ class TeamsPage : Fragment(R.layout.teams_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onGameStarted() {
-                    val fragment = BoardGame.newInstance()  // TODO : replace with Board fragment
+                    val fragment = GameBoard.newInstance()  // TODO : replace with Board fragment
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.container, fragment)
                         .commit()
