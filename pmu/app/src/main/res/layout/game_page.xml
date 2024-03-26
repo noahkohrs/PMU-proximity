@@ -264,7 +264,7 @@
         app:srcCompat="@drawable/d1" />
 
     <ImageButton
-        android:id="@+id/imageButton4"
+        android:id="@+id/deck"
         android:layout_width="82dp"
         android:layout_height="118dp"
         android:padding="0dp"
