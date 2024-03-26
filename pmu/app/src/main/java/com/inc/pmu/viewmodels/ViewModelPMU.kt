@@ -41,14 +41,14 @@ abstract class ViewModelPMU : ViewModel() {
      * Set the connectionClient to connectionClient Start discovering for other devices
      * @param connectionsClient the connectionClient to use
      */
-    protected abstract fun startDiscovering(connectionsClient: ConnectionsClient)
+    abstract fun startDiscovering(connectionsClient: ConnectionsClient)
 
 
     /**
      * Set the connectionClient to connectionClient Start hosting for other devices
      * @param connectionsClient the connectionClient to use
      */
-    protected abstract fun startHosting(connectionsClient: ConnectionsClient)
+    abstract fun startHosting(connectionsClient: ConnectionsClient)
 
     protected val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
