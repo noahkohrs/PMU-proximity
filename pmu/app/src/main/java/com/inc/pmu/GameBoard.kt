@@ -1,5 +1,7 @@
 package com.inc.pmu
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageButton
@@ -11,9 +13,11 @@ import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
+
 class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var vmGame: ViewModelPMU
+    private lateinit var context: Context
 
     private lateinit var deckButton : ImageButton
     private lateinit var playedCards : ImageView
@@ -26,6 +30,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         super.onStart()
 
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+        context = requireContext()
 
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
@@ -35,26 +40,28 @@ class GameBoard : Fragment(R.layout.game_page) {
             vmGame.drawCard()
         }
 
-        deckButton.isClickable = true
+        if (vmGame.isHost()) {
+            deckButton.isClickable = true
+        }
+        else {
+            deckButton.isClickable = false
+        }
 
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onCardDrawn(card: Card) {
-                    Log.d(Global.TAG, card.toString())
-                    if (card != null) {
-                        var drawCard : Drawable = linkCardToDrawable(card)
-                        playedCards.setImageDrawable(drawCard)
-                    }
+                    Log.d(Global.TAG, "Drawn card: $card")
+                    var drawCard : Drawable = getCardDrawable(card, context)
+                    playedCards.setImageDrawable(drawCard)
                 }
             }
         )
     }
 
-    fun linkCardToDrawable(card : Card) : Drawable {
-        val uri = "@drawable/${card.toString()}"
-        Log.d(Global.TAG, uri)
-        var imageIndex : Int = resources.getIdentifier(uri, null, requireContext().packageName)
-        Log.d(Global.TAG, imageIndex.toString())
-        return resources.getDrawable(imageIndex)
+    fun getCardDrawable(card : Card, context : Context) : Drawable {
+        var uri : String = "@drawable/${card.toString()}"
+        var imageId : Int = context.resources.getIdentifier(uri,null, context.packageName)
+        Log.d(Global.TAG, imageId.toString())
+        return context.resources.getDrawable(imageId)
     }
 }
