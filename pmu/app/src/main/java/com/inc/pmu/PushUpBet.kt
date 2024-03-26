@@ -6,6 +6,9 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.inc.pmu.models.Player
+import com.inc.pmu.models.Suit
+import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
@@ -28,7 +31,26 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
         var counter : TextView = requireView().findViewById(R.id.counter)
 
 
+        var betListener = object : ViewModelListener() {
+            override fun onBetValidated(suit: Suit, players: MutableCollection<Player>) {
+                Log.d(Global.TAG, "OnBetValidated")
+
+                var nSuitBet = 0
+                for (player in players) {
+                    if (player.bet.number != -1 && player.bet.suit == suit) {
+                        nSuitBet++
+                    }
+                }
+
+
+                if (nSuitBet > players.size/4) {
+                    vmGame.suitUnavailable(suit)
+                }
+            }
+        }
+
         playButton.setOnClickListener {
+            vmGame.removeListener(betListener)
             vmGame.counter = counter.text.toString().toInt()
             val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
@@ -49,6 +71,8 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
                 counter.setText(newValue.toString())
             }
         }
+
+        vmGame.addListener(betListener)
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
