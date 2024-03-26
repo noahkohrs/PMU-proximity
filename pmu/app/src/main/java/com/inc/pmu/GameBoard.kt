@@ -3,6 +3,7 @@ package com.inc.pmu
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -38,6 +39,18 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         deckButton.setOnClickListener {
             vmGame.drawCard()
+            deckButton.isClickable = false
+            Log.d(Global.TAG, "Bouton non clickable")
+            val timer = object: CountDownTimer(15000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    //affiche les secondes sur le deck transparent
+                }
+                override fun onFinish() {
+                    deckButton.isClickable = true
+                    Log.d(Global.TAG, "Bouton re-clickable !")
+                }
+            }
+            timer.start()
         }
 
         if (vmGame.isHost()) {

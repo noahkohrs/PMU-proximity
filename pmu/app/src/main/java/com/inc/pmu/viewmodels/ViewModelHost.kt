@@ -267,8 +267,6 @@ class ViewModelHost() : ViewModelPMU() {
             .toPayload()
         broadcast(payload)
 
-        Log.d(Global.TAG, "Carte tirée : " + card.toString() )
-
         for (l in listeners)
             l.onCardDrawn(card)
     }
