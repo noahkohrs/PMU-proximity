@@ -57,27 +57,38 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                 .commit()
         }
 
+        launchButton.isClickable = false
+        launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
+
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         if (vmGame.isHost()) {
             val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
             vmGame.startHosting(connectionsClient)
             Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
-            if (vmGame.game.players.size > 1) {
-                launchButton.setBackgroundColor(resources.getColor(R.color.selectOrValidate))
-            }
-        }
-        else {
-            launchButton.isClickable = false
-            launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
+
+            requireView().findViewById<TextView>(R.id.playerList).text = vmGame.localUsername
         }
 
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onPlayerListUpdate(playerList: Array<out String>?) {
+                    Log.d(Global.TAG, playerList.toString())
                     if (playerList != null) {
-                        var textPlayer =  requireView().findViewById<TextView>(R.id.playerList).text
+                        var textPlayer =  requireView().findViewById<TextView>(R.id.playerList)
+                        var data : String = ""
                         for (player in playerList) {
-                            textPlayer = textPlayer.toString() + player + '\n'
+                            Log.d(Global.TAG, player)
+                            data += player + '\n'
+                        }
+                        textPlayer.text = data
+
+                        if (playerList.size > 1 && vmGame.isHost()) {
+                            launchButton.isClickable = true
+                            launchButton.setBackgroundColor(resources.getColor(R.color.selectOrValidate))
+                        }
+                        else {
+                            launchButton.isClickable = false
+                            launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
                         }
                     }
                 }

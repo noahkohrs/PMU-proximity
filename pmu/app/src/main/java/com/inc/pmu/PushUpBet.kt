@@ -30,7 +30,6 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
 
         playButton.setOnClickListener {
             vmGame.counter = counter.text.toString().toInt()
-            Log.d(Global.TAG, "Je parie ${vmGame.counter} pompes...")
             val fragment = BetChoice.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
