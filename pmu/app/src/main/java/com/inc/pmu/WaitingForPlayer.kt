@@ -72,12 +72,10 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onPlayerListUpdate(playerList: Array<out String>?) {
-                    Log.d(Global.TAG, playerList.toString())
                     if (playerList != null) {
                         var textPlayer =  requireView().findViewById<TextView>(R.id.playerList)
                         var data : String = ""
                         for (player in playerList) {
-                            Log.d(Global.TAG, player)
                             data += player + '\n'
                         }
                         textPlayer.text = data
