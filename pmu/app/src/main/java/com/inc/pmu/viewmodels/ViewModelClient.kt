@@ -16,7 +16,7 @@ import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ViewModelClient() : ViewModelPMU() {
+class ViewModelClient : ViewModelPMU() {
 
     private companion object {
         const val TAG = Global.TAG
@@ -68,7 +68,7 @@ class ViewModelClient() : ViewModelPMU() {
 
                 Action.PLAYER_LIST -> {
                     val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
-                    val r : Array<String> = Array(arr.length()) {i -> ""}
+                    val r : Array<String> = Array(arr.length()) {_ -> ""}
                     for (i in r.indices) {
                         r[i] = arr.get(i) as String
                     }
@@ -124,8 +124,10 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handlePlayerList(playerList: Array<String>) {
+        var n = 1
         for (p in playerList){
-            Log.d(Global.TAG, "Joueur 1 : " + p)
+            Log.d(Global.TAG, "Player $n : $p")
+            n++
         }
 
         for (l in listeners)
@@ -143,12 +145,9 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleBetValid(puuid: String, bet: Bet) {
-        var player = game.players[puuid]
-        if (player != null){
-            player.setBet(bet)
-        }
-        for (p in game.players.values){
-            if (p.bet.number != -1){
+        game.players[puuid]?.setBet(bet)
+        for (p in game.players.values) {
+            if (p.bet.number != -1) {
                 Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
             }
         }
@@ -190,7 +189,8 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        TODO("Not yet implemented")
+        for (l in listeners)
+            l.onVoteFinished(puuid, result)
     }
 
     override fun startBet() {
@@ -198,7 +198,7 @@ class ViewModelClient() : ViewModelPMU() {
     }
 
     override fun bet(number: Int, suit: Suit) {
-        val b: Bet = Bet(number, suit)
+        val b = Bet(number, suit)
         val json = PayloadMaker
             .createPayloadRequest(Action.BET, Sender.PLAYER)
             .addParam(Param.BET, b)
@@ -231,6 +231,10 @@ class ViewModelClient() : ViewModelPMU() {
         throw UnsupportedOperationException("A client can't draw a card")
     }
 
+    override fun startGame() {
+        throw UnsupportedOperationException("A client can't start a game")
+    }
+
     override fun pushUpsDone() {
         val pushupDonePayload = PayloadMaker
             .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
@@ -238,6 +242,7 @@ class ViewModelClient() : ViewModelPMU() {
             .toPayload()
         broadcast(pushupDonePayload)
     }
+    
 
 
 }

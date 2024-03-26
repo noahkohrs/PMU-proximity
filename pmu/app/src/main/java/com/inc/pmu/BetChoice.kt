@@ -29,6 +29,8 @@ class BetChoice : Fragment(R.layout.bet_choice) {
     private lateinit var buttonC : Button
     private lateinit var buttonD : Button
     private lateinit var buttonPlay : Button
+    private lateinit var arrayButtons : ArrayList<Button>
+
 
 
     companion object {
@@ -46,41 +48,63 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         buttonD = requireView().findViewById(R.id.carreauButton)
         buttonPlay = requireView().findViewById(R.id.jouerButton)
 
+        arrayButtons = arrayListOf(buttonH, buttonS, buttonC, buttonD)
+
+
+        var betListener = object : ViewModelListener() {
+            override fun onBetValidated(suit: Suit?, players: MutableCollection<Player>?) {
+                Log.d(Global.TAG, "OnBetValidated")
+
+                var nSuitBet = 0
+                if (players != null) {
+                    for (player in players) {
+                        if (player.bet.number != -1 && player.bet.suit == suit) {
+                            nSuitBet++
+                        }
+                    }
+
+
+                    if (nSuitBet > players.size/4) {
+                        setUnchoosable(suit)
+                    }
+                }
+            }
+        }
 
         buttonH.setOnClickListener {
+            for (button in arrayButtons) {
+                button.setBackgroundColor(Color.WHITE)
+            }
             buttonH.setBackgroundColor(Color.YELLOW)
-            buttonS.setBackgroundColor(Color.WHITE)
-            buttonC.setBackgroundColor(Color.WHITE)
-            buttonD.setBackgroundColor(Color.WHITE)
             buttonPlay.isClickable = true
             buttonPlay.setBackgroundColor(Color.YELLOW)
             suitChosen = Suit.HEARTS
         }
 
         buttonS.setOnClickListener {
-            buttonH.setBackgroundColor(Color.WHITE)
+            for (button in arrayButtons) {
+                button.setBackgroundColor(Color.WHITE)
+            }
             buttonS.setBackgroundColor(Color.YELLOW)
-            buttonC.setBackgroundColor(Color.WHITE)
-            buttonD.setBackgroundColor(Color.WHITE)
             buttonPlay.isClickable = true
             buttonPlay.setBackgroundColor(Color.YELLOW)
             suitChosen = Suit.SPADES
         }
 
         buttonC.setOnClickListener {
-            buttonH.setBackgroundColor(Color.WHITE)
-            buttonS.setBackgroundColor(Color.WHITE)
+            for (button in arrayButtons) {
+                button.setBackgroundColor(Color.WHITE)
+            }
             buttonC.setBackgroundColor(Color.YELLOW)
-            buttonD.setBackgroundColor(Color.WHITE)
             buttonPlay.isClickable = true
             buttonPlay.setBackgroundColor(Color.YELLOW)
             suitChosen = Suit.CLUBS
         }
 
         buttonD.setOnClickListener {
-            buttonH.setBackgroundColor(Color.WHITE)
-            buttonS.setBackgroundColor(Color.WHITE)
-            buttonC.setBackgroundColor(Color.WHITE)
+            for (button in arrayButtons) {
+                button.setBackgroundColor(Color.WHITE)
+            }
             buttonD.setBackgroundColor(Color.YELLOW)
             buttonPlay.isClickable = true
             buttonPlay.setBackgroundColor(Color.YELLOW)
@@ -89,31 +113,14 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
         buttonPlay.setOnClickListener {
             suitChosen?.let { it1 -> vmGame.bet(vmGame.counter, it1) }
+            vmGame.removeListener(betListener)
             val fragment = TeamsPage.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
         }
 
-        vmGame.addListener(
-            object : ViewModelListener() {
-                override fun onBetValidated(suit: Suit?, players: MutableCollection<Player>?) {
-                    Log.d(Global.TAG, "OnBetValidated")
-
-                    var nSuitBet = 0
-                    val players = vmGame.game.players.values
-                    for (player in players) {
-                        if (player.bet.suit == suit) {
-                            nSuitBet++
-                        }
-                    }
-
-                    if (nSuitBet > players.size) {
-                        setUnchoosable(suit)
-                    }
-                }
-            }
-        )
+        vmGame.addListener(betListener)
 
         buttonPlay.isClickable = false
 
@@ -130,15 +137,23 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         when (suit) {
             Suit.SPADES -> {
                 buttonS.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonS.isClickable = false
+                arrayButtons.remove(buttonS)
             }
             Suit.HEARTS -> {
                 buttonH.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonH.isClickable = false
+                arrayButtons.remove(buttonH)
             }
             Suit.CLUBS -> {
-                buttonS.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonC.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonC.isClickable = false
+                arrayButtons.remove(buttonC)
             }
             Suit.DIAMONDS -> {
-                buttonS.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonD.setBackgroundColor(resources.getColor(R.color.unavailable))
+                buttonD.isClickable = false
+                arrayButtons.remove(buttonD)
             }
             else -> {}
         }
