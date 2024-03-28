@@ -26,6 +26,8 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var diamonds : ImageView
 
     private lateinit var context : Context
+    private lateinit var v : View
+
 
 
     companion object {
@@ -38,12 +40,15 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         context = requireContext()
+        v = requireView()
 
         spades = requireView().findViewById(R.id.s1)
         club = requireView().findViewById(R.id.c1)
         heart = requireView().findViewById(R.id.h1)
         diamonds = requireView().findViewById(R.id.d1)
         deckButton = requireView().findViewById(R.id.deck)
+
+        var div : View = requireView().findViewById(R.id.divider1)
 
         deckButton.setOnClickListener {
             vmGame.drawCard()
@@ -55,7 +60,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                 override fun onCardDrawn(card: Card) {
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
-                    var divider : View = requireView().findViewById(dividerId)
+                    var divider : View = v.findViewById(dividerId)
 
                     var c : ImageView
                     when(card.suit) {
@@ -77,7 +82,13 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun getDividerFromPos(pos : Int, context : Context): Int {
-        var dividerId = context.resources.getIdentifier(("divider"+pos), null, context.packageName)
+        val res = context.getResources()
+        var dividerId : Int = 0
+        if (pos == 6) {
+            dividerId = res.getIdentifier(("id/arrivee"),"id", context.packageName)
+        } else {
+            dividerId = res.getIdentifier(("id/divider" + pos), "id", context.packageName)
+        }
         return dividerId
     }
 }
