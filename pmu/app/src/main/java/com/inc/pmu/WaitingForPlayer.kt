@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -17,6 +18,8 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
     private lateinit var vmGame: ViewModelPMU
 
+    private lateinit var activity: FragmentActivity
+
     companion object {
         fun newInstance() = WaitingForPlayer()
     }
@@ -24,13 +27,16 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
     fun quitAction() {
         vmGame.stopConnection()
         val fragment = HomePage.newInstance()
-        requireActivity().supportFragmentManager.beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
     }
 
     override fun onStart() {
         super.onStart()
+
+        activity = requireActivity()
+
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
 
         homePageButton = requireView().findViewById(R.id.quitButton)
