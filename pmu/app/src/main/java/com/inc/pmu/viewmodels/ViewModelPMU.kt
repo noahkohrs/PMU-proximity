@@ -31,6 +31,7 @@ abstract class ViewModelPMU : ViewModel() {
     lateinit var connectionsClient : ConnectionsClient
     var counter = 0
     lateinit var game : Game
+    var betsUnavailable : ArrayList<Suit> = arrayListOf()
 
     private companion object {
         const val TAG = Global.TAG
@@ -128,6 +129,8 @@ abstract class ViewModelPMU : ViewModel() {
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
     }
 
+
+
     abstract fun broadcast(payload: Payload)
 
     // Handeling Paquets Related
@@ -160,6 +163,12 @@ abstract class ViewModelPMU : ViewModel() {
     }
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
+    }
+    fun suitUnavailable(suit : Suit) {
+        betsUnavailable.add(suit)
+    }
+    fun getSuitsUnavailable(): ArrayList<Suit> {
+        return betsUnavailable
     }
 
     abstract fun isHost(): Boolean
