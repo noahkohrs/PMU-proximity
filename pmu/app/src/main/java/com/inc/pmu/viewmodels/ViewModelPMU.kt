@@ -50,6 +50,8 @@ abstract class ViewModelPMU : ViewModel() {
      */
     abstract fun startHosting(connectionsClient: ConnectionsClient)
 
+    abstract fun stopConnection()
+
     protected val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
             Log.d(TAG, "onEndpointFound")
@@ -103,9 +105,12 @@ abstract class ViewModelPMU : ViewModel() {
         }
 
         override fun onDisconnected(endpointId: String) {
+            onPlayerDisconnected(endpointId)
             Log.d(TAG, "onDisconnected")
         }
     }
+
+    protected abstract fun onPlayerDisconnected(endpointId: String)
 
     abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
 
