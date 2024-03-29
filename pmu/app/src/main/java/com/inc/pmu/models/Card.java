@@ -68,4 +68,11 @@ public class Card implements Jsonisable {
         }
         return new Card(suit, number);
     }
+
+    @Override
+    public String toString() {
+        String str = String.valueOf(this.suit).split("")[0].toLowerCase();
+        str += this.number;
+        return str;
+    }
 }

@@ -31,8 +31,14 @@ class ViewModelClient : ViewModelPMU() {
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
+    override fun onPlayerDisconnected(endpointId: String) {
+        for (l in listeners)
+            l.onConnectionLost()
+    }
+
     override fun startDiscovering(connectionsClient: ConnectionsClient) {
         this.connectionsClient = connectionsClient
+        stopConnection()
         Log.d(TAG, "Start discovering...")
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(STRATEGY).build()
 
@@ -49,6 +55,12 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun startHosting(connectionsClient: ConnectionsClient) {
         throw UnsupportedOperationException("Client cannot host")
+    }
+
+    override fun stopConnection() {
+        Log.d(TAG, "Stop discovering...")
+        connectionsClient.disconnectFromEndpoint(serverId)
+        connectionsClient.stopDiscovery()
     }
 
     override fun broadcast(payload: Payload){
@@ -162,7 +174,6 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun handleDrawCard(card: Card) {
         game.cardDrawn(card)
-        Log.d(Global.TAG, "Carte tirée : " + card.toString() )
         for (l in listeners)
             l.onCardDrawn(card)
     }

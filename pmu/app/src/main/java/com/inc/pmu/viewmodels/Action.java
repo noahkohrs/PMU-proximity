@@ -2,7 +2,6 @@ package com.inc.pmu.viewmodels;
 
 public class Action {
     public static final String ACTION = "action";
-
     // Actions
     public static final String PLAYER_USERNAME = "player_username";
     public static final String PLAYER_PUUID = "player_puuid";

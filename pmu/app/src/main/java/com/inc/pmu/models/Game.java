@@ -10,7 +10,7 @@ public class Game implements IGame, Jsonisable {
     public Board board;
     public Map<String, Player> players; // key: puuid, value: player
 
-    private Card currentCard;
+    public Card currentCard;
     private boolean currentRoundHaveBeenCanceled = true;
 
     public Game(Player host) {
