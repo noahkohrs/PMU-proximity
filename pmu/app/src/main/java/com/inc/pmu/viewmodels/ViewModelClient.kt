@@ -193,7 +193,7 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun handleStartVote(puuid: String) {
         for (l in listeners)
-            l.onStartVote()
+            l.onStartVote(puuid)
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {

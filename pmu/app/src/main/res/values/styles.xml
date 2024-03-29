@@ -3,6 +3,7 @@
     <style name="AlertDialogCustom" parent="@android:style/Theme.Material.Dialog">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
         <item name="android:headerDividersEnabled">true</item>
         <item name="android:backgroundTint">@color/alert</item>
         <item name="android:dialogCornerRadius" tools:targetApi="p">15dp</item>

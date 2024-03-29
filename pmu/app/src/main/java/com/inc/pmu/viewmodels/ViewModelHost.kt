@@ -227,7 +227,7 @@ class ViewModelHost() : ViewModelPMU() {
         // Make a new validator
         validator = Validator(puuid, game.players.keys)
         for (l in listeners)
-            l.onStartVote()
+            l.onStartVote(puuid)
     }
 
     override fun handleStartVote(puuid: String) {
