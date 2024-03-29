@@ -16,10 +16,10 @@ import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import com.inc.pmu.models.Validator
 import org.json.JSONObject
-import java.util.PriorityQueue
+import java.util.UUID
 
 class ViewModelHost() : ViewModelPMU() {
-    private var playersEndpointIds = mutableListOf<String>()
+    private var playersEndpointIds = HashMap<String, String>()
 
     private var validator: Validator = Validator.doneValidator() // Just to init
     private companion object {
@@ -28,7 +28,29 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun onConnectionResultOK(endpointId: String) {
-        playersEndpointIds.add(endpointId)
+        playersEndpointIds[endpointId] = UUID.randomUUID().toString()
+        Log.d(Global.TAG, playersEndpointIds.toString())
+    }
+
+    override fun onPlayerDisconnected(endpointId: String) {
+        Log.d(Global.TAG, "Player disconnected")
+        game.players.remove(playersEndpointIds[endpointId])
+        playersEndpointIds.remove(endpointId)
+
+        val playerList = game.players.values
+        val playerNameList = mutableListOf<String>()
+        for (p in playerList){
+            playerNameList.add(p.playerName)
+        }
+        for (l in listeners)
+            l.onPlayerListUpdate(playerNameList.toTypedArray())
+
+        val playerListPayload = PayloadMaker
+            .createPayloadRequest(Action.PLAYER_LIST, Sender.HOST)
+            .addParam(Param.PLAYER_LIST, playerNameList.toTypedArray())
+            .toPayload()
+        broadcast(playerListPayload)
+
         Log.d(Global.TAG, playersEndpointIds.toString())
     }
 
@@ -39,6 +61,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun startHosting(connectionsClient: ConnectionsClient) {
         this.connectionsClient = connectionsClient
+        stopConnection()
         Log.d(TAG, "Start advertising...")
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
         connectionsClient.startAdvertising(
@@ -53,6 +76,13 @@ class ViewModelHost() : ViewModelPMU() {
             // 7
             Log.d(TAG, "Unable to start advertising")
         }
+    }
+
+    override fun stopConnection() {
+        for (epi in playersEndpointIds.keys){
+            connectionsClient.disconnectFromEndpoint(epi)
+        }
+        connectionsClient.stopAdvertising()
     }
 
     override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
@@ -95,7 +125,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun broadcast(payload: Payload){
-        for (epi in playersEndpointIds){
+        for (epi in playersEndpointIds.keys){
             connectionsClient.sendPayload(epi, payload)
         }
     }
@@ -105,7 +135,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handlePlayerUsername(endpointId: String,name: String) {
-        val newPlayer: Player = Player(name)
+        val newPlayer: Player = Player(playersEndpointIds[endpointId], name)
 
         val puuidPayload = PayloadMaker
             .createPayloadRequest(Action.PLAYER_PUUID, Sender.HOST)

@@ -1,25 +1,12 @@
 package com.inc.pmu
 
 import android.util.Log
-import android.widget.Adapter
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import com.google.android.gms.nearby.Nearby
-import com.google.android.gms.nearby.connection.ConnectionsClient
-import com.google.android.gms.nearby.connection.Payload
-import com.inc.pmu.models.Game
-import com.inc.pmu.models.PayloadMaker
-import com.inc.pmu.models.Player
-import com.inc.pmu.viewmodels.Action
-import com.inc.pmu.viewmodels.Param
-import com.inc.pmu.viewmodels.Sender
-import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
@@ -31,22 +18,32 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
     private lateinit var vmGame: ViewModelPMU
 
+    private lateinit var activity: FragmentActivity
+
     companion object {
         fun newInstance() = WaitingForPlayer()
     }
 
+    fun quitAction() {
+        vmGame.stopConnection()
+        val fragment = HomePage.newInstance()
+        activity.supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
     override fun onStart() {
         super.onStart()
+
+        activity = requireActivity()
+
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
 
         homePageButton = requireView().findViewById(R.id.quitButton)
         launchButton = requireView().findViewById(R.id.lauchButton)
 
         homePageButton.setOnClickListener {
-            val fragment = HomePage.newInstance()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit()
+            quitAction()
         }
 
        launchButton.setOnClickListener {
@@ -62,10 +59,6 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
 
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         if (vmGame.isHost()) {
-            val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
-            vmGame.startHosting(connectionsClient)
-            Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
-
             requireView().findViewById<TextView>(R.id.playerList).text = vmGame.localUsername
         }
 
@@ -89,6 +82,9 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
                             launchButton.setBackgroundColor(resources.getColor(R.color.unavailable))
                         }
                     }
+                }
+                override fun onConnectionLost() {
+                    quitAction()
                 }
             }
         )

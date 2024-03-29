@@ -24,10 +24,7 @@ class JoinGame : Fragment(R.layout.join_page) {
 
     override fun onStart() {
         super.onStart()
-
-        vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
-        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.CLIENT))[ViewModelPMU::class.java]
-        vmGame.localUsername = vmUserData.getUsername()
+        vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
         vmGame.startDiscovering(connectionsClient)
         Log.d(Global.TAG, "${vmGame.localUsername} starts searching...")

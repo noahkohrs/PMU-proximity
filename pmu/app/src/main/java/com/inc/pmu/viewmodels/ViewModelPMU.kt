@@ -31,6 +31,7 @@ abstract class ViewModelPMU : ViewModel() {
     lateinit var connectionsClient : ConnectionsClient
     var counter = 0
     lateinit var game : Game
+    var betsUnavailable : ArrayList<Suit> = arrayListOf()
 
     private companion object {
         const val TAG = Global.TAG
@@ -49,6 +50,8 @@ abstract class ViewModelPMU : ViewModel() {
      * @param connectionsClient the connectionClient to use
      */
     abstract fun startHosting(connectionsClient: ConnectionsClient)
+
+    abstract fun stopConnection()
 
     protected val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
@@ -103,9 +106,12 @@ abstract class ViewModelPMU : ViewModel() {
         }
 
         override fun onDisconnected(endpointId: String) {
+            onPlayerDisconnected(endpointId)
             Log.d(TAG, "onDisconnected")
         }
     }
+
+    protected abstract fun onPlayerDisconnected(endpointId: String)
 
     abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
 
@@ -122,6 +128,8 @@ abstract class ViewModelPMU : ViewModel() {
 
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
     }
+
+
 
     abstract fun broadcast(payload: Payload)
 
@@ -155,6 +163,12 @@ abstract class ViewModelPMU : ViewModel() {
     }
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
+    }
+    fun suitUnavailable(suit : Suit) {
+        betsUnavailable.add(suit)
+    }
+    fun getSuitsUnavailable(): ArrayList<Suit> {
+        return betsUnavailable
     }
 
     abstract fun isHost(): Boolean
