@@ -272,10 +272,10 @@
         android:src="@drawable/deck"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintHorizontal_bias="0.115"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider0"
-        app:layout_constraintVertical_bias="0.850" />
+        app:layout_constraintVertical_bias="0.831" />
 
     <ImageView
         android:id="@+id/playedCards"
@@ -283,10 +283,11 @@
         android:layout_height="105dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.702"
+        app:layout_constraintHorizontal_bias="0.885
+"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider0"
-        app:layout_constraintVertical_bias="0.850"
+        app:layout_constraintVertical_bias="0.859"
         app:srcCompat="@drawable/single_back_card" />
 
     <TextView
@@ -317,5 +318,18 @@
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/pushButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Faire\nreculer"
+        android:backgroundTint="@color/unavailable"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider0"
+        app:layout_constraintVertical_bias="0.672" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

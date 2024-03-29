@@ -39,6 +39,8 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var diamonds : ImageView
     private lateinit var sideCards : Array<Array<ImageView>>
 
+    private lateinit var pushButton: Button
+
     private lateinit var alertDialogue: AlertDialog
 
     companion object {
@@ -59,6 +61,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         diamonds = requireView().findViewById(R.id.d1)
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
+        pushButton = requireView().findViewById(R.id.pushButton)
 
         sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
         for (i in 1..vmGame.game.board.sideCards.size) {
@@ -86,6 +89,14 @@ class GameBoard : Fragment(R.layout.game_page) {
             }
             timer.start()
         }
+
+
+        pushButton.setOnClickListener {
+            vmGame.doPushUps()
+            alertDialogue = doPushups(view)
+        }
+
+        pushButton.isClickable = false
 
         if (vmGame.isHost()) {
             deckButton.isClickable = true
@@ -116,7 +127,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                         var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
                         var dividerId = getDividerFromPos(cardPos, context)
-                        var divider : View = v.findViewById(dividerId)
+                        var divider : View = view.findViewById(dividerId)
 
                         val params = c.layoutParams as ConstraintLayout.LayoutParams
                         params.topToBottom = divider.id
@@ -125,7 +136,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
-                    var divider : View = v.findViewById(dividerId)
+                    var divider : View = view.findViewById(dividerId)
 
                     var c : ImageView
                     when(card.suit) {
@@ -148,11 +159,22 @@ class GameBoard : Fragment(R.layout.game_page) {
                         sideCards[i][1].setImageDrawable(rightCard)
                     }
 
+                    var suit_string: String
+                    when(card.suit) {
+                        Suit.HEARTS -> suit_string = "Coeur"
+                        Suit.SPADES -> suit_string = "Pique"
+                        Suit.CLUBS -> suit_string = "Trèfle"
+                        Suit.DIAMONDS -> suit_string = "Diamant"
+
+                    }
+                    pushButton.text = "Faire reculer\n" + suit_string
                     if (vmGame.game.players.get(vmGame.localId)?.bet?.suit == card.suit) {
-                        alertDialogue = waitOthers(view)
+                        pushButton.isClickable = false
+                        pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
                     }
                     else {
-                        alertDialogue = moveBackward(view)
+                        pushButton.isClickable = true
+                        pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
                     }
                 }
             }
@@ -161,12 +183,12 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onPlayerDoingPushUps(puuid : String) {
+                    pushButton.isClickable = false
+                    pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
                     if (puuid == vmGame.localId) {
-                        alertDialogue.dismiss()
                         alertDialogue = doPushups(view)
                     }
                     else {
-                        alertDialogue.dismiss()
                         alertDialogue = waitForPushups(view, puuid)
                     }
                 }
@@ -268,30 +290,6 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.vote(false)
     }
 
-    fun moveBackward(view: View): AlertDialog {
-
-        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Voulez vous faire reculer ${vmGame.game.currentCard}")
-            .setPositiveButton("Oui", yesPuchupsButton)
-            .setNegativeButton("Non", noPuchupsButton)
-
-        val alertDialog = builder.create()
-
-        alertDialog.show()
-
-        val timer = object: CountDownTimer(5000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
-            override fun onFinish() {
-                alertDialog.cancel()
-            }
-        }
-
-        timer.start()
-
-        return alertDialog
-    }
-
     val yesPuchupsButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "Validé", Toast.LENGTH_SHORT).show()
@@ -301,28 +299,6 @@ class GameBoard : Fragment(R.layout.game_page) {
     val noPuchupsButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "Refusé", Toast.LENGTH_SHORT).show()
-    }
-
-    fun waitOthers(view: View): AlertDialog {
-
-        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Attente des autres joueurs")
-
-        val alertDialog = builder.create()
-
-        alertDialog.show()
-
-        val timer = object: CountDownTimer(15000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
-            override fun onFinish() {
-                alertDialog.cancel()
-            }
-        }
-
-        timer.start()
-
-        return alertDialog
     }
 
     fun getCardDrawable(card : Card, context : Context) : Drawable {
