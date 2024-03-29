@@ -77,10 +77,10 @@ class GameBoard : Fragment(R.layout.game_page) {
                     playedCards.setImageDrawable(drawCard)
 
                     if (vmGame.game.players.get(vmGame.localId)?.bet?.suit == card.suit) {
-                        waitOthers(view)
+                        alertDialogue = waitOthers(view)
                     }
                     else {
-                        moveBackward(view)
+                        alertDialogue = moveBackward(view)
                     }
                 }
             }
@@ -90,9 +90,11 @@ class GameBoard : Fragment(R.layout.game_page) {
             object : ViewModelListener() {
                 override fun onPlayerDoingPushUps(puuid : String) {
                     if (puuid == vmGame.localId) {
+                        alertDialogue.dismiss()
                         alertDialogue = doPushups(view)
                     }
                     else {
+                        alertDialogue.dismiss()
                         alertDialogue = waitForPushups(view, puuid)
                     }
                 }
@@ -194,7 +196,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.vote(false)
     }
 
-    fun moveBackward(view: View) {
+    fun moveBackward(view: View): AlertDialog {
 
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
             .setMessage("Voulez vous faire reculer ${vmGame.game.currentCard}")
@@ -214,6 +216,8 @@ class GameBoard : Fragment(R.layout.game_page) {
         }
 
         timer.start()
+
+        return alertDialog
     }
 
     val yesPuchupsButton = { dialog: DialogInterface, which: Int ->
@@ -227,7 +231,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             "Refusé", Toast.LENGTH_SHORT).show()
     }
 
-    fun waitOthers(view: View) {
+    fun waitOthers(view: View): AlertDialog {
 
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
             .setMessage("Attente des autres joueurs")
@@ -245,6 +249,8 @@ class GameBoard : Fragment(R.layout.game_page) {
         }
 
         timer.start()
+
+        return alertDialog
     }
 
     fun getCardDrawable(card : Card, context : Context) : Drawable {
