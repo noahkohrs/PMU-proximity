@@ -20,7 +20,7 @@ import java.util.UUID
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = HashMap<String, String>()
-
+    private val automata: VMStateMachine = VMStateMachine()
     private var validator: Validator = Validator.doneValidator() // Just to init
     private companion object {
         const val TAG = Global.TAG
@@ -135,8 +135,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handlePlayerUsername(endpointId: String,name: String) {
+        if (!automata.isGameSetup) {
+            return
+        }
         val newPlayer: Player = Player(playersEndpointIds[endpointId], name)
-
         val puuidPayload = PayloadMaker
             .createPayloadRequest(Action.PLAYER_PUUID, Sender.HOST)
             .addParam(Param.PUUID, newPlayer.puuid)
@@ -162,6 +164,9 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
+        if (!automata.isGameSetup) {
+            return
+        }
         val player = game.players.get(puuid)
         if (player != null){
             player.setBet(bet)
@@ -194,6 +199,13 @@ class ViewModelHost() : ViewModelPMU() {
 
 
     override fun handleAskDoPushUps(puuid: String) {
+        if (!automata.isCardDrawn) {
+            return
+        }
+        automata.notifyAskForPushUps()
+
+        // Make a new validator
+        validator = Validator(puuid, game.players.keys)
         val json = PayloadMaker
             .createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST)
             .addParam(Param.PUUID,puuid)
@@ -218,14 +230,17 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handlePushUpsDone(puuid: String) {
-        //TODO: Need somes conditions later on
+        if (!(automata.isDoingPushUps && validator.votedPlayerPuuid == puuid)) {
+            return
+        }
+        automata.notifyConfirmPushUps()
+
         val startVotePayload = PayloadMaker
             .createPayloadRequest(Action.START_VOTE, Sender.HOST)
             .addParam(Param.PUUID, puuid)
             .toPayload()
         broadcast(startVotePayload)
-        // Make a new validator
-        validator = Validator(puuid, game.players.keys)
+
         for (l in listeners)
             l.onStartVote()
     }
@@ -235,6 +250,9 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {
+        if (!automata.isValidatingPlayer)
+            return
+
         validator.vote(puuid, vote);
         if (validator.hasEveryoneVoted()) {
             val result = validator.result
@@ -246,6 +264,11 @@ class ViewModelHost() : ViewModelPMU() {
             broadcast(voteResultPayload)
             for (l in listeners)
                 l.onVoteFinished(validator.votedPlayerPuuid, result)
+            if (result) {
+                automata.notifyVoteSuccess()
+            } else {
+                automata.notifyVoteFail()
+            }
         }
     }
 
@@ -269,6 +292,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun startGame() {
+        if (!automata.isGameSetup)
+            return
+        automata.notifyStartGame()
+
         val info = PayloadMaker
             .createPayloadRequest(Action.START_GAME, Sender.HOST)
             .toPayload()
@@ -286,10 +313,14 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun drawCard() {
+        if (!(automata.isWaitingForDrawing || automata.isCardDrawn)) {
+            return
+        }
+        automata.notifyDrawCard()
+
         val hostGame: HostGame = game as HostGame
         val card: Card = hostGame.drawCard()
         game.cardDrawn(card)
-
 
         val payload = PayloadMaker
             .createPayloadRequest(Action.DRAW_CARD, Sender.HOST)
