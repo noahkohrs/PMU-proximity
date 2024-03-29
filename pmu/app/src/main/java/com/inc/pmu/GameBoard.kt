@@ -30,7 +30,7 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var club : ImageView
     private lateinit var heart : ImageView
     private lateinit var diamonds : ImageView
-
+    private lateinit var sideCards : Array<Array<ImageView>>
 
 
     companion object {
@@ -51,6 +51,15 @@ class GameBoard : Fragment(R.layout.game_page) {
         diamonds = requireView().findViewById(R.id.d1)
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
+
+        for (i in 1..vmGame.game.board.sideCards.size) {
+            var id = resources.getIdentifier(("id/left"+i),"id", context.packageName)
+            var leftCard : ImageView = requireView().findViewById(id)
+            id = resources.getIdentifier(("id/right"+i),"id", context.packageName)
+            var rightCard : ImageView = requireView().findViewById(id)
+            var sideCardsi : Array<ImageView> = arrayOf(leftCard, rightCard)
+            sideCards.set(i-1, sideCardsi)
+        }
 
 
         deckButton.setOnClickListener {
@@ -76,9 +85,16 @@ class GameBoard : Fragment(R.layout.game_page) {
             deckButton.isClickable = false
         }
 
+
+        deckButton.isClickable = true
+
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onCardDrawn(card: Card) {
+                    Log.d(Global.TAG, "Drawn card: $card")
+                    var drawCard : Drawable = getCardDrawable(card, context)
+                    playedCards.setImageDrawable(drawCard)
+
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
                     var divider : View = v.findViewById(dividerId)
@@ -94,18 +110,15 @@ class GameBoard : Fragment(R.layout.game_page) {
                     val params = c.layoutParams as ConstraintLayout.LayoutParams
                     params.topToBottom = divider.id
                     c.requestLayout()
-                }
-            }
-        )
 
-        deckButton.isClickable = true
-
-        vmGame.addListener(
-            object : ViewModelListener() {
-                override fun onCardDrawn(card: Card) {
-                    Log.d(Global.TAG, "Drawn card: $card")
-                    var drawCard : Drawable = getCardDrawable(card, context)
-                    playedCards.setImageDrawable(drawCard)
+                    val board = vmGame.game.board
+                    val indexSideCards = board.sideCardsDiscoverIndex
+                    for (i in 0..indexSideCards) {
+                        var leftCard : Drawable = getCardDrawable(board.sideCards[i][0], context)
+                        var rightCard : Drawable = getCardDrawable(board.sideCards[i][1], context)
+                        sideCards[i][0].setImageDrawable(leftCard)
+                        sideCards[i][1].setImageDrawable(rightCard)
+                    }
                 }
             }
         )
