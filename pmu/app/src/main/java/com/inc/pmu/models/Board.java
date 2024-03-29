@@ -42,9 +42,9 @@ public class Board implements Jsonisable {
         }
         if (sideCardsDiscoverIndex < LENGTH) {
             sideCardsDiscoverIndex++;
+            moveRiderForward(sideCards[sideCardsDiscoverIndex - 1][0].suit);
+            moveRiderBackward(sideCards[sideCardsDiscoverIndex - 1][1].suit);
         }
-        moveRiderForward(sideCards[sideCardsDiscoverIndex-1][0].suit);
-        moveRiderBackward(sideCards[sideCardsDiscoverIndex-1][1].suit);
 
     }
 
