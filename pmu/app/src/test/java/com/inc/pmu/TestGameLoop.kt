@@ -24,7 +24,8 @@ class TestGameLoop {
         val players : List<Player> = listOf(p1, p2);
 
         // Host game from the perspective of player 1
-        val hostGame: HostGame = HostGame(players);
+        val hostGame: HostGame = HostGame(p1);
+        hostGame.addPlayer(p2);
         val hostGameJSON : JSONObject = hostGame.toJson();
         val game : Game = Game.fromJson(hostGameJSON);
 
