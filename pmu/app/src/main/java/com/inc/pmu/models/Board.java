@@ -52,7 +52,7 @@ public class Board implements Jsonisable {
      */
     public void moveRiderForward(Suit suit) {
         int pos = riderPos.get(suit);
-        if (pos < LENGTH) {
+        if (pos <= LENGTH) {
             riderPos.put(suit, pos + 1);
         }
         this.updateSideCards();
