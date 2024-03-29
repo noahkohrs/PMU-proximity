@@ -98,6 +98,25 @@ class GameBoard : Fragment(R.layout.game_page) {
                     var drawCard : Drawable = getCardDrawable(card, context)
                     playedCards.setImageDrawable(drawCard)
 
+                    for (suit in Suit.values()) {
+
+                        var c : ImageView
+                        when(suit) {
+                            Suit.HEARTS -> c = heart
+                            Suit.SPADES -> c = spades
+                            Suit.CLUBS -> c = club
+                            Suit.DIAMONDS -> c = diamonds
+                        }
+
+                        var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
+                        var dividerId = getDividerFromPos(cardPos, context)
+                        var divider : View = v.findViewById(dividerId)
+
+                        val params = c.layoutParams as ConstraintLayout.LayoutParams
+                        params.topToBottom = divider.id
+                        c.requestLayout()
+                    }
+
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
                     var divider : View = v.findViewById(dividerId)
