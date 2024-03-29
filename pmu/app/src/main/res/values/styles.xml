@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AlertDialogCustom" parent="@android:style/Theme.Material.Dialog">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:headerDividersEnabled">true</item>
-        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:backgroundTint">@color/alert</item>
+        <item name="android:dialogCornerRadius" tools:targetApi="p">15dp</item>
     </style>
 </resources>
