@@ -1,12 +1,18 @@
 package com.inc.pmu
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Card
@@ -22,6 +28,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var deckButton : ImageButton
     private lateinit var playedCards : ImageView
+    private lateinit var popupButton : Button
 
     companion object {
         fun newInstance() = GameBoard()
@@ -35,6 +42,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
+        popupButton = requireView().findViewById(R.id.AlertWithCustomStyle)
 
 
         deckButton.setOnClickListener {
@@ -51,6 +59,10 @@ class GameBoard : Fragment(R.layout.game_page) {
                 }
             }
             timer.start()
+        }
+
+        popupButton.setOnClickListener{
+            basicAlert(requireView())
         }
 
         if (vmGame.isHost()) {
@@ -70,6 +82,36 @@ class GameBoard : Fragment(R.layout.game_page) {
             }
         )
     }
+
+    fun basicAlert(view: View) {
+
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setTitle("Androidly Alert")
+            .setMessage("We have a message")
+
+        val alertDialog = builder.create()
+
+        alertDialog.show()
+
+        val timer = object: CountDownTimer(5000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+            }
+            override fun onFinish() {
+                alertDialog.cancel()
+            }
+        }
+        timer.start()
+
+    }
+
+        val positiveButtonClick = { dialog: DialogInterface, which: Int ->
+            Toast.makeText(context,
+                android.R.string.yes, Toast.LENGTH_SHORT).show()
+        }
+        val negativeButtonClick = { dialog: DialogInterface, which: Int ->
+            Toast.makeText(context,
+                android.R.string.no, Toast.LENGTH_SHORT).show()
+        }
 
     fun getCardDrawable(card : Card, context : Context) : Drawable {
         var uri : String = "@drawable/${card.toString()}"
