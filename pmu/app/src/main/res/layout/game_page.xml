@@ -289,4 +289,33 @@
         app:layout_constraintVertical_bias="0.850"
         app:srcCompat="@drawable/single_back_card" />
 
+    <TextView
+        android:id="@+id/current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_medium"
+        android:textStyle="italic"
+        android:text="1"
+        app:layout_constraintEnd_toStartOf="@+id/arrivee"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textCurrent" />
+
+    <TextView
+        android:id="@+id/textCurrent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_medium"
+        android:textStyle="bold"
+        android:text="Current number \nof Pushups :"
+        app:layout_constraintEnd_toStartOf="@+id/arrivee"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
