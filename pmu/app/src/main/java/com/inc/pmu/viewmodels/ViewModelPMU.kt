@@ -26,7 +26,7 @@ abstract class ViewModelPMU : ViewModel() {
     var serverId: String = ""
     var localUsername: String = "Default"
     //var localPuuid = ""
-    val listeners = mutableListOf<ViewModelListener>()
+    val listeners = mutableSetOf<ViewModelListener>()
     var localId = ""
     lateinit var connectionsClient : ConnectionsClient
     var counter = 0

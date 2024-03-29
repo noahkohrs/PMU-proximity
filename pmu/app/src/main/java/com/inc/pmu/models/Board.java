@@ -19,7 +19,7 @@ public class Board implements Jsonisable {
         riderPos = new HashMap<Suit, Integer>();
         for (Suit suit : Suit.values()) {
             riderPos.put(suit, 0);
-            deck.remove(new Card(suit, 11));
+            deck.remove(new Card(suit, 1));
         }
 
         for (int i = 0; i < LENGTH; i++) {
@@ -40,9 +40,11 @@ public class Board implements Jsonisable {
                 return;
             }
         }
-        sideCardsDiscoverIndex++;
-        moveRiderForward(sideCards[sideCardsDiscoverIndex-1][0].suit);
-        moveRiderBackward(sideCards[sideCardsDiscoverIndex-1][1].suit);
+        if (sideCardsDiscoverIndex < LENGTH) {
+            sideCardsDiscoverIndex++;
+            moveRiderForward(sideCards[sideCardsDiscoverIndex - 1][0].suit);
+            moveRiderBackward(sideCards[sideCardsDiscoverIndex - 1][1].suit);
+        }
 
     }
 
@@ -52,7 +54,7 @@ public class Board implements Jsonisable {
      */
     public void moveRiderForward(Suit suit) {
         int pos = riderPos.get(suit);
-        if (pos < LENGTH) {
+        if (pos <= LENGTH) {
             riderPos.put(suit, pos + 1);
         }
         this.updateSideCards();
