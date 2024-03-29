@@ -52,13 +52,14 @@ class GameBoard : Fragment(R.layout.game_page) {
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
 
+        sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
         for (i in 1..vmGame.game.board.sideCards.size) {
             var id = resources.getIdentifier(("id/left"+i),"id", context.packageName)
             var leftCard : ImageView = requireView().findViewById(id)
             id = resources.getIdentifier(("id/right"+i),"id", context.packageName)
             var rightCard : ImageView = requireView().findViewById(id)
             var sideCardsi : Array<ImageView> = arrayOf(leftCard, rightCard)
-            sideCards.set(i-1, sideCardsi)
+            sideCards[i-1] = sideCardsi
         }
 
 
@@ -66,7 +67,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             vmGame.drawCard()
             deckButton.isClickable = false
             Log.d(Global.TAG, "Bouton non clickable")
-            val timer = object: CountDownTimer(15000, 1000) {
+            val timer = object: CountDownTimer(100, 100) {
                 override fun onTick(millisUntilFinished: Long) {
                     //affiche les secondes sur le deck transparent
                 }
@@ -113,7 +114,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                     val board = vmGame.game.board
                     val indexSideCards = board.sideCardsDiscoverIndex
-                    for (i in 0..indexSideCards) {
+                    for (i in 0..<indexSideCards) {
                         var leftCard : Drawable = getCardDrawable(board.sideCards[i][0], context)
                         var rightCard : Drawable = getCardDrawable(board.sideCards[i][1], context)
                         sideCards[i][0].setImageDrawable(leftCard)

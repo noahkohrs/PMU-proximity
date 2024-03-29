@@ -1,6 +1,7 @@
 package com.inc.pmu.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class HostGame extends Game {
     public Card drawCard() {
         if (deck.size() == 0) {
             deck.addAll(cardLeftAfterBoardSetup);
+            Collections.shuffle(deck);
         }
         return deck.remove(0);
     }
