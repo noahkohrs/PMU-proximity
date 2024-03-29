@@ -19,7 +19,7 @@ public class Board implements Jsonisable {
         riderPos = new HashMap<Suit, Integer>();
         for (Suit suit : Suit.values()) {
             riderPos.put(suit, 0);
-            deck.remove(new Card(suit, 11));
+            deck.remove(new Card(suit, 1));
         }
 
         for (int i = 0; i < LENGTH; i++) {
