@@ -93,7 +93,6 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         pushButton.setOnClickListener {
             vmGame.doPushUps()
-            alertDialogue = doPushups(view)
         }
 
         pushButton.isClickable = false
