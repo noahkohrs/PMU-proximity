@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -43,6 +44,8 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var alertDialogue: AlertDialog
 
+    private lateinit var  currentSuit: TextView
+
     companion object {
         fun newInstance() = GameBoard()
     }
@@ -62,6 +65,16 @@ class GameBoard : Fragment(R.layout.game_page) {
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
         pushButton = requireView().findViewById(R.id.pushButton)
+
+        currentSuit = requireView().findViewById(R.id.playerSuit)
+
+        var suit = vmGame.game.players.get(vmGame.localId)!!.bet.suit
+        when(suit) {
+            Suit.HEARTS -> currentSuit.text = "Coeur"
+            Suit.SPADES -> currentSuit.text = "Pique"
+            Suit.CLUBS -> currentSuit.text = "Trèfle"
+            Suit.DIAMONDS -> currentSuit.text = "Carreau"
+        }
 
         sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
         for (i in 1..vmGame.game.board.sideCards.size) {
@@ -163,7 +176,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                         Suit.HEARTS -> suit_string = "Coeur"
                         Suit.SPADES -> suit_string = "Pique"
                         Suit.CLUBS -> suit_string = "Trèfle"
-                        Suit.DIAMONDS -> suit_string = "Diamant"
+                        Suit.DIAMONDS -> suit_string = "Carreau"
 
                     }
                     pushButton.text = "Faire reculer\n" + suit_string
