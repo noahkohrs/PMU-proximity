@@ -45,6 +45,7 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var alertDialogue: AlertDialog
 
     private lateinit var  currentSuit: TextView
+    private lateinit var currentNbPushUps: TextView
 
     companion object {
         fun newInstance() = GameBoard()
@@ -67,6 +68,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         pushButton = requireView().findViewById(R.id.pushButton)
 
         currentSuit = requireView().findViewById(R.id.playerSuit)
+        currentNbPushUps = requireView().findViewById(R.id.currentPushUps)
 
         var suit = vmGame.game.players.get(vmGame.localId)!!.bet.suit
         when(suit) {
@@ -126,6 +128,8 @@ class GameBoard : Fragment(R.layout.game_page) {
                     Log.d(Global.TAG, "Drawn card: $card")
                     var drawCard : Drawable = getCardDrawable(card, context)
                     playedCards.setImageDrawable(drawCard)
+
+                    currentNbPushUps.text = vmGame.game.players.get(vmGame.localId)!!.currentPushUps.toString()
 
                     for (suit in Suit.values()) {
 
