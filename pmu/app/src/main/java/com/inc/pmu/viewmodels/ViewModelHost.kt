@@ -286,18 +286,23 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleGameEnds(winner: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun handleGivePushUps(count: Int, target: String) {
         for (p in game.players.values){
-            if (game.players.get(localId)!!.bet.suit.equals(target) ){
+            if (game.players[localId]!!.bet.suit.name == target){
                 p.setBet(p.bet.number+count,p.bet.suit)
             }
         }
+        cptWinners += 1
         if (cptWinners >= winners.size){
-            EndPushUps(game.players.values.toTypedArray())
+            EndPushUps()
         }
+    }
+
+    override fun handleEndPushUps(count: Int) {
+        throw UnsupportedOperationException("Not an host action")
     }
 
     override fun startBet() {
@@ -363,9 +368,9 @@ class ViewModelHost() : ViewModelPMU() {
     override fun gameEnds(winner: String){
         for (p in game.players.values){
             val bet = p.bet
-            val ranking = game.board.riderPos.get(p.bet.suit)
+            val ranking = game.board.riderPos[bet.suit]
             p.setBet(bet.number * abs(ranking!! - Board.LENGTH) ,bet.suit)
-            if (p.bet.suit.equals(winner))
+            if (p.bet.suit.name == winner)
                 winners.add(p)
         }
         val payload = PayloadMaker
@@ -381,7 +386,7 @@ class ViewModelHost() : ViewModelPMU() {
     override fun checkWin(){
         var winner: String? = null
         for (suit in Suit.entries){
-            if (game.board.riderPos[suit] == Board.LENGTH){
+            if (game.board.riderPos[suit] == Board.LENGTH + 1){
                 winner = suit.name
             }
         }
@@ -391,17 +396,28 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun givePushUps(target: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not an host action")
     }
 
-    override fun EndPushUps(players: Array<Player>) {
-        val payload = PayloadMaker
-            .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
-            .addParam(Param.END_PUSHUPS, players)
-            .toPayload()
-        broadcast(payload)
-        for (l in listeners)
-            l.onEndPushUps(players.toMutableList())
-    }
+    override fun EndPushUps() {
+        for (endPoint in playersEndpointIds.keys){
+            val id = playersEndpointIds[endPoint]
+            val p = game.players[id]
+            if (p !in winners){
+                val count = p!!.bet.number
+                val payload = PayloadMaker
+                    .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                    .addParam(Param.END_PUSHUPS, count)
+                    .toPayload()
+                connectionsClient.sendPayload(endPoint, payload)
+            }
+        }
 
+        val p = game.players[localId]
+        if (p !in winners){
+            val count = p!!.bet.number
+            for (l in listeners)
+                l.onEndPushUps(count)
+        }
+    }
 }

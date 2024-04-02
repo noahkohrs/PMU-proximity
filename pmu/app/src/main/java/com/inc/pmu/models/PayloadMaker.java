@@ -111,19 +111,6 @@ public class PayloadMaker implements Jsonisable {
         return this;
     }
 
-    public PayloadMaker addParam(String key, Player[] players) {
-        JSONArray list = new JSONArray();
-        try {
-            for (Player p : players) {
-                list.put(p);
-            }
-            params.put(key, list);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-
     @Override
     public JSONObject toJson() {
 
