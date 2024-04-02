@@ -261,7 +261,13 @@ class ViewModelHost() : ViewModelPMU() {
                 .addParam(Param.VOTE_RESULT, result)
                 .addParam(Param.PUUID, validator.votedPlayerPuuid)
                 .toPayload()
+
             broadcast(voteResultPayload)
+            if (result) {
+                game.roundCancelled(validator.votedPlayerPuuid)
+                for (l in listeners)
+                    l.onBoardUpdate()
+            }
             for (l in listeners)
                 l.onVoteFinished(validator.votedPlayerPuuid, result)
             if (result) {
@@ -328,8 +334,10 @@ class ViewModelHost() : ViewModelPMU() {
             .toPayload()
         broadcast(payload)
 
-        for (l in listeners)
+        for (l in listeners) {
             l.onCardDrawn(card)
+            l.onBoardUpdate()
+        }
     }
 
     override fun pushUpsDone() {

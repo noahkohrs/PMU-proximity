@@ -174,8 +174,11 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun handleDrawCard(card: Card) {
         game.cardDrawn(card)
-        for (l in listeners)
+        for (l in listeners) {
             l.onCardDrawn(card)
+            l.onBoardUpdate()
+        }
+
     }
 
     override fun handleAskDoPushUps(puuid: String) {
@@ -202,8 +205,12 @@ class ViewModelClient : ViewModelPMU() {
     }
 
     override fun handleVoteResult(puuid: String, result: Boolean) {
-        for (l in listeners)
+        if (result)
+            game.roundCancelled(puuid)
+        for (l in listeners) {
             l.onVoteFinished(puuid, result)
+            l.onBoardUpdate()
+        }
     }
 
     override fun startBet() {

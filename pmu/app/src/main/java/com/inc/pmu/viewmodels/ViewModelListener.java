@@ -17,6 +17,7 @@ public class ViewModelListener {
     public void onBetValidated(Suit suit, Collection<Player> players){}
     public void onGameStarted(){}
     public void onCardDrawn(Card card){}
+    public void onBoardUpdate(){}
     public void onPlayerDoingPushUps(String puuid){}
     public void onStartVote(String puuid){}
     public void onVoteFinished(String puuid, boolean voteResult){}
