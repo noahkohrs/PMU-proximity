@@ -11,7 +11,7 @@
         android:layout_width="331dp"
         android:layout_height="40dp"
         android:fontFamily="@font/inter_medium"
-        android:text="Connection à une partie"
+        android:text="Connexion à une partie"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="28sp"
