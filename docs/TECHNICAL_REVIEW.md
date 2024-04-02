@@ -7,6 +7,7 @@
 - [View](#view)
 - [ViewModel](#viewmodel)
 - [Model](#model)
+- [Network Payloads](#network-payloads)
 
 ## Introduction
 
@@ -29,9 +30,64 @@ We worked with an MVVM architecture. We will explain the different parts of the 
 TODO
 
 ## ViewModel
-TODO
+For the sake of this project, our ViewModel (`ViewModelPMU`) is an abstract class that has two subclasses :
+- `ViewModelHost`
+- `ViewModelClient`
+
+These two classes have the same goal, while being implemented each in their own specific way. 
+
+### ViewModelHost
+
 
 ## Model
 TODO
 
-## ???
+## Network Payloads 
+The payload system already exists in the Nearby Connections API. 
+The only remaining questions are how to manage the payloads in the ViewModel.
+### Representation
+Data will be represented using a json consistant format.
+This offers a simple way to represent data and to parse it while keeping a human-readable format.
+It also allows to easily add new actions and parameters to the protocol.
+The json format will be as follows:
+```json
+{
+    "action": "<ACTION>",
+    "sender": "<HOST | CLIENT>"
+    "params": {
+        "<PARAM1>": "<VALUE1>",
+        "<PARAM2>": "<VALUE2>",
+        ...
+    }
+}
+```
+
+*Exemple* for a `VOTE` action:
+```json
+{
+    "action": "VOTE",
+    "sender": "HOST",
+    "params": {
+        "puuid": "A39BH49G",
+        "vote": true
+    }
+}
+```
+*There is no need to send the `sender` field as it is implicit in the connection, it is only used for a debug purpose*
+
+Lastly, some more complex objets needs to be transfered for some specific actions (`GAME_START`, `PLAYER_LIST`, etc).
+For these cases, each object that needs to be transfered will have to implement the `Jsonizable` interface.
+This interface will have two methods:
+- `toJson()` : that will return the json representation of the object
+- `fromJson(JSONObject json)` : that will return the object from the json representation
+
+
+### Sending
+There is not much to say about sending the payloads, as it is just using the `sendPayload` method from the Nearby Connections API.
+
+However, We've made an easy way for building the payloads in the ViewModel.
+
+The `PayloadMaker` class. 
+
+### Treatment
+
