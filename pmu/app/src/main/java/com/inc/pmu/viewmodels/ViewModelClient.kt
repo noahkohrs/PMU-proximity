@@ -64,7 +64,7 @@ class ViewModelClient : ViewModelPMU() {
     }
 
     override fun broadcast(payload: Payload){
-        throw UnsupportedOperationException("Client cannot broadcast")
+        connectionsClient.sendPayload(serverId, payload)
     }
 
     override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
@@ -185,6 +185,7 @@ class ViewModelClient : ViewModelPMU() {
     override fun handleDoPushUps(puuid: String) {
         for (l in listeners)
             l.onPlayerDoingPushUps(puuid)
+        Log.d(Global.TAG, "${this.game.players.get(puuid)} veut faire reculer le ${this.game.currentCard}")
     }
 
     override fun handlePushUpsDone(puuid: String) {
@@ -193,7 +194,7 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun handleStartVote(puuid: String) {
         for (l in listeners)
-            l.onStartVote()
+            l.onStartVote(puuid)
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {
@@ -229,7 +230,7 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun doPushUps() {
         val doPushUpsPayload = PayloadMaker
-            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .createPayloadRequest(Action.ASK_DO_PUSH_UPS, Sender.PLAYER)
             .addParam(Param.PUUID, localId)
             .toPayload()
         broadcast(doPushUpsPayload)

@@ -242,7 +242,7 @@ class ViewModelHost() : ViewModelPMU() {
         broadcast(startVotePayload)
 
         for (l in listeners)
-            l.onStartVote()
+            l.onStartVote(puuid)
     }
 
     override fun handleStartVote(puuid: String) {

@@ -7,4 +7,5 @@
     <color name="selectOrValidate">#FFDDFF0F</color>
     <color name="quitGame">#FFED0909</color>
     <color name="betPushupBackground">#FF59AB58</color>
+    <color name="alert">#B0FF6961</color>
 </resources>

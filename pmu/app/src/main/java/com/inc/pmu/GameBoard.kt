@@ -1,14 +1,19 @@
 package com.inc.pmu
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Card
@@ -24,7 +29,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var vmGame: ViewModelPMU
     private lateinit var context: Context
-    private lateinit var v : View
+    private lateinit var view: View
 
     private lateinit var deckButton : ImageButton
     private lateinit var playedCards : ImageView
@@ -34,6 +39,9 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var diamonds : ImageView
     private lateinit var sideCards : Array<Array<ImageView>>
 
+    private lateinit var pushButton: Button
+
+    private lateinit var alertDialogue: AlertDialog
 
     companion object {
         fun newInstance() = GameBoard()
@@ -45,7 +53,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         context = requireContext()
-        v = requireView()
+        view = requireView()
 
         spades = requireView().findViewById(R.id.s1)
         club = requireView().findViewById(R.id.c1)
@@ -53,6 +61,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         diamonds = requireView().findViewById(R.id.d1)
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
+        pushButton = requireView().findViewById(R.id.pushButton)
 
         sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
         for (i in 1..vmGame.game.board.sideCards.size) {
@@ -80,6 +89,13 @@ class GameBoard : Fragment(R.layout.game_page) {
             }
             timer.start()
         }
+
+
+        pushButton.setOnClickListener {
+            vmGame.doPushUps()
+        }
+
+        pushButton.isClickable = false
 
         if (vmGame.isHost()) {
             deckButton.isClickable = true
@@ -110,7 +126,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                         var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
                         var dividerId = getDividerFromPos(cardPos, context)
-                        var divider : View = v.findViewById(dividerId)
+                        var divider : View = view.findViewById(dividerId)
 
                         val params = c.layoutParams as ConstraintLayout.LayoutParams
                         params.topToBottom = divider.id
@@ -119,7 +135,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
-                    var divider : View = v.findViewById(dividerId)
+                    var divider : View = view.findViewById(dividerId)
 
                     var c : ImageView
                     when(card.suit) {
@@ -141,9 +157,147 @@ class GameBoard : Fragment(R.layout.game_page) {
                         sideCards[i][0].setImageDrawable(leftCard)
                         sideCards[i][1].setImageDrawable(rightCard)
                     }
+
+                    var suit_string: String
+                    when(card.suit) {
+                        Suit.HEARTS -> suit_string = "Coeur"
+                        Suit.SPADES -> suit_string = "Pique"
+                        Suit.CLUBS -> suit_string = "Trèfle"
+                        Suit.DIAMONDS -> suit_string = "Diamant"
+
+                    }
+                    pushButton.text = "Faire reculer\n" + suit_string
+                    if (vmGame.game.players.get(vmGame.localId)?.bet?.suit == card.suit) {
+                        pushButton.isClickable = false
+                        pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
+                    }
+                    else {
+                        pushButton.isClickable = true
+                        pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
+                    }
                 }
             }
         )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onPlayerDoingPushUps(puuid : String) {
+                    pushButton.isClickable = false
+                    pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
+                    if (puuid == vmGame.localId) {
+                        alertDialogue = doPushups(view)
+                    }
+                    else {
+                        alertDialogue = waitForPushups(view, puuid)
+                    }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onStartVote(puuid: String) {
+                    if (alertDialogue.isShowing) {
+                        alertDialogue.dismiss()
+                    }
+
+                    if (vmGame.localId == puuid) {
+                        alertDialogue = waitingForVotes(view)
+                    }
+                    else {
+                       alertDialogue = votes(view)
+                    }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onVoteFinished(puuid: String?, voteResult: Boolean) {
+                    alertDialogue.dismiss()
+                }
+            }
+        )
+    }
+
+    fun doPushups(view: View): AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Faites ${vmGame.game.players.get(vmGame.localId)?.currentPushUps} pompes")
+            .setPositiveButton("C'est fait", positivePushupsButtonClick)
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return alertDialog
+    }
+
+    fun waitForPushups(view: View, puuid : String): AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("${vmGame.game.players.get(puuid)?.playerName} fait des pompes")
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return alertDialog
+    }
+
+    val positivePushupsButtonClick = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes validées", Toast.LENGTH_SHORT).show()
+        vmGame.pushUpsDone()
+    }
+
+    fun waitingForVotes(view: View): AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Attente des votes")
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return alertDialog
+    }
+
+    fun votes(view: View): AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Validez vous les pompes")
+            .setPositiveButton("Valider", positiveVoteButton)
+            .setNegativeButton("Refuser", negativeVoteButton)
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    val positiveVoteButton = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "Validé", Toast.LENGTH_SHORT).show()
+        vmGame.vote(true)
+    }
+
+    val negativeVoteButton = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "Refusé", Toast.LENGTH_SHORT).show()
+        vmGame.vote(false)
+    }
+
+    val yesPuchupsButton = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "Validé", Toast.LENGTH_SHORT).show()
+        vmGame.doPushUps()
+    }
+
+    val noPuchupsButton = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "Refusé", Toast.LENGTH_SHORT).show()
     }
 
     fun getCardDrawable(card : Card, context : Context) : Drawable {
