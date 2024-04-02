@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Board
@@ -220,6 +221,35 @@ class GameBoard : Fragment(R.layout.game_page) {
                 }
             }
         )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onGameEnds(winner: String) {
+                    var player = vmGame.game.players.get(vmGame.localId)!!
+                    var suit = vmGame.game.players.get(winner)!!.bet.suit
+                    if (player.bet.suit.name.equals(winner)) {
+                        alertDialogue = winnerPopup(view, suit)
+                    }
+                    else {
+                        alertDialogue = looserPopup(view, suit)
+                    }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object fun onEndPushUps() {
+
+            }
+        )
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the default back button behavior
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     fun doPushups(view: View): AlertDialog {
@@ -318,5 +348,83 @@ class GameBoard : Fragment(R.layout.game_page) {
             dividerId = res.getIdentifier(("id/divider" + pos), "id", context.packageName)
         }
         return dividerId
+    }
+
+    fun winnerPopup(view: View, suit: Suit) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setTitle("Vous avez gagné")
+            .setMessage("A qui voulez vous distribuer vos pompes")
+
+        when(suit) {
+            Suit.HEARTS -> {
+                builder.setPositiveButton("Pique", distributedToSpade)
+                    .setPositiveButton("Carreau", distributedToDiamond)
+                    .setPositiveButton("Trèfle", distributedToClub)
+            }
+
+            Suit.SPADES -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setPositiveButton("Carreau", distributedToDiamond)
+                    .setPositiveButton("Trèfle", distributedToClub)
+            }
+            Suit.CLUBS -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setPositiveButton("Carreau", distributedToDiamond)
+                    .setPositiveButton("Pique", distributedToSpade)
+            }
+            Suit.DIAMONDS -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setPositiveButton("Pique", distributedToSpade)
+                    .setPositiveButton("Trèfle", distributedToClub)
+            }
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    val distributedToHearth = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes distribués à coeur", Toast.LENGTH_SHORT).show()
+        val suit = Suit.HEARTS
+        vmGame.givePushUps(suit)
+    }
+
+    val distributedToSpade = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes distribués à pique", Toast.LENGTH_SHORT).show()
+        val suit = Suit.SPADES
+        vmGame.givePushUps(suit)
+    }
+
+    val distributedToClub = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes distribués à trèfle", Toast.LENGTH_SHORT).show()
+        val suit = Suit.CLUBS
+        vmGame.givePushUps(suit)
+    }
+
+    val distributedToDiamond = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes distribués à carreau", Toast.LENGTH_SHORT).show()
+        val suit = Suit.DIAMONDS
+        vmGame.givePushUps(suit)
+    }
+
+    fun looserPopup(view: View, suit: Suit) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setTitle("Vous avez Perdu")
+            .setMessage("l'équipe ${suit.name} a gagné")
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
     }
 }
