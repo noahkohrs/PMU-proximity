@@ -18,6 +18,7 @@ import com.inc.pmu.models.Suit
 import com.inc.pmu.models.Validator
 import org.json.JSONObject
 import java.util.UUID
+import kotlin.math.abs
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = HashMap<String, String>()
@@ -121,8 +122,9 @@ class ViewModelHost() : ViewModelPMU() {
                     handleVote(puuid, vote)
                 }
                 Action.GIVE_PUSHUPS -> {
+                    val count: Int = params.get(Param.GIVE_PUSHUPS) as Int
                     val target: String = params.get(Param.GIVE_PUSHUPS) as String
-                    handleGivePushUps(target)
+                    handleGivePushUps(count,target)
                 }
                 else -> {
                     Log.d(Global.TAG, "Unknown action for an Host")
@@ -287,14 +289,14 @@ class ViewModelHost() : ViewModelPMU() {
         TODO("Not yet implemented")
     }
 
-    override fun handleGivePushUps(target: String) {
-        cptWinners += 1
+    override fun handleGivePushUps(count: Int, target: String) {
+        for (p in game.players.values){
+            if (game.players.get(localId)!!.bet.suit.equals(target) ){
+                p.setBet(p.bet.number+count,p.bet.suit)
+            }
+        }
         if (cptWinners >= winners.size){
-            val info = PayloadMaker
-                .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
-                .addParam(Param.END_PUSHUPS, game)
-                .toPayload()
-            broadcast(info)
+            EndPushUps(game.players.values.toTypedArray())
         }
     }
 
@@ -358,12 +360,12 @@ class ViewModelHost() : ViewModelPMU() {
         handlePushUpsDone(localId)
     }
 
-    override fun gameEnds(winner: Suit){
+    override fun gameEnds(winner: String){
         for (p in game.players.values){
             val bet = p.bet
             val ranking = game.board.riderPos.get(p.bet.suit)
-            p.setBet(bet.number * ranking!!,bet.suit)
-            if (p.bet.suit == winner)
+            p.setBet(bet.number * abs(ranking!! - Board.LENGTH) ,bet.suit)
+            if (p.bet.suit.equals(winner))
                 winners.add(p)
         }
         val payload = PayloadMaker
@@ -371,13 +373,16 @@ class ViewModelHost() : ViewModelPMU() {
             .addParam(Param.GAME_END, winner)
             .toPayload()
         broadcast(payload)
+
+        for (l in listeners)
+            l.onGameEnds(winner)
     }
 
     override fun checkWin(){
-        var winner: Suit? = null
+        var winner: String? = null
         for (suit in Suit.entries){
             if (game.board.riderPos[suit] == Board.LENGTH){
-                winner = suit
+                winner = suit.name
             }
         }
         if (winner != null){
@@ -385,8 +390,18 @@ class ViewModelHost() : ViewModelPMU() {
         }
     }
 
-    override fun givePushUps(target: Suit) {
+    override fun givePushUps(target: String) {
         TODO("Not yet implemented")
+    }
+
+    override fun EndPushUps(players: Array<Player>) {
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+            .addParam(Param.END_PUSHUPS, players)
+            .toPayload()
+        broadcast(payload)
+        for (l in listeners)
+            l.onEndPushUps(players.toMutableList())
     }
 
 }

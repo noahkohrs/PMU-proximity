@@ -6,7 +6,9 @@ import com.inc.pmu.models.Player;
 import com.inc.pmu.models.Suit;
 import com.inc.pmu.models.Card;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ViewModelListener {
     
@@ -21,4 +23,5 @@ public class ViewModelListener {
     public void onStartVote(String puuid){}
     public void onVoteFinished(String puuid, boolean voteResult){}
     public void onGameEnds(String winner){}
+    public void onEndPushUps(List<Player> players){}
 }
