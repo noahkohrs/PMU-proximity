@@ -12,6 +12,7 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
+import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
@@ -215,7 +216,7 @@ class ViewModelClient : ViewModelPMU() {
             l.onGameEnds(winner)
     }
 
-    override fun handleGivePushUps(target: Suit) {
+    override fun handleGivePushUps(count: Int, target: String) {
         TODO("Not yet implemented")
     }
 
@@ -265,7 +266,7 @@ class ViewModelClient : ViewModelPMU() {
         broadcast(pushupDonePayload)
     }
 
-    override fun gameEnds(winner: Suit) {
+    override fun gameEnds(winner: String) {
         throw UnsupportedOperationException("A client can't end the game")
     }
 
@@ -273,12 +274,17 @@ class ViewModelClient : ViewModelPMU() {
         throw UnsupportedOperationException("A client can't check win")
     }
 
-    override fun givePushUps(target: Suit) {
+    override fun givePushUps(target: String) {
         val payload = PayloadMaker
             .createPayloadRequest(Action.GIVE_PUSHUPS, Sender.PLAYER)
-            .addParam(Param.GIVE_PUSHUPS)
+            .addParam(Param.GIVE_PUSHUPS, game.players.get(localId)!!.bet.number)
+            .addParam(Param.GIVE_PUSHUPS, target)
             .toPayload()
         broadcast(payload)
+    }
+
+    override fun EndPushUps(players: Array<Player>) {
+        TODO("Not yet implemented")
     }
 
 }
