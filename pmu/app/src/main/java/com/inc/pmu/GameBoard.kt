@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.models.Suit
@@ -75,6 +76,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
 
         deckButton.setOnClickListener {
+            vmGame.checkWin()
             vmGame.drawCard()
             deckButton.isClickable = false
             Log.d(Global.TAG, "Bouton non clickable")

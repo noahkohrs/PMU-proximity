@@ -148,6 +148,9 @@ abstract class ViewModelPMU : ViewModel() {
     protected abstract fun handleStartVote(puuid: String)
     protected abstract fun handleVote(puuid: String, vote: Boolean)
     protected abstract fun handleVoteResult(puuid: String, result: Boolean)
+    protected abstract fun handleGameEnds(winner: String)
+    protected abstract fun handleGivePushUps(target: String)
+
 
     // Related to casting actions on the game
     abstract fun startBet()
@@ -157,6 +160,9 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun doPushUps()
     abstract fun drawCard()
     abstract fun pushUpsDone()
+    abstract fun gameEnds(winner: Suit)
+    abstract fun checkWin()
+    abstract fun givePushUps(target: Suit)
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)

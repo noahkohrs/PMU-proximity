@@ -8,6 +8,7 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
+import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.HostGame
@@ -22,6 +23,8 @@ class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = HashMap<String, String>()
     private val automata: VMStateMachine = VMStateMachine()
     private var validator: Validator = Validator.doneValidator() // Just to init
+    private var winners = mutableListOf<Player>()
+    private var cptWinners = 0
     private companion object {
         const val TAG = Global.TAG
         val STRATEGY = Strategy.P2P_STAR
@@ -116,6 +119,10 @@ class ViewModelHost() : ViewModelPMU() {
                     val puuid: String = params.get(Param.PUUID) as String
                     val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
                     handleVote(puuid, vote)
+                }
+                Action.GIVE_PUSHUPS -> {
+                    val target: String = params.get(Param.GIVE_PUSHUPS) as String
+                    handleGivePushUps(target)
                 }
                 else -> {
                     Log.d(Global.TAG, "Unknown action for an Host")
@@ -276,6 +283,21 @@ class ViewModelHost() : ViewModelPMU() {
         throw UnsupportedOperationException("Not an host action")
     }
 
+    override fun handleGameEnds(winner: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleGivePushUps(target: String) {
+        cptWinners += 1
+        if (cptWinners >= winners.size){
+            val info = PayloadMaker
+                .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                .addParam(Param.END_PUSHUPS, game)
+                .toPayload()
+            broadcast(info)
+        }
+    }
+
     override fun startBet() {
         val info = PayloadMaker
             .createPayloadRequest(Action.START_BET, Sender.HOST)
@@ -336,5 +358,35 @@ class ViewModelHost() : ViewModelPMU() {
         handlePushUpsDone(localId)
     }
 
+    override fun gameEnds(winner: Suit){
+        for (p in game.players.values){
+            val bet = p.bet
+            val ranking = game.board.riderPos.get(p.bet.suit)
+            p.setBet(bet.number * ranking!!,bet.suit)
+            if (p.bet.suit == winner)
+                winners.add(p)
+        }
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.GAME_END, Sender.HOST)
+            .addParam(Param.GAME_END, winner)
+            .toPayload()
+        broadcast(payload)
+    }
+
+    override fun checkWin(){
+        var winner: Suit? = null
+        for (suit in Suit.entries){
+            if (game.board.riderPos[suit] == Board.LENGTH){
+                winner = suit
+            }
+        }
+        if (winner != null){
+            gameEnds(winner)
+        }
+    }
+
+    override fun givePushUps(target: Suit) {
+        TODO("Not yet implemented")
+    }
 
 }

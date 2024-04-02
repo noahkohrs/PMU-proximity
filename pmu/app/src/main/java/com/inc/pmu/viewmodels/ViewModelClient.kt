@@ -118,6 +118,10 @@ class ViewModelClient : ViewModelPMU() {
                     val res = params.get(Param.VOTE_RESULT) as Boolean
                     handleVoteResult(id, res)
                 }
+                Action.GAME_END -> {
+                    val suit = params.get(Param.GAME_END) as String
+                    handleGameEnds(suit)
+                }
                 else -> throw UnsupportedOperationException("Not a client action")
             }
         }
@@ -206,6 +210,15 @@ class ViewModelClient : ViewModelPMU() {
             l.onVoteFinished(puuid, result)
     }
 
+    override fun handleGameEnds(winner: String) {
+        for (l in listeners)
+            l.onGameEnds(winner)
+    }
+
+    override fun handleGivePushUps(target: Suit) {
+        TODO("Not yet implemented")
+    }
+
     override fun startBet() {
         throw UnsupportedOperationException("Not a client action")
     }
@@ -251,7 +264,21 @@ class ViewModelClient : ViewModelPMU() {
             .toPayload()
         broadcast(pushupDonePayload)
     }
-    
 
+    override fun gameEnds(winner: Suit) {
+        throw UnsupportedOperationException("A client can't end the game")
+    }
+
+    override fun checkWin() {
+        throw UnsupportedOperationException("A client can't check win")
+    }
+
+    override fun givePushUps(target: Suit) {
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.GIVE_PUSHUPS, Sender.PLAYER)
+            .addParam(Param.GIVE_PUSHUPS)
+            .toPayload()
+        broadcast(payload)
+    }
 
 }

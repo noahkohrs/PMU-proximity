@@ -20,4 +20,5 @@ public class ViewModelListener {
     public void onPlayerDoingPushUps(String puuid){}
     public void onStartVote(String puuid){}
     public void onVoteFinished(String puuid, boolean voteResult){}
+    public void onGameEnds(String winner){}
 }

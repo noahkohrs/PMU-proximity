@@ -17,5 +17,8 @@ public class Action {
     public static final String START_GAME = "start_game";
     public static final String VOTE = "vote";
     public static final String VOTE_RESULTS = "vote_results";
+    public static final String GAME_END = "game_end";
+    public static final String GIVE_PUSHUPS = "give_pushups";
+    public static final String END_PUSHUPS = "end_pushups";
 
 }
