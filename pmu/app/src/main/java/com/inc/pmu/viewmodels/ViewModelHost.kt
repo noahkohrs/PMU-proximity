@@ -396,7 +396,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun givePushUps(target: String) {
-        throw UnsupportedOperationException("Not an host action")
+        handleGivePushUps(game.players[localId]!!.bet.number,target)
     }
 
     override fun EndPushUps() {
