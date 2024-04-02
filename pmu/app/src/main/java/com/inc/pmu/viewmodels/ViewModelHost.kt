@@ -6,6 +6,7 @@ import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
+import com.inc.pmu.Const
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
@@ -198,6 +199,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
 
+
     override fun handleAskDoPushUps(puuid: String) {
         if (!automata.isCardDrawn) {
             return
@@ -206,6 +208,18 @@ class ViewModelHost() : ViewModelPMU() {
 
         // Make a new validator
         validator = Validator(puuid, game.players.keys)
+
+        // Time limit for the players to vote
+        //val timer = java.util.Timer()
+        //timer.schedule(object : java.util.TimerTask() {
+        //    override fun run() {
+        //        if (validator.hasEveryoneVoted()) {
+        //            return
+        //        }
+        //        voteEnded()
+        //    }
+        //}, Const.MAX_TIME_TO_VOTE)
+
         val json = PayloadMaker
             .createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST)
             .addParam(Param.PUUID,puuid)
@@ -255,26 +269,30 @@ class ViewModelHost() : ViewModelPMU() {
 
         validator.vote(puuid, vote);
         if (validator.hasEveryoneVoted()) {
-            val result = validator.result
-            val voteResultPayload = PayloadMaker
-                .createPayloadRequest(Action.VOTE_RESULTS, Sender.HOST)
-                .addParam(Param.VOTE_RESULT, result)
-                .addParam(Param.PUUID, validator.votedPlayerPuuid)
-                .toPayload()
+            voteEnded()
+        }
+    }
 
-            broadcast(voteResultPayload)
-            if (result) {
-                game.roundCancelled(validator.votedPlayerPuuid)
-                for (l in listeners)
-                    l.onBoardUpdate()
-            }
+    private fun voteEnded() {
+        val result = validator.result
+        val voteResultPayload = PayloadMaker
+            .createPayloadRequest(Action.VOTE_RESULTS, Sender.HOST)
+            .addParam(Param.VOTE_RESULT, result)
+            .addParam(Param.PUUID, validator.votedPlayerPuuid)
+            .toPayload()
+
+        broadcast(voteResultPayload)
+        if (result) {
+            game.roundCancelled(validator.votedPlayerPuuid)
             for (l in listeners)
-                l.onVoteFinished(validator.votedPlayerPuuid, result)
-            if (result) {
-                automata.notifyVoteSuccess()
-            } else {
-                automata.notifyVoteFail()
-            }
+                l.onBoardUpdate()
+        }
+        for (l in listeners)
+            l.onVoteFinished(validator.votedPlayerPuuid, result)
+        if (result) {
+            automata.notifyVoteSuccess()
+        } else {
+            automata.notifyVoteFail()
         }
     }
 
@@ -320,6 +338,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun drawCard() {
         if (!(automata.isWaitingForDrawing || automata.isCardDrawn)) {
+            Log.d(Global.TAG, "Trying to draw in the wrong state")
             return
         }
         automata.notifyDrawCard()
