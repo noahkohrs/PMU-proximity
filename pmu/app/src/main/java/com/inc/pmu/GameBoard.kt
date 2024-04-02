@@ -119,9 +119,6 @@ class GameBoard : Fragment(R.layout.game_page) {
             deckButton.isClickable = false
         }
 
-
-        deckButton.isClickable = true
-
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onCardDrawn(card: Card) {
@@ -247,6 +244,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         alertDialog.show()
 
+        if (vmGame.isHost()) {
+            deckButton.isClickable = true
+        }
         return alertDialog
     }
 
