@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
+import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.models.Suit
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -238,8 +239,13 @@ class GameBoard : Fragment(R.layout.game_page) {
         )
 
         vmGame.addListener(
-            object fun onEndPushUps() {
-
+            object : ViewModelListener() {
+                override fun onEndPushUps(players: HashMap<String, Player>) {
+                    alertDialogue.dismiss()
+                    if (vmGame.game.players.get(vmGame.localId)!!.bet.suit.name != vmGame.game.winner.name) {
+                        alertDialogue = loserPushUps(view, players.get(vmGame.localId)!!.bet.number)
+                    }
+                }
             }
         )
 
@@ -391,28 +397,28 @@ class GameBoard : Fragment(R.layout.game_page) {
         Toast.makeText(context,
             "pompes distribués à coeur", Toast.LENGTH_SHORT).show()
         val suit = Suit.HEARTS
-        vmGame.givePushUps(suit)
+        vmGame.givePushUps(suit.name)
     }
 
     val distributedToSpade = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "pompes distribués à pique", Toast.LENGTH_SHORT).show()
         val suit = Suit.SPADES
-        vmGame.givePushUps(suit)
+        vmGame.givePushUps(suit.name)
     }
 
     val distributedToClub = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "pompes distribués à trèfle", Toast.LENGTH_SHORT).show()
         val suit = Suit.CLUBS
-        vmGame.givePushUps(suit)
+        vmGame.givePushUps(suit.name)
     }
 
     val distributedToDiamond = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "pompes distribués à carreau", Toast.LENGTH_SHORT).show()
         val suit = Suit.DIAMONDS
-        vmGame.givePushUps(suit)
+        vmGame.givePushUps(suit.name)
     }
 
     fun looserPopup(view: View, suit: Suit) : AlertDialog {
@@ -426,5 +432,24 @@ class GameBoard : Fragment(R.layout.game_page) {
         alertDialog.show()
 
         return  alertDialog
+    }
+
+    fun loserPushUps(view: View, bet: Int) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Vous avez ${bet} pompes à faire")
+            .setPositiveButton("Fait", lastPushUpsDone)
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    val lastPushUpsDone = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes effectués", Toast.LENGTH_SHORT).show()
+        //TODO vmGame call
     }
 }
