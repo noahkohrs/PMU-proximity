@@ -241,9 +241,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             object : ViewModelListener() {
                 override fun onEndPushUps(count: Int) {
                     alertDialogue.dismiss()
-                    if (vmGame.game.players.get(vmGame.localId)!!.bet.suit.name != vmGame.game.winner.name) {
-                        alertDialogue = loserPushUps(view, players.get(vmGame.localId)!!.bet.number)
-                    }
+                    alertDialogue = loserPushUps(view, count)
                 }
             }
         )
@@ -449,6 +447,6 @@ class GameBoard : Fragment(R.layout.game_page) {
     val lastPushUpsDone = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "pompes effectués", Toast.LENGTH_SHORT).show()
-        //TODO vmGame call
+        vmGame.EndPushUps()
     }
 }
