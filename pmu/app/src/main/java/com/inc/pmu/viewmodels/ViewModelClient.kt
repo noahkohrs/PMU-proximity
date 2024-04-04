@@ -123,6 +123,10 @@ class ViewModelClient : ViewModelPMU() {
                     val suit = params.get(Param.GAME_END) as String
                     handleGameEnds(suit)
                 }
+                Action.END_PUSHUPS -> {
+                    val count = params.get(Param.END_PUSHUPS) as Int
+                    handleEndPushUps(count)
+                }
                 else -> throw UnsupportedOperationException("Not a client action")
             }
         }
@@ -217,7 +221,12 @@ class ViewModelClient : ViewModelPMU() {
     }
 
     override fun handleGivePushUps(count: Int, target: String) {
-        TODO("Not yet implemented")
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handleEndPushUps(count: Int) {
+        for (l in listeners)
+            l.onEndPushUps(count)
     }
 
     override fun startBet() {
@@ -283,8 +292,10 @@ class ViewModelClient : ViewModelPMU() {
         broadcast(payload)
     }
 
-    override fun EndPushUps(players: Array<Player>) {
-        TODO("Not yet implemented")
+    override fun EndPushUps() {
+        throw UnsupportedOperationException("A client can't distribute end push ups")
     }
+
+
 
 }
