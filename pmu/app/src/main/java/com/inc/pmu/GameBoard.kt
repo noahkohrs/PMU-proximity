@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
+import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.models.Suit
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -239,7 +240,8 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onEndPushUps(count: Int) {
-                    //TO DO
+                    alertDialogue.dismiss()
+                    alertDialogue = loserPushUps(view, count)
                 }
             }
         )
@@ -427,5 +429,24 @@ class GameBoard : Fragment(R.layout.game_page) {
         alertDialog.show()
 
         return  alertDialog
+    }
+
+    fun loserPushUps(view: View, bet: Int) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Vous avez ${bet} pompes à faire")
+            .setPositiveButton("Fait", lastPushUpsDone)
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    val lastPushUpsDone = { dialog: DialogInterface, which: Int ->
+        Toast.makeText(context,
+            "pompes effectués", Toast.LENGTH_SHORT).show()
+        vmGame.EndPushUps()
     }
 }

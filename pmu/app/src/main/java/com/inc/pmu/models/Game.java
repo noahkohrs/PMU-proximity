@@ -92,4 +92,15 @@ public class Game implements IGame, Jsonisable {
         }
         return new Game(board, players);
     }
+
+    public Suit getWinner() {
+        Suit winSuit = null;
+        for (Suit suit : Suit.values()) {
+            if (this.board.riderPos.get(suit) == Board.LENGTH + 1) {
+                winSuit = suit;
+            }
+        }
+
+        return winSuit;
+    }
 }
