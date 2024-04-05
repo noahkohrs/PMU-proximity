@@ -57,7 +57,7 @@ public class VMStateMachine {
                 if (transition == Transition.VOTE_SUCCESS) {
                     state = State.WAITING_FOR_DRAWING;
                 } else if (transition == Transition.VOTE_FAIL) {
-                    state = State.DOING_PUSH_UPS;
+                    state = State.CARD_DRAWN;
                 }
                 break;
         }

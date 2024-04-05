@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -46,6 +47,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     private lateinit var alertDialogue: AlertDialog
 
+    private lateinit var  currentSuit: TextView
+    private lateinit var currentNbPushUps: TextView
+
     companion object {
         fun newInstance() = GameBoard()
     }
@@ -65,6 +69,17 @@ class GameBoard : Fragment(R.layout.game_page) {
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
         pushButton = requireView().findViewById(R.id.pushButton)
+
+        currentSuit = requireView().findViewById(R.id.playerSuit)
+        currentNbPushUps = requireView().findViewById(R.id.currentPushUps)
+
+        var suit = vmGame.game.players.get(vmGame.localId)!!.bet.suit
+        when(suit) {
+            Suit.HEARTS -> currentSuit.text = "Coeur"
+            Suit.SPADES -> currentSuit.text = "Pique"
+            Suit.CLUBS -> currentSuit.text = "Trèfle"
+            Suit.DIAMONDS -> currentSuit.text = "Carreau"
+        }
 
         sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
         for (i in 1..vmGame.game.board.sideCards.size) {
@@ -109,34 +124,12 @@ class GameBoard : Fragment(R.layout.game_page) {
             deckButton.isClickable = false
         }
 
-
-        deckButton.isClickable = true
-
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onCardDrawn(card: Card) {
                     Log.d(Global.TAG, "Drawn card: $card")
                     var drawCard : Drawable = getCardDrawable(card, context)
                     playedCards.setImageDrawable(drawCard)
-
-                    for (suit in Suit.values()) {
-
-                        var c : ImageView
-                        when(suit) {
-                            Suit.HEARTS -> c = heart
-                            Suit.SPADES -> c = spades
-                            Suit.CLUBS -> c = club
-                            Suit.DIAMONDS -> c = diamonds
-                        }
-
-                        var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
-                        var dividerId = getDividerFromPos(cardPos, context)
-                        var divider : View = view.findViewById(dividerId)
-
-                        val params = c.layoutParams as ConstraintLayout.LayoutParams
-                        params.topToBottom = divider.id
-                        c.requestLayout()
-                    }
 
                     var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
                     var dividerId = getDividerFromPos(cardPos, context)
@@ -168,7 +161,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                         Suit.HEARTS -> suit_string = "Coeur"
                         Suit.SPADES -> suit_string = "Pique"
                         Suit.CLUBS -> suit_string = "Trèfle"
-                        Suit.DIAMONDS -> suit_string = "Diamant"
+                        Suit.DIAMONDS -> suit_string = "Carreau"
 
                     }
                     pushButton.text = "Faire reculer\n" + suit_string
@@ -179,6 +172,32 @@ class GameBoard : Fragment(R.layout.game_page) {
                     else {
                         pushButton.isClickable = true
                         pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
+                    }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onBoardUpdate() {
+                    currentNbPushUps.text = vmGame.game.players.get(vmGame.localId)!!.currentPushUps.toString()
+                    for (suit in Suit.values()) {
+
+                        var c : ImageView
+                        when(suit) {
+                            Suit.HEARTS -> c = heart
+                            Suit.SPADES -> c = spades
+                            Suit.CLUBS -> c = club
+                            Suit.DIAMONDS -> c = diamonds
+                        }
+
+                        var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
+                        var dividerId = getDividerFromPos(cardPos, context)
+                        var divider : View = view.findViewById(dividerId)
+
+                        val params = c.layoutParams as ConstraintLayout.LayoutParams
+                        params.topToBottom = divider.id
+                        c.requestLayout()
                     }
                 }
             }
@@ -266,6 +285,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         alertDialog.show()
 
+        if (vmGame.isHost()) {
+            deckButton.isClickable = true
+        }
         return alertDialog
     }
 

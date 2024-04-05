@@ -160,6 +160,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
         if (suitChosen == suit) {
             suitChosen = null
             buttonPlay.isClickable = false
+            buttonPlay.setBackgroundColor(resources.getColor(R.color.unavailable))
         }
     }
 
