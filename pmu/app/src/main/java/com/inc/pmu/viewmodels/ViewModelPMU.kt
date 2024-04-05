@@ -162,7 +162,7 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun drawCard()
     abstract fun pushUpsDone()
     abstract fun gameEnds(winner: String)
-    abstract fun checkWin()
+    abstract fun checkWin(): Boolean
     abstract fun givePushUps(target: String)
     abstract fun EndPushUps()
 

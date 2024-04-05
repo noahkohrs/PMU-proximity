@@ -27,7 +27,7 @@ import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
-    val MIN_TIME_DRAW_CARD: Long = 2000
+    val MIN_TIME_DRAW_CARD: Long = 0
 
 
     private lateinit var vmGame: ViewModelPMU
@@ -78,20 +78,21 @@ class GameBoard : Fragment(R.layout.game_page) {
 
 
         deckButton.setOnClickListener {
-            vmGame.checkWin()
-            vmGame.drawCard()
-            deckButton.isClickable = false
-            Log.d(Global.TAG, "Bouton non clickable")
-            val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
-                override fun onTick(millisUntilFinished: Long) {
-                    //affiche les secondes sur le deck transparent
+            if (!vmGame.checkWin()){
+                vmGame.drawCard()
+                deckButton.isClickable = false
+                Log.d(Global.TAG, "Bouton non clickable")
+                val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        //affiche les secondes sur le deck transparent
+                    }
+                    override fun onFinish() {
+                        deckButton.isClickable = true
+                        Log.d(Global.TAG, "Bouton re-clickable !")
+                    }
                 }
-                override fun onFinish() {
-                    deckButton.isClickable = true
-                    Log.d(Global.TAG, "Bouton re-clickable !")
-                }
+                timer.start()
             }
-            timer.start()
         }
 
 
@@ -395,6 +396,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             "pompes distribués à coeur", Toast.LENGTH_SHORT).show()
         val suit = Suit.HEARTS
         vmGame.givePushUps(suit.name)
+        alertDialogue.dismiss()
     }
 
     val distributedToSpade = { dialog: DialogInterface, which: Int ->
@@ -402,6 +404,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             "pompes distribués à pique", Toast.LENGTH_SHORT).show()
         val suit = Suit.SPADES
         vmGame.givePushUps(suit.name)
+        alertDialogue.dismiss()
     }
 
     val distributedToClub = { dialog: DialogInterface, which: Int ->
@@ -409,6 +412,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             "pompes distribués à trèfle", Toast.LENGTH_SHORT).show()
         val suit = Suit.CLUBS
         vmGame.givePushUps(suit.name)
+        alertDialogue.dismiss()
     }
 
     val distributedToDiamond = { dialog: DialogInterface, which: Int ->
@@ -416,6 +420,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             "pompes distribués à carreau", Toast.LENGTH_SHORT).show()
         val suit = Suit.DIAMONDS
         vmGame.givePushUps(suit.name)
+        alertDialogue.dismiss()
     }
 
     fun looserPopup(view: View, suit: String) : AlertDialog {
@@ -447,6 +452,5 @@ class GameBoard : Fragment(R.layout.game_page) {
     val lastPushUpsDone = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
             "pompes effectués", Toast.LENGTH_SHORT).show()
-        vmGame.EndPushUps()
     }
 }
