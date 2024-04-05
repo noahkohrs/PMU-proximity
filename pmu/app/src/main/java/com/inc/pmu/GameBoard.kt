@@ -361,24 +361,24 @@ class GameBoard : Fragment(R.layout.game_page) {
         when(suit) {
             Suit.HEARTS.name -> {
                 builder.setPositiveButton("Pique", distributedToSpade)
-                    .setPositiveButton("Carreau", distributedToDiamond)
-                    .setPositiveButton("Trèfle", distributedToClub)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Trèfle", distributedToClub)
             }
 
             Suit.SPADES.name -> {
                 builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setPositiveButton("Carreau", distributedToDiamond)
-                    .setPositiveButton("Trèfle", distributedToClub)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Trèfle", distributedToClub)
             }
             Suit.CLUBS.name -> {
                 builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setPositiveButton("Carreau", distributedToDiamond)
-                    .setPositiveButton("Pique", distributedToSpade)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Pique", distributedToSpade)
             }
             Suit.DIAMONDS.name -> {
                 builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setPositiveButton("Pique", distributedToSpade)
-                    .setPositiveButton("Trèfle", distributedToClub)
+                    .setNeutralButton("Pique", distributedToSpade)
+                    .setNegativeButton("Trèfle", distributedToClub)
             }
         }
 
