@@ -402,12 +402,13 @@ class ViewModelHost() : ViewModelPMU() {
                 p.setBet(bet.number * abs(ranking!! - Board.LENGTH + 1), bet.suit)
                 Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - Board.LENGTH + 1)}")
             }
-            val payload = PayloadMaker
-                .createPayloadRequest(Action.GAME_END, Sender.HOST)
-                .addParam(Param.GAME_END, winner)
-                .toPayload()
-            broadcast(payload)
         }
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.GAME_END, Sender.HOST)
+            .addParam(Param.GAME_END, winner)
+            .toPayload()
+        broadcast(payload)
+
         for (l in listeners)
             l.onGameEnds(winner)
     }
