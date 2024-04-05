@@ -1,6 +1,5 @@
 package com.inc.pmu
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -12,16 +11,14 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
-import com.inc.pmu.models.Player
-import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.models.Suit
+import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
@@ -390,32 +387,56 @@ class GameBoard : Fragment(R.layout.game_page) {
         return  alertDialog
     }
 
-    val distributedToHearth = { dialog: DialogInterface, which: Int ->
-        Toast.makeText(context,
-            "pompes distribués à coeur", Toast.LENGTH_SHORT).show()
+    val distributedToHearth = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à coeur", Toast.LENGTH_SHORT
+        ).show()
         val suit = Suit.HEARTS
         vmGame.givePushUps(suit.name)
+        val fragment = PushUpBet.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
     }
 
-    val distributedToSpade = { dialog: DialogInterface, which: Int ->
-        Toast.makeText(context,
-            "pompes distribués à pique", Toast.LENGTH_SHORT).show()
+    val distributedToSpade = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à pique", Toast.LENGTH_SHORT
+        ).show()
         val suit = Suit.SPADES
         vmGame.givePushUps(suit.name)
+        val fragment = PushUpBet.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
     }
 
-    val distributedToClub = { dialog: DialogInterface, which: Int ->
-        Toast.makeText(context,
-            "pompes distribués à trèfle", Toast.LENGTH_SHORT).show()
+    val distributedToClub = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à trèfle", Toast.LENGTH_SHORT
+        ).show()
         val suit = Suit.CLUBS
         vmGame.givePushUps(suit.name)
+        val fragment = PushUpBet.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
     }
 
-    val distributedToDiamond = { dialog: DialogInterface, which: Int ->
-        Toast.makeText(context,
-            "pompes distribués à carreau", Toast.LENGTH_SHORT).show()
+    val distributedToDiamond = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à carreau", Toast.LENGTH_SHORT
+        ).show()
         val suit = Suit.DIAMONDS
         vmGame.givePushUps(suit.name)
+        val fragment = PushUpBet.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
     }
 
     fun looserPopup(view: View, suit: String) : AlertDialog {
@@ -434,7 +455,13 @@ class GameBoard : Fragment(R.layout.game_page) {
     fun loserPushUps(view: View, bet: Int) : AlertDialog {
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
             .setMessage("Vous avez ${bet} pompes à faire")
-            .setPositiveButton("Fait", lastPushUpsDone)
+            .setPositiveButton("Quitter", DialogInterface.OnClickListener() {
+                dialog: DialogInterface, which: Int ->
+                val fragment = PushUpBet.newInstance()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .commit()
+            })
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -442,11 +469,5 @@ class GameBoard : Fragment(R.layout.game_page) {
         alertDialog.show()
 
         return  alertDialog
-    }
-
-    val lastPushUpsDone = { dialog: DialogInterface, which: Int ->
-        Toast.makeText(context,
-            "pompes effectués", Toast.LENGTH_SHORT).show()
-        vmGame.EndPushUps()
     }
 }
