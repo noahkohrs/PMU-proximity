@@ -416,7 +416,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         ).show()
         val suit = Suit.HEARTS
         vmGame.givePushUps(suit.name)
-        val fragment = PushUpBet.newInstance()
+        val fragment = HomePage.newInstance()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
@@ -429,7 +429,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         ).show()
         val suit = Suit.SPADES
         vmGame.givePushUps(suit.name)
-        val fragment = PushUpBet.newInstance()
+        val fragment = HomePage.newInstance()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
@@ -442,7 +442,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         ).show()
         val suit = Suit.CLUBS
         vmGame.givePushUps(suit.name)
-        val fragment = PushUpBet.newInstance()
+        val fragment = HomePage.newInstance()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
@@ -455,7 +455,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         ).show()
         val suit = Suit.DIAMONDS
         vmGame.givePushUps(suit.name)
-        val fragment = PushUpBet.newInstance()
+        val fragment = HomePage.newInstance()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commit()
@@ -479,7 +479,7 @@ class GameBoard : Fragment(R.layout.game_page) {
             .setMessage("Vous avez ${bet} pompes à faire")
             .setPositiveButton("Quitter", DialogInterface.OnClickListener() {
                 dialog: DialogInterface, which: Int ->
-                val fragment = PushUpBet.newInstance()
+                val fragment = HomePage.newInstance()
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.container, fragment)
                     .commit()
