@@ -83,6 +83,6 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .commit()
 
-        fragment.requireView().keepScreenOn = true
+        //fragment.requireView().keepScreenOn = true
     }
 }

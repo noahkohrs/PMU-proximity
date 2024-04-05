@@ -246,6 +246,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onGameEnds(winner: String) {
+                    Log.d(Global.TAG, "ONGAMEENDS PD")
                     val player = vmGame.game.players.get(vmGame.localId)!!
                     if (player.bet.suit.name == winner) {
                         alertDialogue = winnerPopup(view, winner)
@@ -260,6 +261,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onEndPushUps(count: Int) {
+                    Log.d(Global.TAG, "ONENDPUHUPS PD")
                     alertDialogue.dismiss()
                     alertDialogue = loserPushUps(view, count)
                 }

@@ -407,10 +407,9 @@ class ViewModelHost() : ViewModelPMU() {
                 .addParam(Param.GAME_END, winner)
                 .toPayload()
             broadcast(payload)
-
-            for (l in listeners)
-                l.onGameEnds(winner)
         }
+        for (l in listeners)
+            l.onGameEnds(winner)
     }
 
     override fun checkWin(): Boolean {
