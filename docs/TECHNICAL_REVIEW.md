@@ -8,6 +8,7 @@
 - [ViewModel](#viewmodel)
 - [Model](#model)
 - [Network Payloads](#network-payloads)
+- [Validation System of the real live actions](#validation-system-of-the-real-live-actions)
 
 ## Introduction
 
@@ -65,7 +66,26 @@ Therefore, the game model *nearly* the same for the host and the clients (the on
 
 ## Model 
 
+Here is the class diagram of the model part of the application.
+![Model Class Diagram](assets/model_class_diagram.png)
 
+The Model part is really basic and is only here to manage the game logic and the data that the game needs to work. 
+
+There only two thing that is worth to mention :
+
+### GameHost
+The Game representation has a special implementation for the Host.
+It's because the host is the only one that can draw a card from the deck.
+Therefore, the `drawCard` method is only implemented in the `GameHost` class and he's the only one that has a deck of cards stored locally. `drawCard` does not directly impact the game, to affect the change on have to call the `cardDrawn` method that is already here in the `Game` class.
+
+### Client side representation
+The make the code easier to work with, the game is stored on the client side as well of the host side. For this reason, the Game is only sent entirely to the clients when the betting phase starts. 
+
+This feature allows the clients to have a local access to the game data and to be able to display the game board and the cards easily.
+
+This also implies that to maintain a coherent game state on each device, the functions of the game model are called on each device when the host sends a payload to the clients.
+
+This is the main principle of the ViewModel, to apply the actions locally when the host sends the confirmation of the action.
 
 ## Network Payloads 
 The payload system already exists in the Nearby Connections API. 
@@ -156,3 +176,16 @@ override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
 }
 ```
 
+## Validation System of the real live actions
+
+To validate IRL actions such as `player X as done a pushup`, we've implemented a simple system that let the players vote to validate if the action was done or not by player X.
+
+The majority of the votes will decide if the action is validated or not.
+
+This approach is inspired by the system of Blockchain and the consensus that is used to validate a block, but at a smaller scale because our system is not critical.
+
+It's composed of 4 steps :
+- The player that has done the action send a payload to the host to inform him that he has done the action.
+- The host will send a payload to all the clients to inform them that player X has done the action and that they have to vote.
+- The clients will send a payload to the host to inform him of their vote.
+- The host will wait for all the votes and then will send a payload to all the clients to inform them (and himself) of the result of the vote.
