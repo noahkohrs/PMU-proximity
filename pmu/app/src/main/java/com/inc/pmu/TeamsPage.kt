@@ -37,8 +37,6 @@ class TeamsPage : Fragment(R.layout.teams_page) {
         heartTeam = requireView().findViewById(R.id.teamCoeur)
         diamondTeam = requireView().findViewById(R.id.teamCarreau)
 
-        playButton.isClickable = false
-
         var team : TextView? = null
         var players : MutableCollection<Player> = vmGame.game.players.values
         var remaining = 0
@@ -67,14 +65,18 @@ class TeamsPage : Fragment(R.layout.teams_page) {
             }
 
         }
-        if (vmGame is ViewModelHost && remaining == 0) {
-            playButton.isClickable = true
-            playButton.setBackgroundColor(Color.YELLOW)
-        }
 
 
         playButton.setOnClickListener {
             vmGame.startGame()
+        }
+
+        if (vmGame is ViewModelHost && remaining == 0) {
+            playButton.isClickable = true
+            playButton.setBackgroundColor(Color.YELLOW)
+        }
+        else {
+            playButton.isClickable = false
         }
 
         vmGame.addListener(
