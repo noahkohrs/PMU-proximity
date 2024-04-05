@@ -1,6 +1,5 @@
 package com.inc.pmu
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -13,19 +12,20 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Card
-import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.models.Suit
+import com.inc.pmu.viewmodels.ViewModelListener
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
-    val MIN_TIME_DRAW_CARD: Long = 2000
+    val MIN_TIME_DRAW_CARD: Long = 0
 
 
     private lateinit var vmGame: ViewModelPMU
@@ -90,19 +90,21 @@ class GameBoard : Fragment(R.layout.game_page) {
 
 
         deckButton.setOnClickListener {
-            vmGame.drawCard()
-            deckButton.isClickable = false
-            Log.d(Global.TAG, "Bouton non clickable")
-            val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
-                override fun onTick(millisUntilFinished: Long) {
-                    //affiche les secondes sur le deck transparent
+            if (!vmGame.checkWin()){
+                vmGame.drawCard()
+                deckButton.isClickable = false
+                Log.d(Global.TAG, "Bouton non clickable")
+                val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        //affiche les secondes sur le deck transparent
+                    }
+                    override fun onFinish() {
+                        deckButton.isClickable = true
+                        Log.d(Global.TAG, "Bouton re-clickable !")
+                    }
                 }
-                override fun onFinish() {
-                    deckButton.isClickable = true
-                    Log.d(Global.TAG, "Bouton re-clickable !")
-                }
+                timer.start()
             }
-            timer.start()
         }
 
 
@@ -237,6 +239,37 @@ class GameBoard : Fragment(R.layout.game_page) {
                 }
             }
         )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onGameEnds(winner: String) {
+                    val player = vmGame.game.players.get(vmGame.localId)!!
+                    if (player.bet.suit.name == winner) {
+                        alertDialogue = winnerPopup(view, winner)
+                    }
+                    else {
+                        alertDialogue = looserPopup(view, winner)
+                    }
+                }
+            }
+        )
+
+        vmGame.addListener(
+            object : ViewModelListener() {
+                override fun onEndPushUps(count: Int) {
+                    alertDialogue.dismiss()
+                    alertDialogue = loserPushUps(view, count)
+                }
+            }
+        )
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing to disable the default back button behavior
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     fun doPushups(view: View): AlertDialog {
@@ -338,5 +371,126 @@ class GameBoard : Fragment(R.layout.game_page) {
             dividerId = res.getIdentifier(("id/divider" + pos), "id", context.packageName)
         }
         return dividerId
+    }
+
+    fun winnerPopup(view: View, suit: String) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setTitle("Vous avez gagné")
+            .setMessage("A qui voulez vous distribuer vos pompes")
+
+        when(suit) {
+            Suit.HEARTS.name -> {
+                builder.setPositiveButton("Pique", distributedToSpade)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Trèfle", distributedToClub)
+            }
+
+            Suit.SPADES.name -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Trèfle", distributedToClub)
+            }
+            Suit.CLUBS.name -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setNeutralButton("Carreau", distributedToDiamond)
+                    .setNegativeButton("Pique", distributedToSpade)
+            }
+            Suit.DIAMONDS.name -> {
+                builder.setPositiveButton("Coeur", distributedToHearth)
+                    .setNeutralButton("Pique", distributedToSpade)
+                    .setNegativeButton("Trèfle", distributedToClub)
+            }
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    val distributedToHearth = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à coeur", Toast.LENGTH_SHORT
+        ).show()
+        val suit = Suit.HEARTS
+        vmGame.givePushUps(suit.name)
+        val fragment = HomePage.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    val distributedToSpade = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à pique", Toast.LENGTH_SHORT
+        ).show()
+        val suit = Suit.SPADES
+        vmGame.givePushUps(suit.name)
+        val fragment = HomePage.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    val distributedToClub = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à trèfle", Toast.LENGTH_SHORT
+        ).show()
+        val suit = Suit.CLUBS
+        vmGame.givePushUps(suit.name)
+        val fragment = HomePage.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    val distributedToDiamond = fun(dialog: DialogInterface, which: Int): Unit {
+        Toast.makeText(
+            context,
+            "pompes distribués à carreau", Toast.LENGTH_SHORT
+        ).show()
+        val suit = Suit.DIAMONDS
+        vmGame.givePushUps(suit.name)
+        val fragment = HomePage.newInstance()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit()
+    }
+
+    fun looserPopup(view: View, suit: String) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setTitle("Vous avez Perdu")
+            .setMessage("l'équipe ${suit} a gagné")
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
+    }
+
+    fun loserPushUps(view: View, bet: Int) : AlertDialog {
+        val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
+            .setMessage("Vous avez ${bet} pompes à faire")
+            .setPositiveButton("Quitter", DialogInterface.OnClickListener() {
+                dialog: DialogInterface, which: Int ->
+                val fragment = HomePage.newInstance()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .commit()
+            })
+
+        val alertDialog = builder.create()
+        alertDialog.setCancelable(false)
+
+        alertDialog.show()
+
+        return  alertDialog
     }
 }

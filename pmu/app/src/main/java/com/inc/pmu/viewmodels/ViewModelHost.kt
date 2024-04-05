@@ -1,5 +1,6 @@
 package com.inc.pmu.viewmodels
 
+import android.os.CountDownTimer
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -9,6 +10,7 @@ import com.inc.pmu.BuildConfig
 import com.inc.pmu.Const
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
+import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.HostGame
@@ -18,11 +20,14 @@ import com.inc.pmu.models.Suit
 import com.inc.pmu.models.Validator
 import org.json.JSONObject
 import java.util.UUID
+import kotlin.math.abs
 
 class ViewModelHost() : ViewModelPMU() {
     private var playersEndpointIds = HashMap<String, String>()
     private val automata: VMStateMachine = VMStateMachine()
     private var validator: Validator = Validator.doneValidator() // Just to init
+    private var winners = mutableListOf<Player>()
+    private var cptWinners = 0
     private companion object {
         const val TAG = Global.TAG
         val STRATEGY = Strategy.P2P_STAR
@@ -117,6 +122,11 @@ class ViewModelHost() : ViewModelPMU() {
                     val puuid: String = params.get(Param.PUUID) as String
                     val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
                     handleVote(puuid, vote)
+                }
+                Action.GIVE_PUSHUPS -> {
+                    val count: Int = params.get(Param.NB_GIVE_PUSHUPS) as Int
+                    val target: String = params.get(Param.TGT_GIVE_PUSHUPS) as String
+                    handleGivePushUps(count,target)
                 }
                 else -> {
                     Log.d(Global.TAG, "Unknown action for an Host")
@@ -300,6 +310,26 @@ class ViewModelHost() : ViewModelPMU() {
         throw UnsupportedOperationException("Not an host action")
     }
 
+    override fun handleGameEnds(winner: String) {
+        throw UnsupportedOperationException("Not an host action")
+    }
+
+    override fun handleGivePushUps(count: Int, target: String) {
+        for (p in game.players.values){
+            if (game.players[localId]!!.bet.suit.name == target){
+                p.setBet(p.bet.number+count,p.bet.suit)
+            }
+        }
+        cptWinners += 1
+        if (cptWinners >= winners.size){
+            EndPushUps()
+        }
+    }
+
+    override fun handleEndPushUps(count: Int) {
+        throw UnsupportedOperationException("Not an host action")
+    }
+
     override fun startBet() {
         val info = PayloadMaker
             .createPayloadRequest(Action.START_BET, Sender.HOST)
@@ -363,5 +393,80 @@ class ViewModelHost() : ViewModelPMU() {
         handlePushUpsDone(localId)
     }
 
+    override fun gameEnds(winner: String) {
+        for (p in game.players.values) {
+            if (p.bet.suit.name == winner) {
+                winners.add(p)
+            } else {
+                val bet = p.bet
+                val ranking = game.board.riderPos[bet.suit]
+                p.setBet(bet.number * abs(ranking!! - (Board.LENGTH + 1)), bet.suit)
+                Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - (Board.LENGTH + 1))}")
+            }
+        }
 
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.GAME_END, Sender.HOST)
+            .addParam(Param.GAME_END, winner)
+            .toPayload()
+        broadcast(payload)
+
+        for (l in listeners)
+            l.onGameEnds(winner)
+
+        if (winners.isEmpty()){
+            val timer = object: CountDownTimer(5000, 100) {
+                override fun onTick(millisUntilFinished: Long) {
+                    //affiche les secondes sur le deck transparent
+                }
+                override fun onFinish() {
+                    EndPushUps()
+                }
+            }
+            timer.start()
+        }
+    }
+
+    override fun checkWin(): Boolean {
+        var winner: String? = null
+        for (suit in Suit.entries){
+            if (game.board.riderPos[suit] == Board.LENGTH + 1){
+                winner = suit.name
+            }
+        }
+        if (winner != null){
+            gameEnds(winner)
+            return true
+        }
+        return false
+    }
+
+    override fun givePushUps(target: String) {
+        handleGivePushUps(game.players[localId]!!.bet.number,target)
+    }
+
+    override fun EndPushUps() {
+        for (suit in game.board.riderPos.keys){
+            Log.d(Global.TAG, suit.name + " : " +game.board.riderPos[suit].toString())
+        }
+        for (endPoint in playersEndpointIds.keys){
+            val id = playersEndpointIds[endPoint]
+            val p = game.players[id]
+            if (p !in winners){
+                val count = p!!.bet.number
+                val payload = PayloadMaker
+                    .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                    .addParam(Param.END_PUSHUPS, count)
+                    .toPayload()
+                connectionsClient.sendPayload(endPoint, payload)
+            }
+        }
+
+        val p = game.players[localId]
+        if (p !in winners){
+            val count = p!!.bet.number
+            for (l in listeners)
+                l.onEndPushUps(count)
+        }
+    }
 }

@@ -12,6 +12,7 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
+import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
@@ -118,6 +119,14 @@ class ViewModelClient : ViewModelPMU() {
                     val res = params.get(Param.VOTE_RESULT) as Boolean
                     handleVoteResult(id, res)
                 }
+                Action.GAME_END -> {
+                    val suit = params.get(Param.GAME_END) as String
+                    handleGameEnds(suit)
+                }
+                Action.END_PUSHUPS -> {
+                    val count = params.get(Param.END_PUSHUPS) as Int
+                    handleEndPushUps(count)
+                }
                 else -> throw UnsupportedOperationException("Not a client action")
             }
         }
@@ -213,6 +222,20 @@ class ViewModelClient : ViewModelPMU() {
         }
     }
 
+    override fun handleGameEnds(winner: String) {
+        for (l in listeners)
+            l.onGameEnds(winner)
+    }
+
+    override fun handleGivePushUps(count: Int, target: String) {
+        throw UnsupportedOperationException("Not a client action")
+    }
+
+    override fun handleEndPushUps(count: Int) {
+        for (l in listeners)
+            l.onEndPushUps(count)
+    }
+
     override fun startBet() {
         throw UnsupportedOperationException("Not a client action")
     }
@@ -258,7 +281,28 @@ class ViewModelClient : ViewModelPMU() {
             .toPayload()
         broadcast(pushupDonePayload)
     }
-    
+
+    override fun gameEnds(winner: String) {
+        throw UnsupportedOperationException("A client can't end the game")
+    }
+
+    override fun checkWin(): Boolean {
+        throw UnsupportedOperationException("A client can't check win")
+    }
+
+    override fun givePushUps(target: String) {
+        val payload = PayloadMaker
+            .createPayloadRequest(Action.GIVE_PUSHUPS, Sender.PLAYER)
+            .addParam(Param.NB_GIVE_PUSHUPS, game.players.get(localId)!!.bet.number)
+            .addParam(Param.TGT_GIVE_PUSHUPS, target)
+            .toPayload()
+        broadcast(payload)
+    }
+
+    override fun EndPushUps() {
+        throw UnsupportedOperationException("A client can't distribute end push ups")
+    }
+
 
 
 }
