@@ -400,8 +400,8 @@ class ViewModelHost() : ViewModelPMU() {
             } else {
                 val bet = p.bet
                 val ranking = game.board.riderPos[bet.suit]
-                p.setBet(bet.number * abs(ranking!! - Board.LENGTH + 1), bet.suit)
-                Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - Board.LENGTH + 1)}")
+                p.setBet(bet.number * abs(ranking!! - (Board.LENGTH + 1)), bet.suit)
+                Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - (Board.LENGTH + 1))}")
             }
         }
 
@@ -421,16 +421,6 @@ class ViewModelHost() : ViewModelPMU() {
                 }
                 override fun onFinish() {
                     EndPushUps()
-                    /*val payload2 = PayloadMaker
-                        .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
-                        .addParam(Param.END_PUSHUPS, winner)
-                        .toPayload()
-                    broadcast(payload2)
-
-                    val p = game.players[localId]
-                    for (l in listeners){
-                        l.onEndPushUps(p!!.bet.number)
-                    }*/
                 }
             }
             timer.start()
