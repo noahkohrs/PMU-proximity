@@ -25,7 +25,7 @@ import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
-    val MIN_TIME_DRAW_CARD: Long = 0
+    val MIN_TIME_DRAW_CARD: Long = 7000
 
 
     private lateinit var vmGame: ViewModelPMU
