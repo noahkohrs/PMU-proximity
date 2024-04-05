@@ -1,5 +1,6 @@
 package com.inc.pmu.viewmodels
 
+import android.os.CountDownTimer
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -123,8 +124,8 @@ class ViewModelHost() : ViewModelPMU() {
                     handleVote(puuid, vote)
                 }
                 Action.GIVE_PUSHUPS -> {
-                    val count: Int = params.get(Param.GIVE_PUSHUPS) as Int
-                    val target: String = params.get(Param.GIVE_PUSHUPS) as String
+                    val count: Int = params.get(Param.NB_GIVE_PUSHUPS) as Int
+                    val target: String = params.get(Param.TGT_GIVE_PUSHUPS) as String
                     handleGivePushUps(count,target)
                 }
                 else -> {
@@ -392,14 +393,18 @@ class ViewModelHost() : ViewModelPMU() {
         handlePushUpsDone(localId)
     }
 
-    override fun gameEnds(winner: String){
-        for (p in game.players.values){
-            val bet = p.bet
-            val ranking = game.board.riderPos[bet.suit]
-            p.setBet(bet.number * abs(ranking!! - Board.LENGTH) ,bet.suit)
-            if (p.bet.suit.name == winner)
+    override fun gameEnds(winner: String) {
+        for (p in game.players.values) {
+            if (p.bet.suit.name == winner) {
                 winners.add(p)
+            } else {
+                val bet = p.bet
+                val ranking = game.board.riderPos[bet.suit]
+                p.setBet(bet.number * abs(ranking!! - Board.LENGTH + 1), bet.suit)
+                Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - Board.LENGTH + 1)}")
+            }
         }
+
         val payload = PayloadMaker
             .createPayloadRequest(Action.GAME_END, Sender.HOST)
             .addParam(Param.GAME_END, winner)
@@ -408,9 +413,31 @@ class ViewModelHost() : ViewModelPMU() {
 
         for (l in listeners)
             l.onGameEnds(winner)
+
+        if (winners.isEmpty()){
+            val timer = object: CountDownTimer(5000, 100) {
+                override fun onTick(millisUntilFinished: Long) {
+                    //affiche les secondes sur le deck transparent
+                }
+                override fun onFinish() {
+                    EndPushUps()
+                    /*val payload2 = PayloadMaker
+                        .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                        .addParam(Param.END_PUSHUPS, winner)
+                        .toPayload()
+                    broadcast(payload2)
+
+                    val p = game.players[localId]
+                    for (l in listeners){
+                        l.onEndPushUps(p!!.bet.number)
+                    }*/
+                }
+            }
+            timer.start()
+        }
     }
 
-    override fun checkWin(){
+    override fun checkWin(): Boolean {
         var winner: String? = null
         for (suit in Suit.entries){
             if (game.board.riderPos[suit] == Board.LENGTH + 1){
@@ -419,7 +446,9 @@ class ViewModelHost() : ViewModelPMU() {
         }
         if (winner != null){
             gameEnds(winner)
+            return true
         }
+        return false
     }
 
     override fun givePushUps(target: String) {
@@ -427,6 +456,9 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun EndPushUps() {
+        for (suit in game.board.riderPos.keys){
+            Log.d(Global.TAG, suit.name + " : " +game.board.riderPos[suit].toString())
+        }
         for (endPoint in playersEndpointIds.keys){
             val id = playersEndpointIds[endPoint]
             val p = game.players[id]

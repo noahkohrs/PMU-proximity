@@ -286,15 +286,15 @@ class ViewModelClient : ViewModelPMU() {
         throw UnsupportedOperationException("A client can't end the game")
     }
 
-    override fun checkWin() {
+    override fun checkWin(): Boolean {
         throw UnsupportedOperationException("A client can't check win")
     }
 
     override fun givePushUps(target: String) {
         val payload = PayloadMaker
             .createPayloadRequest(Action.GIVE_PUSHUPS, Sender.PLAYER)
-            .addParam(Param.GIVE_PUSHUPS, game.players.get(localId)!!.bet.number)
-            .addParam(Param.GIVE_PUSHUPS, target)
+            .addParam(Param.NB_GIVE_PUSHUPS, game.players.get(localId)!!.bet.number)
+            .addParam(Param.TGT_GIVE_PUSHUPS, target)
             .toPayload()
         broadcast(payload)
     }

@@ -25,7 +25,7 @@ import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
-    val MIN_TIME_DRAW_CARD: Long = 2000
+    val MIN_TIME_DRAW_CARD: Long = 0
 
 
     private lateinit var vmGame: ViewModelPMU
@@ -90,20 +90,21 @@ class GameBoard : Fragment(R.layout.game_page) {
 
 
         deckButton.setOnClickListener {
-            vmGame.checkWin()
-            vmGame.drawCard()
-            deckButton.isClickable = false
-            Log.d(Global.TAG, "Bouton non clickable")
-            val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
-                override fun onTick(millisUntilFinished: Long) {
-                    //affiche les secondes sur le deck transparent
+            if (!vmGame.checkWin()){
+                vmGame.drawCard()
+                deckButton.isClickable = false
+                Log.d(Global.TAG, "Bouton non clickable")
+                val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        //affiche les secondes sur le deck transparent
+                    }
+                    override fun onFinish() {
+                        deckButton.isClickable = true
+                        Log.d(Global.TAG, "Bouton re-clickable !")
+                    }
                 }
-                override fun onFinish() {
-                    deckButton.isClickable = true
-                    Log.d(Global.TAG, "Bouton re-clickable !")
-                }
+                timer.start()
             }
-            timer.start()
         }
 
 
