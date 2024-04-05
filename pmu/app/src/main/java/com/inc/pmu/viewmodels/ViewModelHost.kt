@@ -1,5 +1,6 @@
 package com.inc.pmu.viewmodels
 
+import android.os.CountDownTimer
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -403,6 +404,7 @@ class ViewModelHost() : ViewModelPMU() {
                 Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - Board.LENGTH + 1)}")
             }
         }
+
         val payload = PayloadMaker
             .createPayloadRequest(Action.GAME_END, Sender.HOST)
             .addParam(Param.GAME_END, winner)
@@ -411,6 +413,28 @@ class ViewModelHost() : ViewModelPMU() {
 
         for (l in listeners)
             l.onGameEnds(winner)
+
+        if (winners.isEmpty()){
+            val timer = object: CountDownTimer(5000, 100) {
+                override fun onTick(millisUntilFinished: Long) {
+                    //affiche les secondes sur le deck transparent
+                }
+                override fun onFinish() {
+                    EndPushUps()
+                    /*val payload2 = PayloadMaker
+                        .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                        .addParam(Param.END_PUSHUPS, winner)
+                        .toPayload()
+                    broadcast(payload2)
+
+                    val p = game.players[localId]
+                    for (l in listeners){
+                        l.onEndPushUps(p!!.bet.number)
+                    }*/
+                }
+            }
+            timer.start()
+        }
     }
 
     override fun checkWin(): Boolean {
