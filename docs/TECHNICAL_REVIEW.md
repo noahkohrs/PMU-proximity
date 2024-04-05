@@ -36,11 +36,36 @@ For the sake of this project, our ViewModel (`ViewModelPMU`) is an abstract clas
 
 These two classes have the same goal, while being implemented each in their own specific way. 
 
+
 ### ViewModelHost
+The host ViewModel is the one that will manage the game and the connection with the clients. It will be the one that will start the game, manage the bets, and the game board. It will also be the one that will send the payloads as instruction to the clients.
+
+He's acting like a server AND like a client in a lot of way.
+
+He's the one that that will manage the game logic and define the what is legal and what is not.
+
+It's main goal is to checking the legality of a received payload by using a state machine and then to apply the action if it's legal.
+
+State Machine in the ViewModelHost :
+![State Machine](assets/automata_pmu_rules.png) 
+Each state only allows some specific actions to be done. If an action is not allowed in the current state, the payload will be ignored.
+
+This system avoid having to deal with concurrency problems and make the code more readable and maintainable.
+
+At the end, of each main event (such as ended vote, card drawn, etc), the host will send a payload to the clients to inform them of the new state of the game.
+
+the action made by the host will go through the same process as the clients' actions but all locally until the confirmation.
+
+### ViewModelClient
+The client ViewModel always communicate only with the host. It will send the payloads to the host and wait for the host to send back the confirmation of the action to apply the action locally.
+
+For this reason, he's not managing the legality of actions, but only the connection and the payloads that he has to handle. However, when the confirmation of the host is received, the client will apply the action locally by using the same action as the host. 
+
+Therefore, the game model *nearly* the same for the host and the clients (the only difference is that the hostGame has a function draw a new card from the deck).
+
+## Model 
 
 
-## Model
-TODO
 
 ## Network Payloads 
 The payload system already exists in the Nearby Connections API. 
@@ -81,6 +106,7 @@ This interface will have two methods:
 - `toJson()` : that will return the json representation of the object
 - `fromJson(JSONObject json)` : that will return the object from the json representation
 
+All of the actions and parameters are defined as constants to avoid any typo errors during development.
 
 ### Sending
 There is not much to say about sending the payloads, as it is just using the `sendPayload` method from the Nearby Connections API.
@@ -89,5 +115,44 @@ However, We've made an easy way for building the payloads in the ViewModel.
 
 The `PayloadMaker` class. 
 
+By using this class we can create in a more readable way the payloads that we want to send.
+
+Exemple :
+```kotlin
+// Generate a payload for a vote
+val payload : Payload = PayloadMaker.createPayloadRequest(Action.VOTE, Sender.CLIENT)
+    .addParam("puuid", "A39BH49G")
+    .addParam("vote", true)
+    .toPayload()
+
+// Send the 'vote' payload
+nearbyConnectionClient.sendPayload(payload)
+```
+
 ### Treatment
+The first step in treatment of the arriving payloads is done in the `onPayloadReceived` method of the `NearbyConnectionClient` class.
+It's just transforming the payload into a string and then into a JSONObject and then, it calls the `onPayloadReceived` method **OF THE VIEW MODEL**.
+
+Here's an exemple of how the payload are treated
+```kotlin
+override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
+    val sender = paquet.get(Sender.SENDER) as String
+
+    val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
+
+    when(paquet.get(Action.ACTION)){
+        Action.PLAYER_USERNAME -> {
+            val name: String = params.get(Param.PLAYER_USERNAME) as String
+            handlePlayerUsername(endpointId, name)
+        }
+        Action.BET -> {
+            val puuid = params.get(Param.PUUID) as String
+            val jsonBet: JSONObject = params.get(Param.BET) as JSONObject
+            val bet: Bet = Bet.fromJson(jsonBet)
+            handleBet(puuid, bet)
+        }
+        ... // Other actions treatement
+    }
+}
+```
 
