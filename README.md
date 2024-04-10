@@ -1,10 +1,10 @@
-# PPM (Proximity Pushups Monsters) for Android
+# PMU (Push-ups Masters Ultimate) for Android
 
 ## Project Description
 
 This project is our end-of-year project for the `INFO4` program at `Polytech Grenoble`.
 
-`PPM` is a mobile game for Android that let you play quickly and easily a variant of the PMU game where you can interact with the the by doing pushups. The game is playable with two players or more, but the more players there are, the more fun it is. 
+`PMU` is a mobile game for Android that let you play quickly and easily a variant of the PMU game where you can interact with the the by doing pushups. The game is playable with two players or more, but the more players there are, the more fun it is. 
 
 ## How to play
 1. Download the app on your Android phone.
