@@ -2,7 +2,7 @@
 
 ## Project Description
 
-This project is part of the course `INFO4` at `Polytech Grenoble` in the `2023-2024` school year.
+This project is our end-of-year project for the `INFO4` program at `Polytech Grenoble`.
 
 `PPM` is a mobile game for Android that let you play quickly and easily a variant of the PMU game where you can interact with the the by doing pushups. The game is playable with two players or more, but the more players there are, the more fun it is. 
 
@@ -16,10 +16,10 @@ This project is part of the course `INFO4` at `Polytech Grenoble` in the `2023-2
 7. The game ends when a symbol reaches the end of the board.
 
 ## Technical Choices
-- We worked with an MVVM architecture.
-- We used `Android Studio` and `Kotlin` to implement the application.
-- We used `XML` for the visual part of the application.
-- We used `Google Nearby Connections API` to manage the proximity connections.
+- We worked with an MVVM design pattern for the overall architecture.
+- `Android Studio` and `Kotlin` to implement the application.
+- `XML` for the visual part of the application.
+- `Google Nearby Connections API` to manage the proximity connections.
 
 To see more details about the technical choices, you can check the [Technical Review](docs/TECHNICAL_REVIEW.md).
 
