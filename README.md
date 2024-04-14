@@ -21,12 +21,12 @@ This project is our end-of-year project for the `INFO4` program at `Polytech Gre
 - `XML` for the visual part of the application.
 - `Google Nearby Connections API` to manage the proximity connections.
 
-To see more details about the technical choices, you can check the [Technical Review](docs/TECHNICAL_REVIEW.md).
+To see more details about the technical aspect of the project, you can check the **[Technical Review](docs/TECHNICAL_REVIEW.md)**.
 
 ## Authors
-- [Guillaume Bellone](https://à_remplir)
-- [Axel Cazorla](https://à_remplir)
-- [Oriane Doudet](https://à_remplir)
+- [Guillaume Bellone](https://github.com/ricoupat)
+- [Axel Cazorla](https://github.com/Ethazio)
+- [Oriane Doudet](https://github.com/oriane-9505)
 - [Noah Kohrs](https://github.com/noahkohrs)
 
 ## Credits
