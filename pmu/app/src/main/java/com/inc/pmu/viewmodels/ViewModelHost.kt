@@ -91,50 +91,6 @@ class ViewModelHost() : ViewModelPMU() {
         connectionsClient.stopAdvertising()
     }
 
-    override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
-        Log.d(Global.TAG, paquet.toString())
-        val sender = paquet.get(Sender.SENDER) as String
-        if (sender == Sender.PLAYER){
-            val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
-            when(paquet.get(Action.ACTION)){
-
-                Action.PLAYER_USERNAME -> {
-                    val name: String = params.get(Param.PLAYER_USERNAME) as String
-                    handlePlayerUsername(endpointId, name)
-                }
-                Action.BET -> {
-                    val puuid = params.get(Param.PUUID) as String
-                    val jsonBet: JSONObject = params.get(Param.BET) as JSONObject
-                    val bet: Bet = Bet.fromJson(jsonBet)
-                    handleBet(puuid, bet)
-                }
-
-                Action.ASK_DO_PUSH_UPS -> {
-                    val puuid: String = params.get(Param.PUUID) as String
-                    handleAskDoPushUps(puuid)
-                }
-
-                Action.CONFIRM_PUSH_UPS -> {
-                    val puuid: String = params.get(Param.PUUID) as String
-                    handlePushUpsDone(puuid)
-                }
-                Action.VOTE -> {
-                    val puuid: String = params.get(Param.PUUID) as String
-                    val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
-                    handleVote(puuid, vote)
-                }
-                Action.GIVE_PUSHUPS -> {
-                    val count: Int = params.get(Param.NB_GIVE_PUSHUPS) as Int
-                    val target: String = params.get(Param.TGT_GIVE_PUSHUPS) as String
-                    handleGivePushUps(count,target)
-                }
-                else -> {
-                    Log.d(Global.TAG, "Unknown action for an Host")
-                }
-            }
-        }
-    }
-
     override fun broadcast(payload: Payload){
         for (epi in playersEndpointIds.keys){
             connectionsClient.sendPayload(epi, payload)

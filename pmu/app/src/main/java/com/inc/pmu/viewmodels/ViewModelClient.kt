@@ -68,69 +68,7 @@ class ViewModelClient : ViewModelPMU() {
         connectionsClient.sendPayload(serverId, payload)
     }
 
-    override fun onPayloadReceived(endpointId: String, paquet: JSONObject) {
-        val sender = paquet.get(Sender.SENDER)
-        if (sender == Sender.HOST){
-            val params: JSONObject = paquet.get(Param.PARAMS) as JSONObject
-            when(paquet.get(Action.ACTION)){
 
-                Action.PLAYER_PUUID -> {
-                    val puuid = params.get(Param.PUUID) as String
-                    handlePlayerPuuid(puuid)
-                }
-
-                Action.PLAYER_LIST -> {
-                    val arr : JSONArray = params.getJSONArray(Param.PLAYER_LIST)
-                    val r : Array<String> = Array(arr.length()) {_ -> ""}
-                    for (i in r.indices) {
-                        r[i] = arr.get(i) as String
-                    }
-                    handlePlayerList(r)
-                }
-                Action.START_BET -> {
-                    val gameObj = params.get(Param.GAME) as JSONObject
-                    val receivedGame = Game.fromJson(gameObj)
-                    handleStartBet(receivedGame)
-                }
-                Action.BET_VALID -> {
-                    val id = params.get(Param.PUUID) as String
-                    val betObj = params.get(Param.BET) as JSONObject
-                    val bet = Bet.fromJson(betObj)
-                    handleBetValid(id, bet)
-                }
-                Action.START_GAME -> {
-                    handleStartGame()
-                }
-                Action.DRAW_CARD -> {
-                    val cardObj = params.get(Param.CARD) as JSONObject
-                    val card = Card.fromJson(cardObj)
-                    handleDrawCard(card)
-                }
-                Action.DO_PUSH_UPS -> {
-                    val id = params.get(Param.PUUID) as String
-                    handleDoPushUps(id)
-                }
-                Action.START_VOTE -> {
-                    val id = params.get(Param.PUUID) as String
-                    handleStartVote(id)
-                }
-                Action.VOTE_RESULTS -> {
-                    val id = params.get(Param.PUUID) as String
-                    val res = params.get(Param.VOTE_RESULT) as Boolean
-                    handleVoteResult(id, res)
-                }
-                Action.GAME_END -> {
-                    val suit = params.get(Param.GAME_END) as String
-                    handleGameEnds(suit)
-                }
-                Action.END_PUSHUPS -> {
-                    val count = params.get(Param.END_PUSHUPS) as Int
-                    handleEndPushUps(count)
-                }
-                else -> throw UnsupportedOperationException("Not a client action")
-            }
-        }
-    }
 
     override fun isHost(): Boolean {
         return false

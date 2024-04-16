@@ -19,6 +19,7 @@ import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.UUID
 
@@ -113,7 +114,106 @@ abstract class ViewModelPMU : ViewModel() {
 
     protected abstract fun onPlayerDisconnected(endpointId: String)
 
-    abstract fun onPayloadReceived(endpointId: String, paquet: JSONObject)
+    fun onPayloadReceived(endpointId: String, packet: JSONObject) {
+        val params: JSONObject = packet.get(Param.PARAMS) as JSONObject
+        val actionStr = packet.get("action") as String
+        val action = Action.valueOf(actionStr)
+        when (action){
+
+            Action.PLAYER_PUUID -> {
+                val puuid = params.get(Param.PUUID) as String
+                handlePlayerPuuid(puuid)
+            }
+
+            Action.PLAYER_LIST -> {
+                val arr: JSONArray = params.getJSONArray(Param.PLAYER_LIST)
+                val r: Array<String> = Array(arr.length()) { _ -> "" }
+                for (i in r.indices) {
+                    r[i] = arr.get(i) as String
+                }
+                handlePlayerList(r)
+            }
+
+            Action.START_BET -> {
+                val gameObj = params.get(Param.GAME) as JSONObject
+                val receivedGame = Game.fromJson(gameObj)
+                handleStartBet(receivedGame)
+            }
+
+            Action.BET_VALID -> {
+                val id = params.get(Param.PUUID) as String
+                val betObj = params.get(Param.BET) as JSONObject
+                val bet = Bet.fromJson(betObj)
+                handleBetValid(id, bet)
+            }
+
+            Action.START_GAME -> {
+                handleStartGame()
+            }
+
+            Action.DRAW_CARD -> {
+                val cardObj = params.get(Param.CARD) as JSONObject
+                val card = Card.fromJson(cardObj)
+                handleDrawCard(card)
+            }
+
+            Action.DO_PUSH_UPS -> {
+                val id = params.get(Param.PUUID) as String
+                handleDoPushUps(id)
+            }
+
+            Action.START_VOTE -> {
+                val id = params.get(Param.PUUID) as String
+                handleStartVote(id)
+            }
+
+            Action.VOTE_RESULTS -> {
+                val id = params.get(Param.PUUID) as String
+                val res = params.get(Param.VOTE_RESULT) as Boolean
+                handleVoteResult(id, res)
+            }
+
+            Action.GAME_END -> {
+                val suit = params.get(Param.GAME_END) as String
+                handleGameEnds(suit)
+            }
+
+            Action.END_PUSHUPS -> {
+                val count = params.get(Param.END_PUSHUPS) as Int
+                handleEndPushUps(count)
+            }
+
+            Action.PLAYER_USERNAME -> {
+                val name: String = params.get(Param.PLAYER_USERNAME) as String
+                handlePlayerUsername(endpointId, name)
+            }
+
+            Action.BET -> {
+                val puuid = params.get(Param.PUUID) as String
+                val jsonBet: JSONObject = params.get(Param.BET) as JSONObject
+                val bet: Bet = Bet.fromJson(jsonBet)
+                handleBet(puuid, bet)
+            }
+
+            Action.ASK_DO_PUSH_UPS -> {
+                val puuid: String = params.get(Param.PUUID) as String
+                handleAskDoPushUps(puuid)
+            }
+
+            Action.CONFIRM_PUSH_UPS -> {
+                val puuid: String = params.get(Param.PUUID) as String
+                handlePushUpsDone(puuid)
+            }
+
+            Action.VOTE -> {
+                val puuid: String = params.get(Param.PUUID) as String
+                val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
+                handleVote(puuid, vote)
+            }
+
+            Action.GIVE_PUSHUPS -> TODO()
+        }
+    }
 
     protected val payloadCallback: PayloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {

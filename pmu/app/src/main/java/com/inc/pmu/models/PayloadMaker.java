@@ -24,8 +24,8 @@ public class PayloadMaker implements Jsonisable {
         }
     }
 
-    public static PayloadMaker createPayloadRequest(String action, String source) {
-        return new PayloadMaker(action, source);
+    public static PayloadMaker createPayloadRequest(Action action, String source) {
+        return new PayloadMaker(action.name(), source);
     }
     public PayloadMaker addParam(String key, String value) {
         try {
@@ -117,7 +117,7 @@ public class PayloadMaker implements Jsonisable {
         JSONObject json = new JSONObject();
 
         try {
-            json.put(Action.ACTION, action);
+            json.put("action", action);
             json.put(Sender.SENDER, source);
             json.put(Param.PARAMS, params);
         } catch (JSONException e) {
