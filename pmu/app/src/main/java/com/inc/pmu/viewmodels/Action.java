@@ -2,10 +2,12 @@ package com.inc.pmu.viewmodels;
 
 public enum Action {
     // Actions
-    PLAYER_USERNAME,
-    PLAYER_PUUID,
+
+    PLAYER_PROFILE,
+    CONNEXION_ESTABLISHED,
     PLAYER_LIST,
     START_BET,
+    GAME_PACKET,
     BET,
     BET_VALID,
     DRAW_CARD,

@@ -7,7 +7,6 @@ import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
-import com.inc.pmu.Const
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Board
@@ -18,7 +17,6 @@ import com.inc.pmu.models.PayloadMaker
 import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import com.inc.pmu.models.Validator
-import org.json.JSONObject
 import java.util.UUID
 import kotlin.math.abs
 
@@ -40,7 +38,6 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun onPlayerDisconnected(endpointId: String) {
         Log.d(Global.TAG, "Player disconnected")
-        game.players.remove(playersEndpointIds[endpointId])
         playersEndpointIds.remove(endpointId)
 
         val playerList = game.players.values
@@ -52,7 +49,7 @@ class ViewModelHost() : ViewModelPMU() {
             l.onPlayerListUpdate(playerNameList.toTypedArray())
 
         val playerListPayload = PayloadMaker
-            .createPayloadRequest(Action.PLAYER_LIST, Sender.HOST)
+            .createPayload(Action.PLAYER_LIST, Sender.HOST)
             .addParam(Param.PLAYER_LIST, playerNameList.toTypedArray())
             .toPayload()
         broadcast(playerListPayload)
@@ -101,34 +98,63 @@ class ViewModelHost() : ViewModelPMU() {
         return true
     }
 
-    override fun handlePlayerUsername(endpointId: String,name: String) {
-        if (!automata.isGameSetup) {
-            return
-        }
-        val newPlayer: Player = Player(playersEndpointIds[endpointId], name)
-        val puuidPayload = PayloadMaker
-            .createPayloadRequest(Action.PLAYER_PUUID, Sender.HOST)
-            .addParam(Param.PUUID, newPlayer.puuid)
-            .toPayload()
+    override fun handlePlayerProfile(endpointId: String, name: String, puuid: String) {
+        Log.d(Global.TAG, "EndpointId : $endpointId, Name : $name, Puuid : $puuid")
+        if (automata.isGameSetup) {
+            Log.d(Global.TAG, "First Connection of player $name")
+            val newPlayer: Player = Player(puuid, name)
+            game.addPlayer(newPlayer)
+            playersEndpointIds[endpointId] = puuid
+            val payloadEstablishedConnection: Payload = PayloadMaker
+                .createPayload(Action.CONNEXION_ESTABLISHED, Sender.HOST)
+                .addParam(Param.GAME_STATE, "waiting")
+                .toPayload()
 
-        connectionsClient.sendPayload(endpointId, puuidPayload)
+            connectionsClient.sendPayload(endpointId, payloadEstablishedConnection)
 
-        game.addPlayer(newPlayer)
-        val playerList = game.players.values
-        val playerNameList = mutableListOf<String>()
-        for (p in playerList){
-            playerNameList.add(p.playerName)
+            val playerList = game.players.values
+            val playerNameList = mutableListOf<String>()
+            for (p in playerList){
+                playerNameList.add(p.playerName)
+            }
+            Log.d(Global.TAG, playerNameList.toString())
+            val jsonList = PayloadMaker
+                .createPayload(Action.PLAYER_LIST, Sender.HOST)
+                .addParam(Param.PLAYER_LIST,playerNameList.toTypedArray())
+            broadcast(jsonList.toPayload())
+            for (l in listeners)
+                l.onPlayerListUpdate(playerNameList.toTypedArray())
+        } else {
+            if (game.players.containsKey(puuid)) {
+                // Reconnecting player
+                Log.d(Global.TAG, "Reconnecting player")
+                playersEndpointIds[endpointId] = puuid
+                val gamePayload: Payload = PayloadMaker
+                    .createPayload(Action.GAME_PACKET, Sender.HOST)
+                    .addParam(Param.GAME, game)
+                    .toPayload()
+                connectionsClient.sendPayload(endpointId, gamePayload)
+
+                val payloadEstablishedConnection: Payload = PayloadMaker
+                    .createPayload(Action.CONNEXION_ESTABLISHED, Sender.HOST)
+                    .addParam(Param.GAME_STATE, "ingame")
+                    .toPayload()
+                connectionsClient.sendPayload(endpointId, payloadEstablishedConnection)
+
+            } else {
+                // Unable to connect action
+                Log.d(Global.TAG, "Unknown player, $name kicked")
+                connectionsClient.disconnectFromEndpoint(endpointId)
+            }
         }
-        Log.d(Global.TAG, playerNameList.toString())
-        val jsonList = PayloadMaker.createPayloadRequest(Action.PLAYER_LIST, Sender.HOST).addParam(Param.PLAYER_LIST,playerNameList.toTypedArray())
-        broadcast(jsonList.toPayload())
-        for (l in listeners)
-            l.onPlayerListUpdate(playerNameList.toTypedArray())
+
+
     }
 
-    override fun handlePlayerPuuid(puuid: String) {
+    override fun handleConnexionEstablished(state: String) {
         throw UnsupportedOperationException("Not an host action")
     }
+
 
     override fun handleBet(puuid: String, bet: Bet) {
         if (!automata.isGameSetup) {
@@ -148,7 +174,7 @@ class ViewModelHost() : ViewModelPMU() {
             l.onBetValidated(bet.suit, game.players.values)
 
         val info = PayloadMaker
-            .createPayloadRequest(Action.BET_VALID, Sender.HOST)
+            .createPayload(Action.BET_VALID, Sender.HOST)
             .addParam(Param.PUUID, puuid)
             .addParam(Param.BET, bet)
             .toPayload()
@@ -187,7 +213,7 @@ class ViewModelHost() : ViewModelPMU() {
         //}, Const.MAX_TIME_TO_VOTE)
 
         val json = PayloadMaker
-            .createPayloadRequest(Action.DO_PUSH_UPS, Sender.HOST)
+            .createPayload(Action.DO_PUSH_UPS, Sender.HOST)
             .addParam(Param.PUUID,puuid)
         broadcast(json.toPayload())
         for (l in listeners)
@@ -201,6 +227,11 @@ class ViewModelHost() : ViewModelPMU() {
     override fun handleStartBet(game : Game) {
         throw UnsupportedOperationException("Not an host action")
     }
+
+    override fun handleGamePacket(game: Game) {
+        throw UnsupportedOperationException("Not an host action")
+    }
+
     override fun handleDrawCard(card: Card) {
         throw UnsupportedOperationException("Not an host action")
     }
@@ -216,7 +247,7 @@ class ViewModelHost() : ViewModelPMU() {
         automata.notifyConfirmPushUps()
 
         val startVotePayload = PayloadMaker
-            .createPayloadRequest(Action.START_VOTE, Sender.HOST)
+            .createPayload(Action.START_VOTE, Sender.HOST)
             .addParam(Param.PUUID, puuid)
             .toPayload()
         broadcast(startVotePayload)
@@ -242,7 +273,7 @@ class ViewModelHost() : ViewModelPMU() {
     private fun voteEnded() {
         val result = validator.result
         val voteResultPayload = PayloadMaker
-            .createPayloadRequest(Action.VOTE_RESULTS, Sender.HOST)
+            .createPayload(Action.VOTE_RESULTS, Sender.HOST)
             .addParam(Param.VOTE_RESULT, result)
             .addParam(Param.PUUID, validator.votedPlayerPuuid)
             .toPayload()
@@ -272,13 +303,13 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun handleGivePushUps(count: Int, target: String) {
         for (p in game.players.values){
-            if (game.players[localId]!!.bet.suit.name == target){
+            if (game.players[localPuuid]!!.bet.suit.name == target){
                 p.setBet(p.bet.number+count,p.bet.suit)
             }
         }
         cptWinners += 1
         if (cptWinners >= winners.size){
-            EndPushUps()
+            endPushUps()
         }
     }
 
@@ -288,7 +319,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun startBet() {
         val info = PayloadMaker
-            .createPayloadRequest(Action.START_BET, Sender.HOST)
+            .createPayload(Action.START_BET, Sender.HOST)
             .addParam(Param.GAME, game)
             .toPayload()
         broadcast(info)
@@ -298,7 +329,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun bet(number: Int, suit: Suit) {
         val b = Bet(number, suit)
-        handleBet(localId, b)
+        handleBet(localPuuid, b)
     }
 
     override fun startGame() {
@@ -307,7 +338,7 @@ class ViewModelHost() : ViewModelPMU() {
         automata.notifyStartGame()
 
         val info = PayloadMaker
-            .createPayloadRequest(Action.START_GAME, Sender.HOST)
+            .createPayload(Action.START_GAME, Sender.HOST)
             .toPayload()
         broadcast(info)
         for (l in listeners)
@@ -315,11 +346,11 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun vote(choice: Boolean) {
-        handleVote(localId, choice)
+        handleVote(localPuuid, choice)
     }
 
     override fun doPushUps() {
-        handleAskDoPushUps(localId)
+        handleAskDoPushUps(localPuuid)
     }
 
     override fun drawCard() {
@@ -334,7 +365,7 @@ class ViewModelHost() : ViewModelPMU() {
         game.cardDrawn(card)
 
         val payload = PayloadMaker
-            .createPayloadRequest(Action.DRAW_CARD, Sender.HOST)
+            .createPayload(Action.DRAW_CARD, Sender.HOST)
             .addParam(Param.CARD, card)
             .toPayload()
         broadcast(payload)
@@ -346,7 +377,7 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun pushUpsDone() {
-        handlePushUpsDone(localId)
+        handlePushUpsDone(localPuuid)
     }
 
     override fun gameEnds(winner: String) {
@@ -362,7 +393,7 @@ class ViewModelHost() : ViewModelPMU() {
         }
 
         val payload = PayloadMaker
-            .createPayloadRequest(Action.GAME_END, Sender.HOST)
+            .createPayload(Action.GAME_END, Sender.HOST)
             .addParam(Param.GAME_END, winner)
             .toPayload()
         broadcast(payload)
@@ -376,7 +407,7 @@ class ViewModelHost() : ViewModelPMU() {
                     //affiche les secondes sur le deck transparent
                 }
                 override fun onFinish() {
-                    EndPushUps()
+                    endPushUps()
                 }
             }
             timer.start()
@@ -398,10 +429,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun givePushUps(target: String) {
-        handleGivePushUps(game.players[localId]!!.bet.number,target)
+        handleGivePushUps(game.players[localPuuid]!!.bet.number,target)
     }
 
-    override fun EndPushUps() {
+    override fun endPushUps() {
         for (suit in game.board.riderPos.keys){
             Log.d(Global.TAG, suit.name + " : " +game.board.riderPos[suit].toString())
         }
@@ -411,14 +442,14 @@ class ViewModelHost() : ViewModelPMU() {
             if (p !in winners){
                 val count = p!!.bet.number
                 val payload = PayloadMaker
-                    .createPayloadRequest(Action.END_PUSHUPS, Sender.HOST)
+                    .createPayload(Action.END_PUSHUPS, Sender.HOST)
                     .addParam(Param.END_PUSHUPS, count)
                     .toPayload()
                 connectionsClient.sendPayload(endPoint, payload)
             }
         }
 
-        val p = game.players[localId]
+        val p = game.players[localPuuid]
         if (p !in winners){
             val count = p!!.bet.number
             for (l in listeners)

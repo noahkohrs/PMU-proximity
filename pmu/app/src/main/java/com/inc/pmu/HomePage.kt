@@ -2,22 +2,19 @@ package com.inc.pmu
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.inc.pmu.models.Game
 import com.inc.pmu.models.HostGame
 import com.inc.pmu.models.Player
 import com.inc.pmu.viewmodels.ViewModelBeforeNetwork
-import com.inc.pmu.viewmodels.ViewModelClient
-import com.inc.pmu.viewmodels.ViewModelHost
 import com.inc.pmu.viewmodels.ViewModelPMU
 import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
@@ -51,8 +48,9 @@ class HomePage : Fragment(R.layout.home_page) {
             ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java].setUsername(username)
             var player = Player(vmUserData.getUsername())
             vmGame.game = HostGame(player)
-            vmGame.localId = player.puuid
+            vmGame.localPuuid = player.puuid
             vmGame.localUsername = vmUserData.getUsername()
+            vmGame.context = requireActivity().applicationContext
             val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
             vmGame.startHosting(connectionsClient)
             Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
@@ -67,7 +65,8 @@ class HomePage : Fragment(R.layout.home_page) {
             vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory(ViewModelPMUFactory.Mode.CLIENT))[ViewModelPMU::class.java]
             ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java].setUsername(username)
             vmGame.localUsername = vmUserData.getUsername()
-            val fragment = JoinGame.newInstance()
+            vmGame.context = requireActivity().applicationContext
+            val fragment = JoinGame.newInstance() // Seems to be wrong to create the activity everytime
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)

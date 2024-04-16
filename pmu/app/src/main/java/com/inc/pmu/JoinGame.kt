@@ -13,7 +13,7 @@ import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 class JoinGame : Fragment(R.layout.join_page) {
 
-    lateinit var homePage: Button
+    lateinit var homePageButton: Button
 
     private lateinit var vmUserData: ViewModelBeforeNetwork
     private lateinit var vmGame: ViewModelPMU
@@ -29,10 +29,11 @@ class JoinGame : Fragment(R.layout.join_page) {
         vmGame.startDiscovering(connectionsClient)
         Log.d(Global.TAG, "${vmGame.localUsername} starts searching...")
 
-        homePage = requireView().findViewById(R.id.homePage)
+        homePageButton = requireView().findViewById(R.id.homePage)
 
-        homePage.setOnClickListener {
+        homePageButton.setOnClickListener {
             val fragment = HomePage.newInstance()
+            vmGame.stopConnection()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit()
@@ -40,9 +41,15 @@ class JoinGame : Fragment(R.layout.join_page) {
 
         vmGame.addListener(
             object : ViewModelListener() {
-                override fun onConnectionEstablished() {
+                override fun onConnectionEstablished(state: String) {
+                    vmGame.removeAllListeners()
                     Log.d(Global.TAG, "Connection established")
-                    val fragment = WaitingForPlayer.newInstance()
+                    var fragment: Fragment = WaitingForPlayer.newInstance()
+                    if (state == "betting") {
+                        fragment = PushUpBet.newInstance()
+                    } else if (state == "ingame") {
+                        fragment = GameBoard.newInstance()
+                    }
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.container, fragment)
                         .commit()

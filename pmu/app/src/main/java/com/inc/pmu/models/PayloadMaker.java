@@ -24,7 +24,7 @@ public class PayloadMaker implements Jsonisable {
         }
     }
 
-    public static PayloadMaker createPayloadRequest(Action action, String source) {
+    public static PayloadMaker createPayload(Action action, String source) {
         return new PayloadMaker(action.name(), source);
     }
     public PayloadMaker addParam(String key, String value) {

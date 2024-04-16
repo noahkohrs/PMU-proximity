@@ -98,6 +98,7 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onBetStart() {
+                    vmGame.removeAllListeners()
                     Log.d(Global.TAG, "Start bet !")
                     val fragment = PushUpBet.newInstance()
                     requireActivity().supportFragmentManager.beginTransaction()

@@ -5,6 +5,7 @@ public class Param {
 
     // Params
     public static final String PLAYER_USERNAME = "player_username";
+    public static final String GAME_STATE = "game_state";
     public static final String PLAYER_LIST = "player_list";
     public static final String BET = "bet";
     public static final String GAME = "game";

@@ -1,5 +1,6 @@
 package com.inc.pmu.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.nearby.connection.ConnectionInfo
@@ -17,22 +18,20 @@ import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
-import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.UUID
 
 abstract class ViewModelPMU : ViewModel() {
     var serverId: String = ""
     var localUsername: String = "Default"
-    //var localPuuid = ""
     val listeners = mutableSetOf<ViewModelListener>()
-    var localId = ""
+    var localPuuid = ""
     lateinit var connectionsClient : ConnectionsClient
     var counter = 0
     lateinit var game : Game
-    var betsUnavailable : ArrayList<Suit> = arrayListOf()
+    private var betsUnavailable : ArrayList<Suit> = arrayListOf()
+    var context: Context? = null
 
     private companion object {
         const val TAG = Global.TAG
@@ -117,12 +116,12 @@ abstract class ViewModelPMU : ViewModel() {
     fun onPayloadReceived(endpointId: String, packet: JSONObject) {
         val params: JSONObject = packet.get(Param.PARAMS) as JSONObject
         val actionStr = packet.get("action") as String
+        Log.d(Global.TAG, "Received action: $actionStr")
         val action = Action.valueOf(actionStr)
         when (action){
-
-            Action.PLAYER_PUUID -> {
-                val puuid = params.get(Param.PUUID) as String
-                handlePlayerPuuid(puuid)
+            Action.CONNEXION_ESTABLISHED -> {
+                val state = params.get(Param.GAME_STATE) as String
+                handleConnexionEstablished(state)
             }
 
             Action.PLAYER_LIST -> {
@@ -183,9 +182,10 @@ abstract class ViewModelPMU : ViewModel() {
                 handleEndPushUps(count)
             }
 
-            Action.PLAYER_USERNAME -> {
+            Action.PLAYER_PROFILE -> {
                 val name: String = params.get(Param.PLAYER_USERNAME) as String
-                handlePlayerUsername(endpointId, name)
+                val puuid: String = params.get(Param.PUUID) as String
+                handlePlayerProfile(endpointId, name, puuid)
             }
 
             Action.BET -> {
@@ -209,6 +209,11 @@ abstract class ViewModelPMU : ViewModel() {
                 val puuid: String = params.get(Param.PUUID) as String
                 val vote: Boolean = params.get(Param.VOTE_RESULT) as Boolean
                 handleVote(puuid, vote)
+            }
+            Action.GAME_PACKET -> {
+                val gameObj = params.get(Param.GAME) as JSONObject
+                val receivedGame = Game.fromJson(gameObj)
+                handleGamePacket(receivedGame)
             }
 
             Action.GIVE_PUSHUPS -> TODO()
@@ -234,10 +239,11 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun broadcast(payload: Payload)
 
     // Handeling Paquets Related
-    protected abstract fun handlePlayerUsername(endpointId: String, name: String)
-    protected abstract fun handlePlayerPuuid(puuid: String)
+    protected abstract fun handlePlayerProfile(endpointId: String, name: String, puuid: String)
+    protected abstract fun handleConnexionEstablished(state: String)
     protected abstract fun handlePlayerList(playerList: Array<String>)
     protected abstract fun handleStartBet(game : Game)
+    protected abstract fun handleGamePacket(game : Game)
     protected abstract fun handleBet(puuid: String, bet: Bet)
     protected abstract fun handleBetValid(puuid: String, bet: Bet)
     protected abstract fun handleStartGame()
@@ -264,13 +270,17 @@ abstract class ViewModelPMU : ViewModel() {
     abstract fun gameEnds(winner: String)
     abstract fun checkWin(): Boolean
     abstract fun givePushUps(target: String)
-    abstract fun EndPushUps()
+    abstract fun endPushUps()
 
     fun addListener(listener: ViewModelListener){
         listeners.add(listener)
     }
     fun removeListener(listener: ViewModelListener){
         listeners.remove(listener)
+    }
+
+    fun removeAllListeners() {
+        listeners.clear()
     }
     fun suitUnavailable(suit : Suit) {
         betsUnavailable.add(suit)

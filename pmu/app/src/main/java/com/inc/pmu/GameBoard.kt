@@ -70,7 +70,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         currentSuit = requireView().findViewById(R.id.playerSuit)
         currentNbPushUps = requireView().findViewById(R.id.currentPushUps)
 
-        var suit = vmGame.game.players.get(vmGame.localId)!!.bet.suit
+        var suit = vmGame.game.players.get(vmGame.localPuuid)!!.bet.suit
         when(suit) {
             Suit.HEARTS -> currentSuit.text = "Coeur"
             Suit.SPADES -> currentSuit.text = "Pique"
@@ -162,7 +162,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
                     }
                     pushButton.text = "Faire reculer\n" + suit_string
-                    if (vmGame.game.players.get(vmGame.localId)?.bet?.suit == card.suit) {
+                    if (vmGame.game.players.get(vmGame.localPuuid)?.bet?.suit == card.suit) {
                         pushButton.isClickable = false
                         pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
                     }
@@ -177,7 +177,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onBoardUpdate() {
-                    currentNbPushUps.text = vmGame.game.players.get(vmGame.localId)!!.currentPushUps.toString()
+                    currentNbPushUps.text = vmGame.game.players.get(vmGame.localPuuid)!!.currentPushUps.toString()
                     for (suit in Suit.values()) {
 
                         var c : ImageView
@@ -205,7 +205,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                 override fun onPlayerDoingPushUps(puuid : String) {
                     pushButton.isClickable = false
                     pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
-                    if (puuid == vmGame.localId) {
+                    if (puuid == vmGame.localPuuid) {
                         alertDialogue = doPushups(view)
                     }
                     else {
@@ -222,7 +222,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                         alertDialogue.dismiss()
                     }
 
-                    if (vmGame.localId == puuid) {
+                    if (vmGame.localPuuid == puuid) {
                         alertDialogue = waitingForVotes(view)
                     }
                     else {
@@ -243,7 +243,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onGameEnds(winner: String) {
-                    val player = vmGame.game.players.get(vmGame.localId)!!
+                    val player = vmGame.game.players.get(vmGame.localPuuid)!!
                     if (player.bet.suit.name == winner) {
                         alertDialogue = winnerPopup(view, winner)
                     }
@@ -274,7 +274,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     fun doPushups(view: View): AlertDialog {
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Faites ${vmGame.game.players.get(vmGame.localId)?.currentPushUps} pompes")
+            .setMessage("Faites ${vmGame.game.players.get(vmGame.localPuuid)?.currentPushUps} pompes")
             .setPositiveButton("C'est fait", positivePushupsButtonClick)
 
         val alertDialog = builder.create()

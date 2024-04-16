@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ViewModelListener {
     
-    public void onConnectionEstablished(){}
+    public void onConnectionEstablished(String gameState){}
     public void onConnectionLost(){}
     public void onPlayerListUpdate(String[] playerList){}
     public void onBetStart(){}

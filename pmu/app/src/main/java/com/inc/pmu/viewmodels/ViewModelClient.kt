@@ -1,6 +1,6 @@
 package com.inc.pmu.viewmodels
 
-import kotlin.collections.*
+import android.provider.Settings
 import android.util.Log
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.DiscoveryOptions
@@ -12,10 +12,7 @@ import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
 import com.inc.pmu.models.PayloadMaker
-import com.inc.pmu.models.Player
 import com.inc.pmu.models.Suit
-import org.json.JSONArray
-import org.json.JSONObject
 
 class ViewModelClient : ViewModelPMU() {
 
@@ -25,10 +22,13 @@ class ViewModelClient : ViewModelPMU() {
     }
 
     override fun onConnectionResultOK(endpointId: String) {
-        for (l in listeners)
-            l.onConnectionEstablished()
         serverId = endpointId
-        val json = PayloadMaker.createPayloadRequest(Action.PLAYER_USERNAME, Sender.PLAYER).addParam(Param.PLAYER_USERNAME,localUsername)
+        localPuuid = Settings.Secure.getString(context?.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "Local PUUID = $localPuuid")
+        val json = PayloadMaker
+            .createPayload(Action.PLAYER_PROFILE, Sender.PLAYER)
+            .addParam(Param.PLAYER_USERNAME,localUsername)
+            .addParam(Param.PUUID, localPuuid)
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
@@ -74,13 +74,15 @@ class ViewModelClient : ViewModelPMU() {
         return false
     }
 
-    override fun handlePlayerUsername(endpointId: String, name: String) {
+    override fun handlePlayerProfile(endpointId: String, name: String, puuid: String) {
         throw UnsupportedOperationException("Not a client action")
     }
 
-    override fun handlePlayerPuuid(puuid: String) {
-        localId = puuid
+    override fun handleConnexionEstablished(state: String) {
+        for (l in listeners)
+            l.onConnectionEstablished(state)
     }
+
 
     override fun handlePlayerList(playerList: Array<String>) {
         var n = 1
@@ -97,6 +99,12 @@ class ViewModelClient : ViewModelPMU() {
         this.game = game
         for (l in listeners)
             l.onBetStart()
+    }
+
+    override fun handleGamePacket(game: Game) {
+        this.game = game
+        for (l in listeners)
+            l.onBoardUpdate()
     }
 
     override fun handleBet(puuid: String, bet: Bet) {
@@ -181,16 +189,16 @@ class ViewModelClient : ViewModelPMU() {
     override fun bet(number: Int, suit: Suit) {
         val b = Bet(number, suit)
         val json = PayloadMaker
-            .createPayloadRequest(Action.BET, Sender.PLAYER)
+            .createPayload(Action.BET, Sender.PLAYER)
             .addParam(Param.BET, b)
-            .addParam(Param.PUUID, localId)
+            .addParam(Param.PUUID, localPuuid)
         connectionsClient.sendPayload(serverId, json.toPayload())
     }
 
     override fun vote(choice: Boolean) {
         val votePayload = PayloadMaker
-            .createPayloadRequest(Action.VOTE, Sender.PLAYER)
-            .addParam(Param.PUUID, localId)
+            .createPayload(Action.VOTE, Sender.PLAYER)
+            .addParam(Param.PUUID, localPuuid)
             .addParam(Param.VOTE_RESULT, choice)
             .toPayload()
         broadcast(votePayload)
@@ -198,8 +206,8 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun doPushUps() {
         val doPushUpsPayload = PayloadMaker
-            .createPayloadRequest(Action.ASK_DO_PUSH_UPS, Sender.PLAYER)
-            .addParam(Param.PUUID, localId)
+            .createPayload(Action.ASK_DO_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localPuuid)
             .toPayload()
         broadcast(doPushUpsPayload)
     }
@@ -214,8 +222,8 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun pushUpsDone() {
         val pushupDonePayload = PayloadMaker
-            .createPayloadRequest(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
-            .addParam(Param.PUUID, localId)
+            .createPayload(Action.CONFIRM_PUSH_UPS, Sender.PLAYER)
+            .addParam(Param.PUUID, localPuuid)
             .toPayload()
         broadcast(pushupDonePayload)
     }
@@ -230,14 +238,14 @@ class ViewModelClient : ViewModelPMU() {
 
     override fun givePushUps(target: String) {
         val payload = PayloadMaker
-            .createPayloadRequest(Action.GIVE_PUSHUPS, Sender.PLAYER)
-            .addParam(Param.NB_GIVE_PUSHUPS, game.players.get(localId)!!.bet.number)
+            .createPayload(Action.GIVE_PUSHUPS, Sender.PLAYER)
+            .addParam(Param.NB_GIVE_PUSHUPS, game.players.get(localPuuid)!!.bet.number)
             .addParam(Param.TGT_GIVE_PUSHUPS, target)
             .toPayload()
         broadcast(payload)
     }
 
-    override fun EndPushUps() {
+    override fun endPushUps() {
         throw UnsupportedOperationException("A client can't distribute end push ups")
     }
 
