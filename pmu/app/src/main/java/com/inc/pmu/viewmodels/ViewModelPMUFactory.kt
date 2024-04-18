@@ -3,8 +3,7 @@ package com.inc.pmu.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.nearby.connection.ConnectionsClient
-import com.inc.pmu.Global
+import com.inc.pmu.TAG
 
 class ViewModelPMUFactory(private val mode : Mode) : ViewModelProvider.Factory {
 
@@ -23,7 +22,7 @@ class ViewModelPMUFactory(private val mode : Mode) : ViewModelProvider.Factory {
             SELECTED = mode
         } else {
             if (SELECTED == Mode.NONE)
-                Log.d(Global.TAG, "MODE SHOULD NOT BE NONE")
+                Log.d(TAG.TAG, "MODE SHOULD NOT BE NONE")
         }
     }
 

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
@@ -28,7 +27,7 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(Global.TAG, "WaitingPage onDestroyView")
+        Log.d(TAG.TAG, "WaitingPage onDestroyView")
     }
 
     override fun onStart() {

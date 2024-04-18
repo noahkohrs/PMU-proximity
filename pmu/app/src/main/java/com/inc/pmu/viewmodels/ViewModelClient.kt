@@ -7,7 +7,6 @@ import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
-import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
@@ -17,7 +16,7 @@ import com.inc.pmu.models.Suit
 class ViewModelClient : ViewModelPMU() {
 
     private companion object {
-        const val TAG = Global.TAG
+        const val TAG = com.inc.pmu.TAG.TAG
         val STRATEGY = Strategy.P2P_STAR
     }
 
@@ -89,7 +88,7 @@ class ViewModelClient : ViewModelPMU() {
     override fun handlePlayerList(playerList: Array<String>) {
         var n = 1
         for (p in playerList){
-            Log.d(Global.TAG, "Player $n : $p")
+            Log.d(com.inc.pmu.TAG.TAG, "Player $n : $p")
             n++
         }
 
@@ -117,7 +116,7 @@ class ViewModelClient : ViewModelPMU() {
         game.players[puuid]?.setBet(bet)
         for (p in game.players.values) {
             if (p.bet.number != -1) {
-                Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
+                Log.d(com.inc.pmu.TAG.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
             }
         }
         for (l in listeners)
@@ -145,7 +144,7 @@ class ViewModelClient : ViewModelPMU() {
     override fun handleDoPushUps(puuid: String) {
         for (l in listeners)
             l.onPlayerDoingPushUps(puuid)
-        Log.d(Global.TAG, "${this.game.players.get(puuid)} veut faire reculer le ${this.game.currentCard}")
+        Log.d(com.inc.pmu.TAG.TAG, "${this.game.players.get(puuid)} veut faire reculer le ${this.game.currentCard}")
     }
 
     override fun handlePushUpsDone(puuid: String) {

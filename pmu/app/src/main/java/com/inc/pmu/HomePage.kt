@@ -32,7 +32,7 @@ class HomePage : Fragment(R.layout.home_page) {
             vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
             vmGame.stopConnection()
         } catch (e: IllegalArgumentException) {
-            Log.d(Global.TAG, "No ViewModel to stop")
+            Log.d(TAG.TAG, "No ViewModel to stop")
         }
         vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
         username = vmUserData.getUsername()
@@ -54,7 +54,7 @@ class HomePage : Fragment(R.layout.home_page) {
             vmGame.context = requireActivity().applicationContext
             val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
             vmGame.startHosting(connectionsClient)
-            Log.d(Global.TAG, "${vmGame.localUsername} starts hosting...")
+            Log.d(TAG.TAG, "${vmGame.localUsername} starts hosting...")
             val fragment = WaitingForPlayer.newInstance()
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)

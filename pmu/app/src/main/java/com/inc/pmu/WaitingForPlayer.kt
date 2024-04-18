@@ -99,7 +99,7 @@ class WaitingForPlayer : Fragment(R.layout.waiting_for_player) {
             object : ViewModelListener() {
                 override fun onBetStart() {
                     vmGame.removeAllListeners()
-                    Log.d(Global.TAG, "Start bet !")
+                    Log.d(TAG.TAG, "Start bet !")
                     val fragment = PushUpBet.newInstance()
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.container, fragment)

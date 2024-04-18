@@ -27,7 +27,7 @@ class JoinGame : Fragment(R.layout.join_page) {
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
         val connectionsClient: ConnectionsClient = Nearby.getConnectionsClient(requireActivity().applicationContext)
         vmGame.startDiscovering(connectionsClient)
-        Log.d(Global.TAG, "${vmGame.localUsername} starts searching...")
+        Log.d(TAG.TAG, "${vmGame.localUsername} starts searching...")
 
         homePageButton = requireView().findViewById(R.id.homePage)
 
@@ -43,7 +43,7 @@ class JoinGame : Fragment(R.layout.join_page) {
             object : ViewModelListener() {
                 override fun onConnectionEstablished(state: String) {
                     vmGame.removeAllListeners()
-                    Log.d(Global.TAG, "Connection established")
+                    Log.d(TAG.TAG, "Connection established")
                     var fragment: Fragment = WaitingForPlayer.newInstance()
                     if (state == "betting") {
                         fragment = PushUpBet.newInstance()

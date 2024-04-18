@@ -21,7 +21,7 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
     }
     override fun onStart() {
         super.onStart()
-        Log.d(Global.TAG, "PushUpsBet")
+        Log.d(TAG.TAG, "PushUpsBet")
 
         vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
 
@@ -33,7 +33,7 @@ class PushUpBet : Fragment(R.layout.pushup_bet_page) {
 
         var betListener = object : ViewModelListener() {
             override fun onBetValidated(suit: Suit, players: MutableCollection<Player>) {
-                Log.d(Global.TAG, "OnBetValidated")
+                Log.d(TAG.TAG, "OnBetValidated")
 
                 var nSuitBet = 0
                 for (player in players) {

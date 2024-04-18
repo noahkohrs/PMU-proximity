@@ -2,7 +2,7 @@ package com.inc.pmu.viewmodels;
 
 import android.util.Log;
 
-import com.inc.pmu.Global;
+import com.inc.pmu.TAG;
 
 public class VMStateMachine {
 
@@ -61,7 +61,7 @@ public class VMStateMachine {
                 }
                 break;
         }
-        Log.d(Global.TAG, "State [" + prev + " -> " + state + "] by " + transition);
+        Log.d(TAG.TAG, "State [" + prev + " -> " + state + "] by " + transition);
     }
 
     public void notifyStartGame() {

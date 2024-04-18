@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.viewmodels.ViewModelPMU
@@ -31,6 +30,6 @@ class WaitingPage : Fragment(R.layout.waiting_page) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(Global.TAG, "WaitingPage onViewCreated")
+        Log.d(TAG.TAG, "WaitingPage onViewCreated")
     }
 }

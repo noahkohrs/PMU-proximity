@@ -14,7 +14,6 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Strategy
-import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Card
 import com.inc.pmu.models.Game
@@ -34,7 +33,7 @@ abstract class ViewModelPMU : ViewModel() {
     var context: Context? = null
 
     private companion object {
-        const val TAG = Global.TAG
+        const val TAG = com.inc.pmu.TAG.TAG
         val STRATEGY = Strategy.P2P_STAR
     }
 
@@ -84,23 +83,23 @@ abstract class ViewModelPMU : ViewModel() {
         }
 
         override fun onConnectionResult(endpointId: String, resolution: ConnectionResolution) {
-            Log.d(Global.TAG, "onConnectionResult")
+            Log.d(com.inc.pmu.TAG.TAG, "onConnectionResult")
 
             when (resolution.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_OK")
+                    Log.d(com.inc.pmu.TAG.TAG, "ConnectionsStatusCodes.STATUS_OK")
 
                     connectionsClient.stopDiscovery()
                     onConnectionResultOK(endpointId)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED")
+                    Log.d(com.inc.pmu.TAG.TAG, "ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED")
                 }
                 ConnectionsStatusCodes.STATUS_ERROR -> {
-                    Log.d(Global.TAG, "ConnectionsStatusCodes.STATUS_ERROR")
+                    Log.d(com.inc.pmu.TAG.TAG, "ConnectionsStatusCodes.STATUS_ERROR")
                 }
                 else -> {
-                    Log.d(Global.TAG, "Unknown status code ${resolution.status.statusCode}")
+                    Log.d(com.inc.pmu.TAG.TAG, "Unknown status code ${resolution.status.statusCode}")
                 }
             }
         }
@@ -116,7 +115,7 @@ abstract class ViewModelPMU : ViewModel() {
     fun onPayloadReceived(endpointId: String, packet: JSONObject) {
         val params: JSONObject = packet.get(Param.PARAMS) as JSONObject
         val actionStr = packet.get("action") as String
-        Log.d(Global.TAG, "Received action: $actionStr")
+        Log.d(com.inc.pmu.TAG.TAG, "Received action: $actionStr")
         val action = Action.valueOf(actionStr)
         when (action){
             Action.CONNEXION_ESTABLISHED -> {

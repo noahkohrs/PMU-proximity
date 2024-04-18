@@ -6,7 +6,7 @@ import java.util.Set;
 
 import android.util.Log;
 
-import com.inc.pmu.Global;
+import com.inc.pmu.TAG;
 
 public class Validator {
 
@@ -31,7 +31,7 @@ public class Validator {
 
     public void vote(String puuid, boolean validate) {
         if (IS_DONE) {
-            Log.d(Global.VALIDATOR, "vote: Voting is done");
+            Log.d(TAG.VALIDATOR, "vote: Voting is done");
             return;
         }
         if (puuid.equals(votedPlayerPuuid))
@@ -41,7 +41,7 @@ public class Validator {
 
     public boolean hasEveryoneVoted() {
         if (IS_DONE){
-            Log.d(Global.VALIDATOR, "Trying to vote while vote done.");
+            Log.d(TAG.VALIDATOR, "Trying to vote while vote done.");
             return false;
         }
         Collection<VoteState> values = vote.values();

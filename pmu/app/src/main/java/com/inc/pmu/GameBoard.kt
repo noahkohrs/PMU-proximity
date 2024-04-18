@@ -92,14 +92,14 @@ class GameBoard : Fragment(R.layout.game_page) {
             if (!vmGame.checkWin()){
                 vmGame.drawCard()
                 deckButton.isClickable = false
-                Log.d(Global.TAG, "Bouton non clickable")
+                Log.d(TAG.TAG, "Bouton non clickable")
                 val timer = object: CountDownTimer(Const.MIN_TIME_FOR_A_NEW_DRAW, 100) {
                     override fun onTick(millisUntilFinished: Long) {
                         //affiche les secondes sur le deck transparent
                     }
                     override fun onFinish() {
                         deckButton.isClickable = true
-                        Log.d(Global.TAG, "Bouton re-clickable !")
+                        Log.d(TAG.TAG, "Bouton re-clickable !")
                     }
                 }
                 timer.start()
@@ -218,7 +218,7 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     fun drawnCardLogic(card : Card) {
 
-        Log.d(Global.TAG, "Drawn card: $card")
+        Log.d(TAG.TAG, "Drawn card: $card")
         var drawCard : Drawable = getCardDrawable(card, context)
         playedCards.setImageDrawable(drawCard)
 
@@ -373,7 +373,7 @@ class GameBoard : Fragment(R.layout.game_page) {
     fun getCardDrawable(card : Card, context : Context) : Drawable {
         var uri : String = "@drawable/${card.toString()}"
         var imageId : Int = context.resources.getIdentifier(uri,null, context.packageName)
-        Log.d(Global.TAG, imageId.toString())
+        Log.d(TAG.TAG, imageId.toString())
         return context.resources.getDrawable(imageId)
     }
 

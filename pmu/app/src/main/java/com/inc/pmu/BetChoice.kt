@@ -47,7 +47,7 @@ class BetChoice : Fragment(R.layout.bet_choice) {
 
         var betListener = object : ViewModelListener() {
             override fun onBetValidated(suit: Suit?, players: MutableCollection<Player>?) {
-                Log.d(Global.TAG, "OnBetValidated")
+                Log.d(TAG.TAG, "OnBetValidated")
 
                 var nSuitBet = 0
                 if (players != null) {

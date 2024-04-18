@@ -2,13 +2,12 @@ package com.inc.pmu.models;
 
 import android.util.Log;
 
-import com.inc.pmu.Global;
+import com.inc.pmu.TAG;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class Player implements Jsonisable, Serializable {
@@ -53,7 +52,7 @@ public class Player implements Jsonisable, Serializable {
             player.put("name", playerName);
             player.put("bet", bet.toJson());
         } catch (JSONException e) {
-            Log.d(Global.TAG, "JSON Exception /!\\ Should not happen");
+            Log.d(TAG.TAG, "JSON Exception /!\\ Should not happen");
         }
         return player;
     }

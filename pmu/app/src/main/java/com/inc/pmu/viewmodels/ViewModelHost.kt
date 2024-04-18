@@ -10,7 +10,6 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Const
-import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
@@ -30,17 +29,17 @@ class ViewModelHost() : ViewModelPMU() {
     private var winners = mutableListOf<Player>()
     private var cptWinners = 0
     private companion object {
-        const val TAG = Global.TAG
+        const val TAG = com.inc.pmu.TAG.TAG
         val STRATEGY = Strategy.P2P_STAR
     }
 
     override fun onConnectionResultOK(endpointId: String) {
         playersEndpointIds[endpointId] = UUID.randomUUID().toString()
-        Log.d(Global.TAG, playersEndpointIds.toString())
+        Log.d(com.inc.pmu.TAG.TAG, playersEndpointIds.toString())
     }
 
     override fun onPlayerDisconnected(endpointId: String) {
-        Log.d(Global.TAG, "Player disconnected")
+        Log.d(com.inc.pmu.TAG.TAG, "Player disconnected")
         playersEndpointIds.remove(endpointId)
 
         val playerList = game.players.values
@@ -57,7 +56,7 @@ class ViewModelHost() : ViewModelPMU() {
             .toPayload()
         broadcast(playerListPayload)
 
-        Log.d(Global.TAG, playersEndpointIds.toString())
+        Log.d(com.inc.pmu.TAG.TAG, playersEndpointIds.toString())
     }
 
     override fun startDiscovering(connectionsClient: ConnectionsClient) {
@@ -102,9 +101,9 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handlePlayerProfile(endpointId: String, name: String, puuid: String) {
-        Log.d(Global.TAG, "EndpointId : $endpointId, Name : $name, Puuid : $puuid")
+        Log.d(com.inc.pmu.TAG.TAG, "EndpointId : $endpointId, Name : $name, Puuid : $puuid")
         if (automata.isGameSetup) {
-            Log.d(Global.TAG, "First Connection of player $name")
+            Log.d(com.inc.pmu.TAG.TAG, "First Connection of player $name")
             val newPlayer: Player = Player(puuid, name)
             game.addPlayer(newPlayer)
             playersEndpointIds[endpointId] = puuid
@@ -120,7 +119,7 @@ class ViewModelHost() : ViewModelPMU() {
             for (p in playerList){
                 playerNameList.add(p.playerName)
             }
-            Log.d(Global.TAG, playerNameList.toString())
+            Log.d(com.inc.pmu.TAG.TAG, playerNameList.toString())
             val jsonList = PayloadMaker
                 .createPayload(Action.PLAYER_LIST, Sender.HOST)
                 .addParam(Param.PLAYER_LIST,playerNameList.toTypedArray())
@@ -130,7 +129,7 @@ class ViewModelHost() : ViewModelPMU() {
         } else {
             if (game.players.containsKey(puuid)) {
                 // Reconnecting player
-                Log.d(Global.TAG, "Reconnecting player")
+                Log.d(com.inc.pmu.TAG.TAG, "Reconnecting player")
                 playersEndpointIds[endpointId] = puuid
                 val gamePayload: Payload = PayloadMaker
                     .createPayload(Action.GAME_PACKET, Sender.HOST)
@@ -146,7 +145,7 @@ class ViewModelHost() : ViewModelPMU() {
 
             } else {
                 // Unable to connect action
-                Log.d(Global.TAG, "Unknown player, $name kicked")
+                Log.d(com.inc.pmu.TAG.TAG, "Unknown player, $name kicked")
                 connectionsClient.disconnectFromEndpoint(endpointId)
             }
         }
@@ -170,7 +169,7 @@ class ViewModelHost() : ViewModelPMU() {
 
         for (p in game.players.values){
             if (p.bet.number != -1){
-                Log.d(Global.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
+                Log.d(com.inc.pmu.TAG.TAG, p.playerName + " : " + p.bet.number + " sur le " + p.bet.suit)
             }
         }
         for (l in listeners)
@@ -363,7 +362,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun drawCard() {
         if (!(automata.isWaitingForDrawing || automata.isCardDrawn)) {
-            Log.d(Global.TAG, "Trying to draw in the wrong state")
+            Log.d(com.inc.pmu.TAG.TAG, "Trying to draw in the wrong state")
             return
         }
         automata.notifyDrawCard()
@@ -396,7 +395,7 @@ class ViewModelHost() : ViewModelPMU() {
                 val bet = p.bet
                 val ranking = game.board.riderPos[bet.suit]
                 p.setBet(bet.number * abs(ranking!! - (Board.LENGTH + 1)), bet.suit)
-                Log.d(Global.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - (Board.LENGTH + 1))}")
+                Log.d(com.inc.pmu.TAG.TAG, "player : ${p.playerName}, bet : ${bet.number}, classement : ${abs(ranking!! - (Board.LENGTH + 1))}")
             }
         }
 
@@ -442,7 +441,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun endPushUps() {
         for (suit in game.board.riderPos.keys){
-            Log.d(Global.TAG, suit.name + " : " +game.board.riderPos[suit].toString())
+            Log.d(com.inc.pmu.TAG.TAG, suit.name + " : " +game.board.riderPos[suit].toString())
         }
         for (endPoint in playersEndpointIds.keys){
             val id = playersEndpointIds[endPoint]
