@@ -1,10 +1,6 @@
 package com.inc.pmu
 
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -32,7 +28,12 @@ class HomePage : Fragment(R.layout.home_page) {
 
     override fun onStart() {
         super.onStart()
-
+        try {
+            vmGame = ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java]
+            vmGame.stopConnection()
+        } catch (e: IllegalArgumentException) {
+            Log.d(Global.TAG, "No ViewModel to stop")
+        }
         vmUserData = ViewModelProvider(requireActivity())[ViewModelBeforeNetwork::class.java]
         username = vmUserData.getUsername()
         // Destroy the view model given by ViewModelProvider(requireActivity(), ViewModelPMUFactory())[ViewModelPMU::class.java] if it exists
