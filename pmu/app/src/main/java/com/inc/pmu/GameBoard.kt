@@ -25,7 +25,6 @@ import com.inc.pmu.viewmodels.ViewModelPMUFactory
 
 
 class GameBoard : Fragment(R.layout.game_page) {
-    val MIN_TIME_DRAW_CARD: Long = 7000
 
 
     private lateinit var vmGame: ViewModelPMU
@@ -94,7 +93,7 @@ class GameBoard : Fragment(R.layout.game_page) {
                 vmGame.drawCard()
                 deckButton.isClickable = false
                 Log.d(Global.TAG, "Bouton non clickable")
-                val timer = object: CountDownTimer(MIN_TIME_DRAW_CARD, 100) {
+                val timer = object: CountDownTimer(Const.MIN_TIME_FOR_A_NEW_DRAW, 100) {
                     override fun onTick(millisUntilFinished: Long) {
                         //affiche les secondes sur le deck transparent
                     }

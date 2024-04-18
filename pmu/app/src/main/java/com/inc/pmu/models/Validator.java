@@ -2,12 +2,11 @@ package com.inc.pmu.models;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import android.util.Log;
 
-import com.inc.pmu.viewmodels.ViewModelListener;
+import com.inc.pmu.Global;
 
 public class Validator {
 
@@ -31,16 +30,20 @@ public class Validator {
     }
 
     public void vote(String puuid, boolean validate) {
-        if (IS_DONE)
-            throw new IllegalStateException("Trying to vote while vote done");
+        if (IS_DONE) {
+            Log.d(Global.VALIDATOR, "vote: Voting is done");
+            return;
+        }
         if (puuid.equals(votedPlayerPuuid))
             throw new IllegalArgumentException("The voted player can't be a voter");
         vote.put(puuid, validate ? VoteState.VOTE_TRUE : VoteState.VOTE_FALSE);
     }
 
     public boolean hasEveryoneVoted() {
-        if (IS_DONE)
-            throw new IllegalStateException("Trying to vote while vote done");
+        if (IS_DONE){
+            Log.d(Global.VALIDATOR, "Trying to vote while vote done.");
+            return false;
+        }
         Collection<VoteState> values = vote.values();
         int numberOfVotesDones = 0;
         for (VoteState v : values){
@@ -55,8 +58,6 @@ public class Validator {
      * @return the vote result
      */
     public boolean getResult() {
-        if (IS_DONE)
-            throw new IllegalStateException("Trying to vote while vote done");
         Collection<VoteState> values = vote.values();
         int voteTrue = 0;
         int voteFalse = 0;
