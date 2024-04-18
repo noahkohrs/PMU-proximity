@@ -1,6 +1,8 @@
 package com.inc.pmu.viewmodels
 
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -202,16 +204,21 @@ class ViewModelHost() : ViewModelPMU() {
         // Make a new validator
         validator = Validator(puuid, game.players.keys)
 
+
         // Time limit for the players to vote
-        //val timer = java.util.Timer()
-        //timer.schedule(object : java.util.TimerTask() {
-        //    override fun run() {
-        //        if (validator.hasEveryoneVoted()) {
-        //            return
-        //        }
-        //        voteEnded()
-        //    }
-        //}, Const.MAX_TIME_TO_VOTE)
+        val timer = java.util.Timer()
+        val handler = Handler(Looper.getMainLooper())
+        timer.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                if (validator.hasEveryoneVoted()) {
+                    return
+                }
+                handler.post {
+                    voteEnded()
+                }
+            }
+        }, Const.MAX_TIME_TO_VOTE)
+
 
         val json = PayloadMaker
             .createPayload(Action.DO_PUSH_UPS, Sender.HOST)
