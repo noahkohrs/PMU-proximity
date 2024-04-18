@@ -60,6 +60,8 @@ public class Game implements IGame, Jsonisable {
         JSONObject game = new JSONObject();
         try {
             game.put("board", board.toJson());
+            if (currentCard != null)
+                game.put("currentCard", currentCard.toJson());
             JSONArray players = new JSONArray();
             for (Player p : this.players.values()) {
                 players.put(p.toJson());
@@ -71,16 +73,20 @@ public class Game implements IGame, Jsonisable {
         return game;
     }
 
-    private Game(Board board, Map<String, Player> players) {
+    private Game(Board board, Map<String, Player> players, Card currentCard) {
         this.board = board;
         this.players = players;
+        this.currentCard = currentCard;
     }
 
     public static Game fromJson(JSONObject json) {
         Board board;
         Map<String, Player> players;
+        Card currentCard = null;
         try {
             board = Board.fromJson(json.getJSONObject("board"));
+            if (json.has("currentCard"))
+                currentCard = Card.fromJson(json.getJSONObject("currentCard"));
             players = new HashMap<String, Player>();
             JSONArray playersJson = json.getJSONArray("players");
             for (int i = 0; i < playersJson.length(); i++) {
@@ -90,7 +96,7 @@ public class Game implements IGame, Jsonisable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return new Game(board, players);
+        return new Game(board, players, currentCard);
     }
 
     public Suit getWinner() {

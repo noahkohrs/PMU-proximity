@@ -47,7 +47,7 @@ class JoinGame : Fragment(R.layout.join_page) {
                     var fragment: Fragment = WaitingForPlayer.newInstance()
                     if (state == "betting") {
                         fragment = PushUpBet.newInstance()
-                    } else if (state == "ingame") {
+                    } else if (state == "in-game") {
                         fragment = GameBoard.newInstance()
                     }
                     requireActivity().supportFragmentManager.beginTransaction()

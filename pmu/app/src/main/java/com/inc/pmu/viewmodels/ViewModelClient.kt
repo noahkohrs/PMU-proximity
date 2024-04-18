@@ -81,6 +81,8 @@ class ViewModelClient : ViewModelPMU() {
     override fun handleConnexionEstablished(state: String) {
         for (l in listeners)
             l.onConnectionEstablished(state)
+        for (l in listeners)
+            l.onPlayerListUpdate(game.players.keys.toTypedArray())
     }
 
 

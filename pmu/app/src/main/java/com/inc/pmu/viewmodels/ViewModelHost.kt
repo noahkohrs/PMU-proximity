@@ -7,6 +7,7 @@ import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
+import com.inc.pmu.Const
 import com.inc.pmu.Global
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Board
@@ -137,7 +138,7 @@ class ViewModelHost() : ViewModelPMU() {
 
                 val payloadEstablishedConnection: Payload = PayloadMaker
                     .createPayload(Action.CONNEXION_ESTABLISHED, Sender.HOST)
-                    .addParam(Param.GAME_STATE, "ingame")
+                    .addParam(Param.GAME_STATE, "in-game")
                     .toPayload()
                 connectionsClient.sendPayload(endpointId, payloadEstablishedConnection)
 
@@ -402,7 +403,7 @@ class ViewModelHost() : ViewModelPMU() {
             l.onGameEnds(winner)
 
         if (winners.isEmpty()){
-            val timer = object: CountDownTimer(5000, 100) {
+            val timer = object: CountDownTimer(Const.MIN_TIME_FOR_A_NEW_DRAW, 100) {
                 override fun onTick(millisUntilFinished: Long) {
                     //affiche les secondes sur le deck transparent
                 }

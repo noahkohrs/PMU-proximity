@@ -124,78 +124,21 @@ class GameBoard : Fragment(R.layout.game_page) {
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onCardDrawn(card: Card) {
-                    Log.d(Global.TAG, "Drawn card: $card")
-                    var drawCard : Drawable = getCardDrawable(card, context)
-                    playedCards.setImageDrawable(drawCard)
-
-                    var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
-                    var dividerId = getDividerFromPos(cardPos, context)
-                    var divider : View = view.findViewById(dividerId)
-
-                    var c : ImageView
-                    when(card.suit) {
-                        Suit.HEARTS -> c = heart
-                        Suit.SPADES -> c = spades
-                        Suit.CLUBS -> c = club
-                        Suit.DIAMONDS -> c = diamonds
-                    }
-
-                    val params = c.layoutParams as ConstraintLayout.LayoutParams
-                    params.topToBottom = divider.id
-                    c.requestLayout()
-
-                    val board = vmGame.game.board
-                    val indexSideCards = board.sideCardsDiscoverIndex
-                    for (i in 0..<indexSideCards) {
-                        var leftCard : Drawable = getCardDrawable(board.sideCards[i][0], context)
-                        var rightCard : Drawable = getCardDrawable(board.sideCards[i][1], context)
-                        sideCards[i][0].setImageDrawable(leftCard)
-                        sideCards[i][1].setImageDrawable(rightCard)
-                    }
-
-                    var suit_string: String
-                    when(card.suit) {
-                        Suit.HEARTS -> suit_string = "Coeur"
-                        Suit.SPADES -> suit_string = "Pique"
-                        Suit.CLUBS -> suit_string = "Trèfle"
-                        Suit.DIAMONDS -> suit_string = "Carreau"
-
-                    }
-                    pushButton.text = "Faire reculer\n" + suit_string
-                    if (vmGame.game.players.get(vmGame.localPuuid)?.bet?.suit == card.suit) {
-                        pushButton.isClickable = false
-                        pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
-                    }
-                    else {
-                        pushButton.isClickable = true
-                        pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
-                    }
+                    drawnCardLogic(card)
                 }
             }
         )
 
+        // Initial board update (reconnection case)
+        updateBoard()
+        if (vmGame.game.currentCard != null)
+            drawnCardLogic(vmGame.game.currentCard)
+
+
         vmGame.addListener(
             object : ViewModelListener() {
                 override fun onBoardUpdate() {
-                    currentNbPushUps.text = vmGame.game.players.get(vmGame.localPuuid)!!.currentPushUps.toString()
-                    for (suit in Suit.values()) {
-
-                        var c : ImageView
-                        when(suit) {
-                            Suit.HEARTS -> c = heart
-                            Suit.SPADES -> c = spades
-                            Suit.CLUBS -> c = club
-                            Suit.DIAMONDS -> c = diamonds
-                        }
-
-                        var cardPos : Int = vmGame.game.board.riderPos.get(suit) as Int
-                        var dividerId = getDividerFromPos(cardPos, context)
-                        var divider : View = view.findViewById(dividerId)
-
-                        val params = c.layoutParams as ConstraintLayout.LayoutParams
-                        params.topToBottom = divider.id
-                        c.requestLayout()
-                    }
+                    updateBoard()
                 }
             }
         )
@@ -270,6 +213,79 @@ class GameBoard : Fragment(R.layout.game_page) {
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+
+
+    }
+
+    fun drawnCardLogic(card : Card) {
+
+        Log.d(Global.TAG, "Drawn card: $card")
+        var drawCard : Drawable = getCardDrawable(card, context)
+        playedCards.setImageDrawable(drawCard)
+
+        var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
+        var dividerId = getDividerFromPos(cardPos, context)
+        var divider : View = view.findViewById(dividerId)
+
+        var c : ImageView
+        when(card.suit) {
+            Suit.HEARTS -> c = heart
+            Suit.SPADES -> c = spades
+            Suit.CLUBS -> c = club
+            Suit.DIAMONDS -> c = diamonds
+        }
+
+        val params = c.layoutParams as ConstraintLayout.LayoutParams
+        params.topToBottom = divider.id
+        c.requestLayout()
+
+        val board = vmGame.game.board
+        val indexSideCards = board.sideCardsDiscoverIndex
+        for (i in 0..<indexSideCards) {
+            var leftCard : Drawable = getCardDrawable(board.sideCards[i][0], context)
+            var rightCard : Drawable = getCardDrawable(board.sideCards[i][1], context)
+            sideCards[i][0].setImageDrawable(leftCard)
+            sideCards[i][1].setImageDrawable(rightCard)
+        }
+
+        var suit_string: String
+        when(card.suit) {
+            Suit.HEARTS -> suit_string = "Coeur"
+            Suit.SPADES -> suit_string = "Pique"
+            Suit.CLUBS -> suit_string = "Trèfle"
+            Suit.DIAMONDS -> suit_string = "Carreau"
+
+        }
+        pushButton.text = "Faire reculer\n" + suit_string
+        if (vmGame.game.players[vmGame.localPuuid]?.bet?.suit == card.suit) {
+            pushButton.isClickable = false
+            pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
+        }
+        else {
+            pushButton.isClickable = true
+            pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
+        }
+    }
+    fun updateBoard() {
+        currentNbPushUps.text = vmGame.game.players[vmGame.localPuuid]!!.currentPushUps.toString()
+        for (suit in Suit.entries) {
+
+            var c : ImageView
+            when(suit) {
+                Suit.HEARTS -> c = heart
+                Suit.SPADES -> c = spades
+                Suit.CLUBS -> c = club
+                Suit.DIAMONDS -> c = diamonds
+            }
+
+            var cardPos : Int = vmGame.game.board.riderPos[suit] as Int
+            var dividerId = getDividerFromPos(cardPos, context)
+            var divider : View = view.findViewById(dividerId)
+
+            val params = c.layoutParams as ConstraintLayout.LayoutParams
+            params.topToBottom = divider.id
+            c.requestLayout()
+        }
     }
 
     fun doPushups(view: View): AlertDialog {
