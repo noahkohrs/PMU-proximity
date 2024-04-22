@@ -31,4 +31,4 @@ To see more details about the technical aspect of the project, you can check the
 
 ## Credits
 - [Google Nearby Connections API](https://developers.google.com/nearby/connections/overview) for the api to manage the proximity connections that we used in our project.
-- [Fernando Sproviero](https://github.com/fernandospr) for providing [a simple exemple](https://github.com/fernandospr/android-nearby-tictactoe/) of how to use the Google Nearby Connections API
+- [Fernando Sproviero](https://github.com/fernandospr) for providing [a simple example](https://github.com/fernandospr/android-nearby-tictactoe/) that helped us to understand how to use the Google Nearby Connections API.
