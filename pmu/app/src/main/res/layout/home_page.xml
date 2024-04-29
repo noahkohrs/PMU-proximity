@@ -31,7 +31,7 @@
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
         android:onClick="onClickCreate"
-        android:text="CRÉER"
+        android:text="@string/createBtn"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,15 +40,29 @@
         app:layout_constraintVertical_bias="0.047" />
 
     <Button
+        android:id="@+id/backButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/white"
+        android:fontFamily="@font/inter_medium"
+        android:onClick="onClickCreate"
+        android:text="@string/backBtn"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/joinButton"
         android:layout_width="@dimen/main_button_width"
         android:layout_height="@dimen/main_button_height"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
-        android:text="REJOINDRE"
-        android:textColor="@color/black"
         android:onClick="onClickJoin"
+        android:text="@string/joinBtn"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createButton" />

@@ -18,6 +18,7 @@ class HomePage : Fragment(R.layout.home_page) {
 
     private lateinit var createButton: Button
     private lateinit var joinButton: Button
+    private lateinit var backButton: Button
 
     private lateinit var vmUserData: ViewModelBeforeNetwork
     private lateinit var vmGame: ViewModelPMU
@@ -42,6 +43,7 @@ class HomePage : Fragment(R.layout.home_page) {
 
         createButton = requireView().findViewById(R.id.createButton)
         joinButton = requireView().findViewById(R.id.joinButton)
+        backButton = requireView().findViewById(R.id.backButton)
 
         createButton.setOnClickListener {
             requireActivity().viewModelStore.clear()
@@ -71,6 +73,13 @@ class HomePage : Fragment(R.layout.home_page) {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)
+                .commit()
+        }
+
+        backButton.setOnClickListener {
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.container, PseudoChoice.newInstance())
                 .commit()
         }
 
