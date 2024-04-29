@@ -27,7 +27,6 @@ class PseudoChoice : Fragment(R.layout.pseudo_choice) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(TAG.TAG, "WaitingPage onDestroyView")
     }
 
     override fun onStart() {

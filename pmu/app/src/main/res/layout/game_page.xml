@@ -111,19 +111,24 @@
 
     <TextView
         android:id="@+id/arrivee"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_medium"
-        android:text="Arrivée"
+        android:gravity="center"
+        android:text="@string/arivalLine"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="34sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        app:layout_constraintVertical_bias="0.023"
+
+        app:layout_constraintWidth_percent="0.6" />
 
     <View
         android:id="@+id/divider5"
@@ -294,11 +299,11 @@
         android:id="@+id/currentPushUps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:text="@string/counter"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:fontFamily="@font/inter_medium"
         android:textStyle="italic"
-        android:text="1"
         app:layout_constraintEnd_toStartOf="@+id/arrivee"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,9 +1,9 @@
 <resources>
 <!-- General usage -->
-    <string name="spades">PIQUE</string>
-    <string name="hearts">CŒUR</string>
-    <string name="diamonds">CARREAU</string>
-    <string name="clubs">TRÈFLE</string>
+    <string name="spades">PIQUES</string>
+    <string name="hearts">COEURS</string>
+    <string name="diamonds">CARREAUX</string>
+    <string name="clubs">TRÈFLES</string>
     <string name="playBtn">JOUER</string>
 
     <!-- Home page -->
@@ -19,6 +19,28 @@
     <!-- Game page -->
     <string name="currentCost">Coût actuel\ndes pompes :</string>
     <string name="cancelTurnBtn">Annuler\nle tour</string>
+    <string name="cancelCard">Annuler le</string>
+    <!-- Should take a string parameter -->
+    <string name="doPushupsMsg">Faites %1$d pompes</string>
+    <string name="doPushUpsConfirm">Fait</string>
+    <string name="otherDoPushUpsMsg">%1$s fait %2$d pompes</string>
+    <string name="pushUpsValidated">Pompes validées</string>
+    <string name="waitingForVote">En attente du vote</string>
+    <string name="voteMsg">Le joueur a-t-il fait ses pompes ?</string>
+    <string name="vote">VOTE</string>
+    <string name="yesBtn">OUI</string>
+    <string name="noBtn">NON</string>
+    <string name="voteValid">Vote accepté</string>
+    <string name="voteRefused">Vote refusé</string>
+
+    <string name="winTitle">Vous avez gagné !</string>
+    <string name="winText">À quel joueur souhaitez-vous distribuer les pompes ?</string>
+    <string name="pushUpsDistributedTo">Pompes distribuées à %1$s</string>
+
+    <string name="loseTitle">Vous avez perdu !</string>
+    <string name="loseText">L\'équipe %1$s a gagné !</string>
+    <string name="pushUpsReceived">Vous avez reçu %1$d pompes</string>
+
 
     <!-- Join page -->
     <string name="connectionMsg">Connexion à une partie...</string>
@@ -46,4 +68,5 @@
     <string name="waitingMsg">En attente des autres joueurs...</string>
     <string name="quitBtn">QUITTER</string>
     <string name="startBtn">DÉMARRER</string>
+    <string name="arivalLine">Arrivée</string>
 </resources>

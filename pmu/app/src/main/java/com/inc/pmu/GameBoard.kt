@@ -34,9 +34,16 @@ class GameBoard : Fragment(R.layout.game_page) {
     private lateinit var deckButton : ImageButton
     private lateinit var playedCards : ImageView
     private lateinit var spades : ImageView
-    private lateinit var club : ImageView
-    private lateinit var heart : ImageView
+    private lateinit var clubs : ImageView
+    private lateinit var hearts : ImageView
     private lateinit var diamonds : ImageView
+
+    private lateinit var spadesString : String
+    private lateinit var clubsString : String
+    private lateinit var heartsString : String
+    private lateinit var diamondsString : String
+
+
     private lateinit var sideCards : Array<Array<ImageView>>
 
     private lateinit var pushButton: Button
@@ -59,8 +66,8 @@ class GameBoard : Fragment(R.layout.game_page) {
         view = requireView()
 
         spades = requireView().findViewById(R.id.s1)
-        club = requireView().findViewById(R.id.c1)
-        heart = requireView().findViewById(R.id.h1)
+        clubs = requireView().findViewById(R.id.c1)
+        hearts = requireView().findViewById(R.id.h1)
         diamonds = requireView().findViewById(R.id.d1)
         deckButton = requireView().findViewById(R.id.deck)
         playedCards = requireView().findViewById(R.id.playedCards)
@@ -69,12 +76,18 @@ class GameBoard : Fragment(R.layout.game_page) {
         currentSuit = requireView().findViewById(R.id.playerSuit)
         currentNbPushUps = requireView().findViewById(R.id.currentPushUps)
 
-        var suit = vmGame.game.players.get(vmGame.localPuuid)!!.bet.suit
+        spadesString = resources.getString(R.string.spades)
+        clubsString = resources.getString(R.string.clubs)
+        heartsString = resources.getString(R.string.hearts)
+        diamondsString = resources.getString(R.string.diamonds)
+
+        var suit = vmGame.game.players[vmGame.localPuuid]!!.bet.suit
         when(suit) {
-            Suit.HEARTS -> currentSuit.text = "Coeur"
-            Suit.SPADES -> currentSuit.text = "Pique"
-            Suit.CLUBS -> currentSuit.text = "Trèfle"
-            Suit.DIAMONDS -> currentSuit.text = "Carreau"
+            // Get the text from strings.xml
+            Suit.HEARTS -> currentSuit.text = spadesString
+            Suit.SPADES -> currentSuit.text = clubsString
+            Suit.CLUBS -> currentSuit.text = heartsString
+            Suit.DIAMONDS -> currentSuit.text = diamondsString
         }
 
         sideCards = Array(vmGame.game.board.sideCards.size) { Array(2) { spades } }
@@ -228,9 +241,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
         var c : ImageView
         when(card.suit) {
-            Suit.HEARTS -> c = heart
+            Suit.HEARTS -> c = hearts
             Suit.SPADES -> c = spades
-            Suit.CLUBS -> c = club
+            Suit.CLUBS -> c = clubs
             Suit.DIAMONDS -> c = diamonds
         }
 
@@ -247,15 +260,16 @@ class GameBoard : Fragment(R.layout.game_page) {
             sideCards[i][1].setImageDrawable(rightCard)
         }
 
-        var suit_string: String
+        var suitString: String
         when(card.suit) {
-            Suit.HEARTS -> suit_string = "Coeur"
-            Suit.SPADES -> suit_string = "Pique"
-            Suit.CLUBS -> suit_string = "Trèfle"
-            Suit.DIAMONDS -> suit_string = "Carreau"
+
+            Suit.HEARTS -> suitString = heartsString
+            Suit.SPADES -> suitString = spadesString
+            Suit.CLUBS -> suitString = clubsString
+            Suit.DIAMONDS -> suitString = diamondsString
 
         }
-        pushButton.text = "Faire reculer\n" + suit_string
+        pushButton.text = resources.getString(R.string.cancelCard) + "\n" + suitString
         if (vmGame.game.players[vmGame.localPuuid]?.bet?.suit == card.suit) {
             pushButton.isClickable = false
             pushButton.setBackgroundColor(context.resources.getColor(R.color.unavailable))
@@ -271,9 +285,9 @@ class GameBoard : Fragment(R.layout.game_page) {
 
             var c : ImageView
             when(suit) {
-                Suit.HEARTS -> c = heart
+                Suit.HEARTS -> c = hearts
                 Suit.SPADES -> c = spades
-                Suit.CLUBS -> c = club
+                Suit.CLUBS -> c = clubs
                 Suit.DIAMONDS -> c = diamonds
             }
 
@@ -288,9 +302,11 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun doPushups(view: View): AlertDialog {
+        // <string name="doPushupsMsg">Do %1$d push-ups</string>
+        val msg: String = resources.getString(R.string.doPushupsMsg, vmGame.game.players[vmGame.localPuuid]?.currentPushUps)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Faites ${vmGame.game.players.get(vmGame.localPuuid)?.currentPushUps} pompes")
-            .setPositiveButton("C'est fait", positivePushupsButtonClick)
+            .setMessage(msg)
+            .setPositiveButton(resources.getString(R.string.doPushUpsConfirm), positivePushupsButtonClick)
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -304,8 +320,9 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun waitForPushups(view: View, puuid : String): AlertDialog {
+        val msg = resources.getString(R.string.otherDoPushUpsMsg, vmGame.game.players[puuid]?.playerName, vmGame.game.players[puuid]?.currentPushUps)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("${vmGame.game.players.get(puuid)?.playerName} fait des pompes")
+            .setMessage(msg)
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -316,14 +333,16 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     val positivePushupsButtonClick = { dialog: DialogInterface, which: Int ->
+        val msg = resources.getString(R.string.pushUpsValidated)
         Toast.makeText(context,
-            "pompes validées", Toast.LENGTH_SHORT).show()
+            msg, Toast.LENGTH_SHORT).show()
         vmGame.pushUpsDone()
     }
 
     fun waitingForVotes(view: View): AlertDialog {
+        val msg = resources.getString(R.string.waitingForVote)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Attente des votes")
+            .setMessage(msg)
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -334,10 +353,13 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun votes(view: View): AlertDialog {
+        val msg = resources.getString(R.string.voteMsg)
+        val yes = resources.getString(R.string.yesBtn)
+        val no = resources.getString(R.string.noBtn)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Validez vous les pompes")
-            .setPositiveButton("Valider", positiveVoteButton)
-            .setNegativeButton("Refuser", negativeVoteButton)
+            .setMessage(msg)
+            .setPositiveButton(yes, positiveVoteButton)
+            .setNegativeButton(no, negativeVoteButton)
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -349,25 +371,25 @@ class GameBoard : Fragment(R.layout.game_page) {
 
     val positiveVoteButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
-            "Validé", Toast.LENGTH_SHORT).show()
+            resources.getString(R.string.voteValid), Toast.LENGTH_SHORT).show()
         vmGame.vote(true)
     }
 
     val negativeVoteButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
-            "Refusé", Toast.LENGTH_SHORT).show()
+            resources.getString(R.string.voteRefused), Toast.LENGTH_SHORT).show()
         vmGame.vote(false)
     }
 
     val yesPuchupsButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
-            "Validé", Toast.LENGTH_SHORT).show()
+            resources.getString(R.string.voteValid), Toast.LENGTH_SHORT).show()
         vmGame.doPushUps()
     }
 
     val noPuchupsButton = { dialog: DialogInterface, which: Int ->
         Toast.makeText(context,
-            "Refusé", Toast.LENGTH_SHORT).show()
+            resources.getString(R.string.voteRefused), Toast.LENGTH_SHORT).show()
     }
 
     fun getCardDrawable(card : Card, context : Context) : Drawable {
@@ -389,31 +411,36 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun winnerPopup(view: View, suit: String) : AlertDialog {
+        val title = resources.getString(R.string.winTitle)
+        val msg = resources.getString(R.string.winText)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setTitle("Vous avez gagné")
-            .setMessage("A qui voulez vous distribuer vos pompes")
+            .setTitle(title)
+            .setMessage(msg)
 
         when(suit) {
             Suit.HEARTS.name -> {
-                builder.setPositiveButton("Pique", distributedToSpade)
-                    .setNeutralButton("Carreau", distributedToDiamond)
-                    .setNegativeButton("Trèfle", distributedToClub)
+                builder
+                    .setPositiveButton(spadesString, distributedToSpade)
+                    .setNeutralButton(clubsString, distributedToDiamond)
+                    .setNegativeButton(diamondsString, distributedToClub)
             }
-
             Suit.SPADES.name -> {
-                builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setNeutralButton("Carreau", distributedToDiamond)
-                    .setNegativeButton("Trèfle", distributedToClub)
+                builder
+                    .setPositiveButton(clubsString, distributedToClub)
+                    .setNeutralButton(diamondsString, distributedToDiamond)
+                    .setNegativeButton(heartsString, distributedToHeart)
             }
             Suit.CLUBS.name -> {
-                builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setNeutralButton("Carreau", distributedToDiamond)
-                    .setNegativeButton("Pique", distributedToSpade)
+                builder
+                    .setPositiveButton(diamondsString, distributedToDiamond)
+                    .setNeutralButton(heartsString, distributedToHeart)
+                    .setNegativeButton(spadesString, distributedToSpade)
             }
             Suit.DIAMONDS.name -> {
-                builder.setPositiveButton("Coeur", distributedToHearth)
-                    .setNeutralButton("Pique", distributedToSpade)
-                    .setNegativeButton("Trèfle", distributedToClub)
+                builder
+                    .setPositiveButton(heartsString, distributedToHeart)
+                    .setNeutralButton(spadesString, distributedToSpade)
+                    .setNegativeButton(clubsString, distributedToClub)
             }
         }
 
@@ -425,10 +452,11 @@ class GameBoard : Fragment(R.layout.game_page) {
         return  alertDialog
     }
 
-    val distributedToHearth = fun(dialog: DialogInterface, which: Int): Unit {
+    val distributedToHeart = fun(dialog: DialogInterface, which: Int): Unit {
+        val text = resources.getString(R.string.pushUpsDistributedTo, heartsString)
         Toast.makeText(
             context,
-            "pompes distribués à coeur", Toast.LENGTH_SHORT
+            text, Toast.LENGTH_SHORT
         ).show()
         val suit = Suit.HEARTS
         vmGame.givePushUps(suit.name)
@@ -439,9 +467,10 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     val distributedToSpade = fun(dialog: DialogInterface, which: Int): Unit {
+        val text = resources.getString(R.string.pushUpsDistributedTo, spadesString)
         Toast.makeText(
             context,
-            "pompes distribués à pique", Toast.LENGTH_SHORT
+            text, Toast.LENGTH_SHORT
         ).show()
         val suit = Suit.SPADES
         vmGame.givePushUps(suit.name)
@@ -452,9 +481,10 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     val distributedToClub = fun(dialog: DialogInterface, which: Int): Unit {
+        val text = resources.getString(R.string.pushUpsDistributedTo, clubsString)
         Toast.makeText(
             context,
-            "pompes distribués à trèfle", Toast.LENGTH_SHORT
+            text, Toast.LENGTH_SHORT
         ).show()
         val suit = Suit.CLUBS
         vmGame.givePushUps(suit.name)
@@ -465,9 +495,10 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     val distributedToDiamond = fun(dialog: DialogInterface, which: Int): Unit {
+        val text = resources.getString(R.string.pushUpsDistributedTo, diamondsString)
         Toast.makeText(
             context,
-            "pompes distribués à carreau", Toast.LENGTH_SHORT
+            text, Toast.LENGTH_SHORT
         ).show()
         val suit = Suit.DIAMONDS
         vmGame.givePushUps(suit.name)
@@ -478,9 +509,11 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun looserPopup(view: View, suit: String) : AlertDialog {
+        val title = resources.getString(R.string.loseTitle)
+        val msg = resources.getString(R.string.loseText, suit)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setTitle("Vous avez Perdu")
-            .setMessage("l'équipe ${suit} a gagné")
+            .setTitle(title)
+            .setMessage(msg)
 
         val alertDialog = builder.create()
         alertDialog.setCancelable(false)
@@ -491,9 +524,10 @@ class GameBoard : Fragment(R.layout.game_page) {
     }
 
     fun loserPushUps(view: View, bet: Int) : AlertDialog {
+        val msg = resources.getString(R.string.pushUpsReceived, bet)
         val builder = AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
-            .setMessage("Vous avez ${bet} pompes à faire")
-            .setPositiveButton("Quitter", DialogInterface.OnClickListener() {
+            .setMessage(msg)
+            .setPositiveButton(resources.getString(R.string.quitBtn), DialogInterface.OnClickListener() {
                 dialog: DialogInterface, which: Int ->
                 val fragment = HomePage.newInstance()
                 requireActivity().supportFragmentManager.beginTransaction()

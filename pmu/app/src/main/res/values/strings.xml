@@ -1,9 +1,9 @@
 <resources>
     <!-- General usage -->
-    <string name="spades">SPADE</string>
-    <string name="hearts">HEART</string>
-    <string name="diamonds">DIAMOND</string>
-    <string name="clubs">CLUB</string>
+    <string name="spades">SPADES</string>
+    <string name="hearts">HEARTS</string>
+    <string name="diamonds">DIAMONDS</string>
+    <string name="clubs">CLUBS</string>
     <string name="playBtn">PLAY</string>
 
     <!-- Home page -->
@@ -17,8 +17,33 @@
     <string name="betChoiceTitle">Choose your bet</string>
 
     <!-- Game page -->
-    <string name="currentCost">Current\npumps cost:</string>
+    <string name="currentCost">Current\npush-ups cost:</string>
     <string name="cancelTurnBtn">Cancel\nthe turn</string>
+    <string name="cancelCard">Cancel the</string>
+    <!-- Should take a string parameter -->
+    <string name="doPushupsMsg">Do %1$d push-ups</string>
+    <string name="doPushUpsConfirm">Done</string>
+    <string name="otherDoPushUpsMsg">%1$s is doing %2$d push-ups</string>
+    <string name="pushUpsValidated">Push-ups validated</string>
+    <string name="waitingForVote">Waiting for the vote</string>
+    <string name="voteMsg">Has the player done his push-ups?</string>
+    <string name="vote">VOTE</string>
+    <string name="yesBtn">YES</string>
+    <string name="noBtn">NO</string>
+    <string name="voteValid">Vote accepted</string>
+    <string name="voteRefused">Vote refused</string>
+
+    <string name="winTitle">You won!</string>
+    <string name="winText">To which player do you want to distribute the push-ups?</string>
+    <string name="pushUpsDistributedTo">Push-ups distributed to %1$s</string>
+
+    <string name="loseTitle">You lost!</string>
+    <string name="loseText">Team %1$s won!</string>
+    <string name="pushUpsReceived">You received %1$d push-ups</string>
+
+
+
+
 
     <!-- Join page -->
     <string name="connectionMsg">Connecting to a game...</string>
@@ -46,7 +71,7 @@
     <string name="waitingMsg">Waiting for the other players...</string>
     <string name="quitBtn">QUIT</string>
     <string name="startBtn">START</string>
-
+    <string name="arivalLine">Arival</string>
 
 
 </resources>

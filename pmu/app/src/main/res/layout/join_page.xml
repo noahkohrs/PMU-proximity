@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/connection"
         android:layout_width="331dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/inter_medium"
         android:text="@string/connectionMsg"
         android:textAlignment="center"
