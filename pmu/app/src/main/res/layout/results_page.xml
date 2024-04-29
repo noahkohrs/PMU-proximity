@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_medium"
-        android:text="Nombre de pompes\neffectuées"
+        android:text="@string/pushUpsDone"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="20sp"

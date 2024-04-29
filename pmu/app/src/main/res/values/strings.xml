@@ -1,3 +1,52 @@
 <resources>
+    <!-- General usage -->
+    <string name="spades">SPADE</string>
+    <string name="hearts">HEART</string>
+    <string name="diamonds">DIAMOND</string>
+    <string name="clubs">CLUB</string>
+    <string name="playBtn">PLAY</string>
+
+    <!-- Home page -->
     <string name="app_name">PMU</string>
+    <string name="createBtn">CREATE</string>
+    <string name="joinBtn">JOIN</string>
+    <string name="rulesBtn">RULES</string>
+    <string name="backBtn">←</string>
+
+    <!-- Bet page -->
+    <string name="betChoiceTitle">Choose your bet</string>
+
+    <!-- Game page -->
+    <string name="currentCost">Current\npumps cost:</string>
+    <string name="cancelTurnBtn">Cancel\nthe turn</string>
+
+    <!-- Join page -->
+    <string name="connectionMsg">Connecting to a game...</string>
+    <string name="homeBtn">HOME</string>
+
+    <!-- Pseudo choice page -->
+    <string name="enterPseudo">Enter your username:</string>
+    <string name="usernameHint">ex: Bob123</string>
+
+    <!-- Pushup bet page -->
+    <string name="pushupBetTitle">Choose your bet</string>
+    <string name="pushupBetDesc">How many push-ups are you ready to do?</string>
+    <string name="minusBtn">-</string>
+    <string name="plusBtn">+</string>
+    <string name="counter">1</string>
+    <string name="betBtn">BET</string>
+
+    <!-- Results page -->
+    <string name="pushUpsDone">Push-ups done:</string>
+
+    <!-- Teams page -->
+    <string name="teams">TEAMS</string>
+
+    <!-- Waiting page -->
+    <string name="waitingMsg">Waiting for the other players...</string>
+    <string name="quitBtn">QUIT</string>
+    <string name="startBtn">START</string>
+
+
+
 </resources>

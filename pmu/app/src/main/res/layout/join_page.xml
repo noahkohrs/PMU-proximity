@@ -11,7 +11,7 @@
         android:layout_width="331dp"
         android:layout_height="40dp"
         android:fontFamily="@font/inter_medium"
-        android:text="Connexion à une partie"
+        android:text="@string/connectionMsg"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="28sp"
@@ -30,7 +30,7 @@
         android:backgroundTint="@color/white"
         android:fontFamily="@font/inter_medium"
         android:onClick="onClickHomePage"
-        android:text="ACCUEIL"
+        android:text="@string/homeBtn"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

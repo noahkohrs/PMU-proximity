@@ -1,0 +1,49 @@
+<resources>
+<!-- General usage -->
+    <string name="spades">PIQUE</string>
+    <string name="hearts">CŒUR</string>
+    <string name="diamonds">CARREAU</string>
+    <string name="clubs">TRÈFLE</string>
+    <string name="playBtn">JOUER</string>
+
+    <!-- Home page -->
+    <string name="app_name">PMU</string>
+    <string name="createBtn">CRÉER</string>
+    <string name="joinBtn">REJOINDRE</string>
+    <string name="rulesBtn">RÈGLES</string>
+    <string name="backBtn">←</string>
+
+    <!-- Bet page -->
+    <string name="betChoiceTitle">Choisissez votre mise</string>
+
+    <!-- Game page -->
+    <string name="currentCost">Coût actuel\ndes pompes :</string>
+    <string name="cancelTurnBtn">Annuler\nle tour</string>
+
+    <!-- Join page -->
+    <string name="connectionMsg">Connexion à une partie...</string>
+    <string name="homeBtn">ACCUEIL</string>
+
+    <!-- Pseudo choice page -->
+    <string name="enterPseudo">Entrez votre pseudo :</string>
+    <string name="usernameHint">ex: AAABob123</string>
+
+    <!-- Pushup bet page -->
+    <string name="pushupBetTitle">Choisissez votre mise</string>
+    <string name="pushupBetDesc">Combien de pompes êtes-vous prêt à faire ?</string>
+    <string name="minusBtn">-</string>
+    <string name="plusBtn">+</string>
+    <string name="counter">1</string>
+    <string name="betBtn">MISER</string>
+
+    <!-- Results page -->
+    <string name="pushUpsDone">Pompes réalisées :</string>
+
+    <!-- Teams page -->
+    <string name="teams">ÉQUIPES</string>
+
+    <!-- Waiting page -->
+    <string name="waitingMsg">En attente des autres joueurs...</string>
+    <string name="quitBtn">QUITTER</string>
+    <string name="startBtn">DÉMARRER</string>
+</resources>
