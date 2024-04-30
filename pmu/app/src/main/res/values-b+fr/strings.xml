@@ -48,7 +48,7 @@
 
     <!-- Pseudo choice page -->
     <string name="enterPseudo">Entrez votre pseudo :</string>
-    <string name="usernameHint">ex: AAABob123</string>
+    <string name="usernameHint">ex: Bob123</string>
 
     <!-- Pushup bet page -->
     <string name="pushupBetTitle">Choisissez votre mise</string>
