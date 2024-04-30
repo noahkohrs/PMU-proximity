@@ -5,9 +5,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.CountDownTimer
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.util.Log
+import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -15,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.inc.pmu.models.Card
@@ -235,7 +240,7 @@ class GameBoard : Fragment(R.layout.game_page) {
         var drawCard : Drawable = getCardDrawable(card, context)
         playedCards.setImageDrawable(drawCard)
 
-        var cardPos : Int = vmGame.game.board.riderPos.get(card.suit) as Int
+        var cardPos : Int = vmGame.game.board.riderPos[card.suit] as Int
         var dividerId = getDividerFromPos(cardPos, context)
         var divider : View = view.findViewById(dividerId)
 
@@ -279,27 +284,38 @@ class GameBoard : Fragment(R.layout.game_page) {
             pushButton.setBackgroundColor(context.resources.getColor(R.color.white))
         }
     }
+
     fun updateBoard() {
         currentNbPushUps.text = vmGame.game.players[vmGame.localPuuid]!!.currentPushUps.toString()
-        for (suit in Suit.entries) {
 
-            var c : ImageView
-            when(suit) {
-                Suit.HEARTS -> c = hearts
-                Suit.SPADES -> c = spades
-                Suit.CLUBS -> c = clubs
-                Suit.DIAMONDS -> c = diamonds
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(context, R.layout.game_page)
+
+        val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
+
+        for (suit in Suit.entries) {
+            val c: ImageView = when (suit) {
+                Suit.HEARTS -> hearts
+                Suit.SPADES -> spades
+                Suit.CLUBS -> clubs
+                Suit.DIAMONDS -> diamonds
             }
 
-            var cardPos : Int = vmGame.game.board.riderPos[suit] as Int
-            var dividerId = getDividerFromPos(cardPos, context)
-            var divider : View = view.findViewById(dividerId)
+            val cardPos: Int = vmGame.game.board.riderPos[suit] as Int
+            val dividerId = getDividerFromPos(cardPos, context)
+            val divider: View = view.findViewById(dividerId)
 
-            val params = c.layoutParams as ConstraintLayout.LayoutParams
-            params.topToBottom = divider.id
-            c.requestLayout()
+            // Apply the new constraints
+            constraintSet.connect(c.id, ConstraintSet.TOP, divider.id, ConstraintSet.BOTTOM, margin)
         }
+
+        // Apply the transition
+        val transition = ChangeBounds()
+        transition.duration = Const.CARD_TRANSITION_DURATION
+        TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+        constraintSet.applyTo(view as ConstraintLayout)
     }
+
 
     fun doPushups(view: View): AlertDialog {
         // <string name="doPushupsMsg">Do %1$d push-ups</string>
