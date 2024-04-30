@@ -61,7 +61,7 @@ public class VMStateMachine {
                 }
                 break;
         }
-        Log.d(TAG.TAG, "State [" + prev + " -> " + state + "] by " + transition);
+        Log.d(TAG.AUTOMATA, "State [" + prev + " -> " + state + "] by " + transition);
     }
 
     public void notifyStartGame() {

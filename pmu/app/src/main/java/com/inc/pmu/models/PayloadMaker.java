@@ -1,6 +1,9 @@
 package com.inc.pmu.models;
 
+import android.util.Log;
+
 import com.google.android.gms.nearby.connection.Payload;
+import com.inc.pmu.TAG;
 import com.inc.pmu.viewmodels.Action;
 import com.inc.pmu.viewmodels.Param;
 import com.inc.pmu.viewmodels.Sender;
@@ -129,6 +132,7 @@ public class PayloadMaker implements Jsonisable {
     }
 
     public Payload toPayload() {
+        Log.d(TAG.NETWORK, action + " payload created");
         return Payload.fromBytes(toJson().toString().getBytes());
     }
 }
