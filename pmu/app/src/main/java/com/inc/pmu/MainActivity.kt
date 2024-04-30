@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -61,7 +62,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
+        val fragment = PseudoChoice.newInstance()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
 
@@ -72,15 +77,10 @@ class MainActivity : AppCompatActivity() {
                 REQUIRED_PERMISSIONS
             )
         }
-        val fragment = PseudoChoice.newInstance()
         if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
             requestMultiplePermissions.launch(
                 REQUIRED_PERMISSIONS
             )
         }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, fragment)
-            .addToBackStack(null)
-            .commit()
     }
 }
