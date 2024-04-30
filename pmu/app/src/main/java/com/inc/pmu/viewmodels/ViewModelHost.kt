@@ -199,26 +199,6 @@ class ViewModelHost() : ViewModelPMU() {
             return
         }
         automata.notifyAskForPushUps()
-
-        // Make a new validator
-        validator = Validator(puuid, game.players.keys)
-
-
-        // Time limit for the players to vote
-        val timer = java.util.Timer()
-        val handler = Handler(Looper.getMainLooper())
-        timer.schedule(object : java.util.TimerTask() {
-            override fun run() {
-                if (validator.hasEveryoneVoted()) {
-                    return
-                }
-                handler.post {
-                    voteEnded()
-                }
-            }
-        }, Const.MAX_TIME_TO_VOTE)
-
-
         val json = PayloadMaker
             .createPayload(Action.DO_PUSH_UPS, Sender.HOST)
             .addParam(Param.PUUID,puuid)
@@ -252,6 +232,24 @@ class ViewModelHost() : ViewModelPMU() {
             return
         }
         automata.notifyConfirmPushUps()
+
+        // Make a new validator to handle this vote
+        validator = Validator(puuid, game.players.keys)
+
+
+        // Time limit for the players to vote
+        val timer = java.util.Timer()
+        val handler = Handler(Looper.getMainLooper())
+        timer.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                if (validator.hasEveryoneVoted()) {
+                    return
+                }
+                handler.post {
+                    voteEnded()
+                }
+            }
+        }, Const.MAX_TIME_TO_VOTE)
 
         val startVotePayload = PayloadMaker
             .createPayload(Action.START_VOTE, Sender.HOST)
