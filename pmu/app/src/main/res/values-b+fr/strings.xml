@@ -19,7 +19,7 @@
     <!-- Game page -->
     <string name="currentCost">Coût actuel\ndes pompes :</string>
     <string name="cancelTurnBtn">Annuler\nle tour</string>
-    <string name="cancelCard">Annuler le</string>
+    <string name="cancelCard">Faire reculer les</string>
     <!-- Should take a string parameter -->
     <string name="doPushupsMsg">Faites %1$d pompes</string>
     <string name="doPushUpsConfirm">Fait</string>
