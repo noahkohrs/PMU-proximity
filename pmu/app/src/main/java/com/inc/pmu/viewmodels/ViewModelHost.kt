@@ -10,6 +10,7 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import com.inc.pmu.BuildConfig
 import com.inc.pmu.Const
+import com.inc.pmu.TAG
 import com.inc.pmu.models.Bet
 import com.inc.pmu.models.Board
 import com.inc.pmu.models.Card
@@ -29,17 +30,16 @@ class ViewModelHost() : ViewModelPMU() {
     private var winners = mutableListOf<Player>()
     private var cptWinners = 0
     private companion object {
-        const val TAG = com.inc.pmu.TAG.TAG
         val STRATEGY = Strategy.P2P_STAR
     }
 
     override fun onConnectionResultOK(endpointId: String) {
         playersEndpointIds[endpointId] = UUID.randomUUID().toString()
-        Log.d(com.inc.pmu.TAG.TAG, playersEndpointIds.toString())
+        Log.d(TAG.TAG, playersEndpointIds.toString())
     }
 
     override fun onPlayerDisconnected(endpointId: String) {
-        Log.d(com.inc.pmu.TAG.TAG, "Player disconnected")
+        Log.d(TAG.TAG, "Player disconnected")
         playersEndpointIds.remove(endpointId)
 
         val playerList = game.players.values
@@ -67,7 +67,7 @@ class ViewModelHost() : ViewModelPMU() {
     override fun startHosting(connectionsClient: ConnectionsClient) {
         this.connectionsClient = connectionsClient
         stopConnection()
-        Log.d(TAG, "Start advertising...")
+        Log.d(TAG.NETWORK, "Start advertising...")
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
         connectionsClient.startAdvertising(
             localUsername, // 2
@@ -76,10 +76,10 @@ class ViewModelHost() : ViewModelPMU() {
             advertisingOptions // 5
         ).addOnSuccessListener {
             //this.players.add(localUsername)
-            Log.d(TAG, "Advertising...")
+            Log.d(TAG.NETWORK, "Advertising...")
         }.addOnFailureListener {
             // 7
-            Log.d(TAG, "Unable to start advertising")
+            Log.d(TAG.NETWORK, "Unable to start advertising")
         }
     }
 
@@ -101,9 +101,9 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handlePlayerProfile(endpointId: String, name: String, puuid: String) {
-        Log.d(com.inc.pmu.TAG.TAG, "EndpointId : $endpointId, Name : $name, Puuid : $puuid")
+        Log.d(TAG.NETWORK, "EndpointId : $endpointId, Name : $name, Puuid : $puuid")
         if (automata.isGameSetup) {
-            Log.d(com.inc.pmu.TAG.TAG, "First Connection of player $name")
+            Log.d(TAG.TAG, "First Connection of player $name")
             val newPlayer: Player = Player(puuid, name)
             game.addPlayer(newPlayer)
             playersEndpointIds[endpointId] = puuid
@@ -160,9 +160,10 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun handleBet(puuid: String, bet: Bet) {
         if (!automata.isGameSetup) {
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
         }
-        val player = game.players.get(puuid)
+        val player = game.players[puuid]
         if (player != null){
             player.setBet(bet)
         }
@@ -196,8 +197,13 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun handleAskDoPushUps(puuid: String) {
         if (!automata.isCardDrawn) {
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
         }
+
+        // Make a new validator to handle the future vote
+        validator = Validator(puuid, game.players.keys)
+
         automata.notifyAskForPushUps()
         val json = PayloadMaker
             .createPayload(Action.DO_PUSH_UPS, Sender.HOST)
@@ -229,13 +235,10 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun handlePushUpsDone(puuid: String) {
         if (!(automata.isDoingPushUps && validator.votedPlayerPuuid == puuid)) {
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
         }
         automata.notifyConfirmPushUps()
-
-        // Make a new validator to handle this vote
-        validator = Validator(puuid, game.players.keys)
-
 
         // Time limit for the players to vote
         val timer = java.util.Timer()
@@ -266,10 +269,12 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun handleVote(puuid: String, vote: Boolean) {
-        if (!automata.isValidatingPlayer)
+        if (!automata.isValidatingPlayer) {
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
+        }
 
-        validator.vote(puuid, vote);
+        validator.vote(puuid, vote)
         if (validator.hasEveryoneVoted()) {
             voteEnded()
         }
@@ -338,8 +343,10 @@ class ViewModelHost() : ViewModelPMU() {
     }
 
     override fun startGame() {
-        if (!automata.isGameSetup)
+        if (!automata.isGameSetup) {
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
+        }
         automata.notifyStartGame()
 
         val info = PayloadMaker
@@ -360,7 +367,7 @@ class ViewModelHost() : ViewModelPMU() {
 
     override fun drawCard() {
         if (!(automata.isWaitingForDrawing || automata.isCardDrawn)) {
-            Log.d(com.inc.pmu.TAG.TAG, "Trying to draw in the wrong state")
+            Log.d(TAG.AUTOMATA, "Impossible automata state reached")
             return
         }
         automata.notifyDrawCard()

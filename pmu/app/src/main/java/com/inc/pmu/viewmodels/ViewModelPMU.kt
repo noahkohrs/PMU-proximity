@@ -115,7 +115,7 @@ abstract class ViewModelPMU : ViewModel() {
     fun onPayloadReceived(endpointId: String, packet: JSONObject) {
         val params: JSONObject = packet.get(Param.PARAMS) as JSONObject
         val actionStr = packet.get("action") as String
-        Log.d(com.inc.pmu.TAG.TAG, "Received action: $actionStr")
+        Log.d(com.inc.pmu.TAG.NETWORK, "Received action: $actionStr")
         val action = Action.valueOf(actionStr)
         when (action){
             Action.CONNEXION_ESTABLISHED -> {
